@@ -1,0 +1,8 @@
+#!/usr/bin/python
+
+class ConnectException(Exception): pass
+
+
+
+if __name__ == '__main__':
+    pass
