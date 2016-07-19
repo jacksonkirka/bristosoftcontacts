@@ -39,6 +39,7 @@ class Controller(QMainWindow,  bristocontacts):
         # Database constants cursor list return
         self._CONTACT = 0
         self._FIRSTCONTACT = 0
+        self._ID = 0
         self._COMPANY = 1
         self._MRMRS = 2
         self._FNAME = 3
@@ -82,6 +83,14 @@ class Controller(QMainWindow,  bristocontacts):
         self._file_ct = 2
         self._file_name = 3
         self._file_file = 4
+        
+        #Calls
+        self._calls_id = 0
+        self._calls_ct_id = 1
+        self._calls_stamp = 2
+        self._calls_phone = 3
+        self._calls_in = 4
+        self._calls_results = 5
         
         #Date and Time
         self._DATE = datetime.datetime.now()
@@ -275,6 +284,9 @@ class Controller(QMainWindow,  bristocontacts):
         '''
         self.bristo_search = bristoContactsSearchDialog()
         self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
+        self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
+        self.bristo_search.callsTableWidget.setColumnHidden(self._calls_ct_id,
+            True)
     
         # set bristoMapper class
         self.google_com = bristoMapper()
@@ -295,18 +307,14 @@ class Controller(QMainWindow,  bristocontacts):
         
         # Phone Calls
         self.bristo_search.callsTableWidget.setHorizontalHeaderLabels(
-            ['Time Stamp', 'Phone/CID', 'In', 'Results'])
+            ['ID', 'CTID', 'Time Stamp', 'Phone/CID', 'IO', 'Results'])
+
         self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
-            0, 140)
+            self._calls_stamp, 140)
         self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
-            1, 140)
+            self._calls_phone, 140)
         self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
-            2, 20)
-            
-        chkbx = [QCheckBox() for cellwidget in range(self._table_rows_count)] 
-        for _cell in range(self._table_rows_count):
-           self.bristo_search.callsTableWidget.setCellWidget(
-               _cell, 2, chkbx[_cell])
+            self._calls_in, 22)
         
         if self.connected:
             self.cursor = self.conn.cursor()
@@ -330,8 +338,7 @@ class Controller(QMainWindow,  bristocontacts):
             self.cursor.execute(_query)
             self.fetch_calls = self.cursor.fetchall() # Get all calls
             self.update_fetch_results()
-            _msg = 'All data fetched from database.\
-                Click red x to clear memory.'
+            _msg = 'All data fetched from database.  Click red x to clear memory.'
             self.contactsStatusBar.showMessage(_msg, 7000)
             
     def update_fetch_results(self):
@@ -365,14 +372,21 @@ class Controller(QMainWindow,  bristocontacts):
         self.bristo_search.notesTableWidget.cellChanged.connect(
                 self.db_insert_contact_note)
         self.bristo_search.callsTableWidget.cellChanged.connect(
-                self.db_insert_contact_call)
+            self.db_insert_contact_call)
         self.bristo_search.notesDetailPushButton.clicked.connect(
             self.resize_notes)
+        self.bristo_search.callsDetailPushButton.clicked.connect(
+            self.resize_calls)
         self.bristo_search.filePushButton.clicked.connect(
             self.db_insert_contact_file)
         self.bristo_search.fileTableWidget.doubleClicked.connect(
             self.get_contact_file)
         self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
+        self.bristo_search.callsTableWidget.clicked.connect(self.live_widgets)
+        
+        self._CONTACT = self._FIRSTCONTACT
+        self.display_contact()
+        
         
     def db_contact_fetch_first(self):
         '''
@@ -490,7 +504,9 @@ class Controller(QMainWindow,  bristocontacts):
         '''
         
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(0)
+        self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0) 
         self.bristo_search.notesTableWidget.blockSignals(True) # block during load
+        self.bristo_search.callsTableWidget.blockSignals(True)
         self.bristo_search.companyLineEdit.setText(
             self.fetch_results[self._CONTACT][self._COMPANY])
         self.bristo_search.mrmrsLineEdit.setText(
@@ -535,6 +551,7 @@ class Controller(QMainWindow,  bristocontacts):
         # Update Time Date and Note for Notes
         self.bristo_search.notesTableWidget.clearContents()
         self.bristo_search.fileTableWidget.clearContents()
+        self.bristo_search.callsTableWidget.clearContents()
         _tblwgt_row = 0  # Changes each record
         _tblwgt_date = 0 # static
         _tblwgt_note_col = 1 # static
@@ -574,9 +591,41 @@ class Controller(QMainWindow,  bristocontacts):
                     _tblwgt_filename_col, _qwitem)
                 _tblwgt_file_row += 1
                 
-        _msg = 'Contact, notes, files '+str(self._CONTACT+1)+" of "\
+        _tblwgt_calls_row = 0  # dynamic
+        _tblwgt_calls_date = 2 # static
+        _tblwgt_phone_col = 3 #static
+        _tblwgt_in_col = 4 # static
+        _tblwgt_results_col = 5 # static
+        for _contact_call in range(len(self.fetch_calls)):
+            if self.fetch_calls[_contact_call][self._calls_ct_id] ==\
+                self.fetch_results[self._CONTACT][self._ID]:
+                _date_row = self.fetch_calls[_contact_call][self._calls_stamp].strftime(
+                "%m/%d/%y %I:%M%p")
+                _qwitem = QTableWidgetItem(_date_row)
+                self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row, 
+                    _tblwgt_calls_date, _qwitem)
+                _phone_row = self.fetch_calls[_contact_call][self._calls_phone]
+                _qwitem = QTableWidgetItem(_phone_row)
+                self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
+                    _tblwgt_phone_col, _qwitem)
+                _in_row = self.fetch_calls[_contact_call][self._calls_in]
+                if _in_row:
+                    _in_row = 'I'
+                else:
+                    _in_row = 'O'
+                _qwitem = QTableWidgetItem(_in_row)
+                self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
+                    _tblwgt_in_col, _qwitem)
+                _results_row = self.fetch_calls[_contact_call][self._calls_results]
+                _qwitem = QTableWidgetItem(_results_row)
+                self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
+                    _tblwgt_results_col, _qwitem)
+                _tblwgt_calls_row += 1
+                
+        _msg = 'Contact, notes, files, calls '+str(self._CONTACT+1)+" of "\
         +str(self._LASTCONTACT+1)+" and map url fetched and loaded."
         self.bristo_search.notesTableWidget.blockSignals(False) #unblock for update
+        self.bristo_search.callsTableWidget.blockSignals(False) 
         self.contactsStatusBar.showMessage(_msg, 3000)
     
     def refresh_map(self):
@@ -619,6 +668,14 @@ class Controller(QMainWindow,  bristocontacts):
         '''
         
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(3)
+    
+    def resize_calls(self):
+        
+        '''
+        resize_calls resets the table widget resize mode to resize to contents.
+        '''
+        
+        self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(3) 
         
 
     def db_insert_contact_file(self):
@@ -716,6 +773,27 @@ class Controller(QMainWindow,  bristocontacts):
         p = QPixmap()                                       # Create QPixmap
         p.loadFromData(picture)                             # Load Picture
         self.bristo_search.picLabel.setPixmap(p)            # Display Picture
+        
+    def live_widgets(self):
+        '''
+        live_widgets is a bristosoft native abstract idea.  It postulates that
+        resources should be allocated just in time.  This class method creates
+        live widgets where they are needed at dataentry time on the fly ie
+        live.
+        '''
+        _crow = self.bristo_search.callsTableWidget.currentRow()
+        self.live_combobox = QComboBox()
+        self.bristo_search.callsTableWidget.setCellWidget(
+               _crow, self._calls_phone, self.live_combobox)
+        self.live_combobox.setFrame(False)
+        self.live_combobox.setEditable(True)
+        self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._OPHONE])
+        self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._CELL])
+        self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._HPHONE])
+        self.live_chkbox = QCheckBox()
+        self.bristo_search.callsTableWidget.setCellWidget(
+               _crow, self._calls_in, self.live_chkbox)
+        
     
     def db_insert_contact_call(self):
         
@@ -726,29 +804,21 @@ class Controller(QMainWindow,  bristocontacts):
         or outbound and results need be entered.
         
         '''
-        
-        # Remember to create hidden column of id then grab id
-        # from the hidden column
-        _crow = self.bristo_search.callsTableWidget.currentRow()
-        _ccol = self.bristo_search.callsTableWidget.currentColumn()
         _id = 0
-        _id_row = str(self.fetch_calls[_crow][_id])
-        _call = self.bristo_search.notesTableWidget.cellWidget(
-                                            _crow,_ccol ).text()
+        _crow = self.bristo_search.callsTableWidget.currentRow()
+        _id_ct = str(self.fetch_results[self._CONTACT][_id])
+        _ph = self.live_combobox.currentText()
+        _in = self.live_chkbox.isChecked()
+        _results = self.bristo_search.callsTableWidget.cellWidget(
+            _crow, self._calls_results).text()
         
-        self.cursor.execute("""INSERT INTO bristo_contacts_notes
-                (bristo_contacts_notes_ct, bristo_contacts_notes_note)
-                VALUES (%s,%s);""", (_oph,_note))
+        self.cursor.execute("""INSERT INTO bristo_contacts_calls
+                (bristo_contacts_calls_ct_id, bristo_contacts_calls_phone,
+                bristo_contacts_calls_type, bristo_contacts_calls_results)
+                VALUES (%s,%s, %s, %s);""", (_id_ct, _ph,_in, _results))
         self.conn.commit()
-        self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
-    
-    def resize_calls(self):
-        
-        '''
-        resize_notes resets the table widget resize mode to resize to contents.
-        '''
-        
-        self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(3)    
+        self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
+      
     
     def db_full_vacuum(self):
         '''
