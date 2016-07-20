@@ -101,6 +101,14 @@ class Controller(QMainWindow,  bristocontacts):
         self._calls_results = 5
         self.live_set = False
         
+        # Appointment
+        self._appt_id = 0
+        self._appt_ct_id = 1
+        self._appt_stamp = 2
+        self._appt_time = 3
+        self._appt_complete = 4
+        self._appt_purpose = 5
+        
         #Date and Time
         self._DATE = datetime.datetime.now()
         self._TODAY = self._DATE.strftime("%m/%d/%y %I:%M%p")
@@ -305,6 +313,9 @@ class Controller(QMainWindow,  bristocontacts):
         self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
         self.bristo_search.callsTableWidget.setColumnHidden(self._calls_ct_id,
             True)
+        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_id,  True)
+        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_ct_id,  True)
+        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_stamp,  True)
     
         # set bristoMapper class
         self.google_com = bristoMapper()
@@ -339,6 +350,15 @@ class Controller(QMainWindow,  bristocontacts):
             self._calls_phone, 140)
         self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
             self._calls_in, 22)
+        
+        # Appointments
+        self.bristo_search.apptTableWidget.setHorizontalHeaderLabels(
+            ['ID', 'CTID', 'Time Stamp', 'Date/Time', 'CO', 'Purpose'])
+
+        self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
+            self._appt_time, 140)
+        self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
+            self._appt_complete, 28)
         
         if self.connected:
             self.cursor = self.conn.cursor()

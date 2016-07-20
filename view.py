@@ -78,7 +78,7 @@ class bristoMailView(QWebView):
     '''
     def __init__(self,  parent=None):
         super(bristoMailView,  self).__init__(parent)
-        self.setZoomFactor(.7)
+        self.setZoomFactor(.75)
     
         
 if __name__ == '__main__':
