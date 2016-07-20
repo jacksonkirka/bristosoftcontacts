@@ -15,6 +15,9 @@ from PyQt4.uic import *
 import psycopg2
 from view import *
 
+# Version assignment
+__version__ = '0.1'
+
 # contactsdialog = loadUiType('contacts_combo.ui')[0]
 bristocontacts = loadUiType('contacts_main.ui')[0]
         
@@ -35,6 +38,11 @@ class Controller(QMainWindow,  bristocontacts):
         '''
         super(Controller, self).__init__(parent)
         self.setupUi(self)
+        
+        # users
+        self._user = None
+        self._user_email = None
+        self._user_webmail = None
         
         # Database constants cursor list return
         self._CONTACT = 0
@@ -196,11 +204,20 @@ class Controller(QMainWindow,  bristocontacts):
             self.conn = psycopg2.connect(con)
             self.connected = True
             
+            
             # Save login credentials
             self._user = self.login.userNameLineEdit.text() # User Name
             self._host = self.login.hostLineEdit.text()     # Host Name
             self._db = self.login.databaseLineEdit.text()   # Database Name
             
+            # get user webmail link for contact filter
+            self.cursor = self.conn.cursor()
+            self.cursor.execute("SELECT bristo_contacts_users_webmail FROM \
+            bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
+                self._user, ))
+            self._user_webmail_tuple = self.cursor.fetchone()
+            self._user_webmail = self._user_webmail_tuple[0]
+            self.cursor.close()
             
             if self.disconnected:
                 self.contactsStatusBar.removeWidget(self.conn_msg)
@@ -655,8 +672,8 @@ class Controller(QMainWindow,  bristocontacts):
         button.
         '''
         _email_addr_filter = self.fetch_results[self._CONTACT][self._OEMAIL]
-        _google_mail_search = 'https://mail.google.com/mail/u/0/#search/'
-        _loc = _google_mail_search + _email_addr_filter
+        _mail_search = self._user_webmail
+        _loc = _mail_search + _email_addr_filter
         self.google_mail_com.load(QUrl(_loc))
         
     def db_insert_contact_note(self):
