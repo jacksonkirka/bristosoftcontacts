@@ -91,6 +91,7 @@ class Controller(QMainWindow,  bristocontacts):
         self._calls_phone = 3
         self._calls_in = 4
         self._calls_results = 5
+        self.live_set = False
         
         #Date and Time
         self._DATE = datetime.datetime.now()
@@ -294,6 +295,12 @@ class Controller(QMainWindow,  bristocontacts):
         layout.addWidget(self.google_com)
         self.bristo_search.mapTabFrame.setLayout(layout)
         
+        # set bristoMailFrame
+        self.google_mail_com = bristoMailView()
+        mail_layout = QHBoxLayout()
+        mail_layout.addWidget(self.google_mail_com)
+        self.bristo_search.emailFrame.setLayout(mail_layout)
+        
         # Notes
         self.bristo_search.notesTableWidget.setHorizontalHeaderLabels(
             ['Time Stamp', 'Notes'])
@@ -382,6 +389,7 @@ class Controller(QMainWindow,  bristocontacts):
         self.bristo_search.fileTableWidget.doubleClicked.connect(
             self.get_contact_file)
         self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
+        self.bristo_search.emailRefreshPushButton.clicked.connect(self.refresh_email)
         self.bristo_search.callsTableWidget.clicked.connect(self.live_widgets)
         
         self._CONTACT = self._FIRSTCONTACT
@@ -639,6 +647,17 @@ class Controller(QMainWindow,  bristocontacts):
         _google = 'https://www.google.com/maps/place/'
         _loc = _google+_map_addr+_map_zip
         self.google_com.load(QUrl(_loc))
+
+    def refresh_email(self):
+    
+        '''
+        refresh_map refreshes the google map page when the user clicks the refresh
+        button.
+        '''
+        _email_addr_filter = self.fetch_results[self._CONTACT][self._OEMAIL]
+        _google_mail_search = 'https://mail.google.com/mail/u/0/#search/'
+        _loc = _google_mail_search + _email_addr_filter
+        self.google_mail_com.load(QUrl(_loc))
         
     def db_insert_contact_note(self):
         
@@ -779,21 +798,22 @@ class Controller(QMainWindow,  bristocontacts):
         live_widgets is a bristosoft native abstract idea.  It postulates that
         resources should be allocated just in time.  This class method creates
         live widgets where they are needed at dataentry time on the fly ie
-        live.
+        live.  The live widgets require a boolean object for control set/not set.
         '''
-        _crow = self.bristo_search.callsTableWidget.currentRow()
-        self.live_combobox = QComboBox()
-        self.bristo_search.callsTableWidget.setCellWidget(
-               _crow, self._calls_phone, self.live_combobox)
-        self.live_combobox.setFrame(False)
-        self.live_combobox.setEditable(True)
-        self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._OPHONE])
-        self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._CELL])
-        self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._HPHONE])
-        self.live_chkbox = QCheckBox()
-        self.bristo_search.callsTableWidget.setCellWidget(
-               _crow, self._calls_in, self.live_chkbox)
-        
+        if not self.live_set:
+            _crow = self.bristo_search.callsTableWidget.currentRow()
+            self.live_combobox = QComboBox()
+            self.bristo_search.callsTableWidget.setCellWidget(
+                   _crow, self._calls_phone, self.live_combobox)
+            self.live_combobox.setFrame(False)
+            self.live_combobox.setEditable(True)
+            self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._OPHONE])
+            self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._CELL])
+            self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._HPHONE])
+            self.live_chkbox = QCheckBox()
+            self.bristo_search.callsTableWidget.setCellWidget(
+                   _crow, self._calls_in, self.live_chkbox)
+            self.live_set = True # Prevents Dupes on selection
     
     def db_insert_contact_call(self):
         
@@ -817,6 +837,7 @@ class Controller(QMainWindow,  bristocontacts):
                 bristo_contacts_calls_type, bristo_contacts_calls_results)
                 VALUES (%s,%s, %s, %s);""", (_id_ct, _ph,_in, _results))
         self.conn.commit()
+        self.live_set = False
         self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
       
     

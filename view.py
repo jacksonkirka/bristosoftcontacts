@@ -70,6 +70,15 @@ class bristoMapper(QWebView):
     '''
     def __init__(self, parent=None):
         super(bristoMapper, self).__init__(parent)
+
+class bristoMailView(QWebView):
+    '''
+    bristoMailView is a webview of the users web mail service filtered for the
+    current contact.
+    '''
+    def __init__(self,  parent=None):
+        super(bristoMailView,  self).__init__(parent)
+
     
         
 if __name__ == '__main__':
