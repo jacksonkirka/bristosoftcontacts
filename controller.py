@@ -356,10 +356,11 @@ class Controller(QMainWindow,  bristocontacts):
             ['ID', 'CTID', 'Time Stamp', 'Date/Time', 'CO', 'Purpose'])
 
         self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
-            self._appt_time, 140)
+            self._appt_time, 150)
         self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
             self._appt_complete, 28)
         
+        # Fetch Data from tables --> Python lists
         if self.connected:
             self.cursor = self.conn.cursor()
             _query = "SELECT * FROM bristo_contacts_ct ORDER by \
@@ -381,6 +382,10 @@ class Controller(QMainWindow,  bristocontacts):
                 bristo_contacts_calls_ct_id, bristo_contacts_calls_stamp"
             self.cursor.execute(_query)
             self.fetch_calls = self.cursor.fetchall() # Get all calls
+            _query = "SELECT * FROM bristo_contacts_appt ORDER by \
+                bristo_contacts_appt_ct_id, bristo_contacts_appt_stamp"
+            self.cursor.execute(_query)
+            self.fetch_appts = self.cursor.fetchall() # Get all appointments
             self.update_fetch_results()
             _msg = 'All data fetched from database.  Click red x to clear memory.'
             self.contactsStatusBar.showMessage(_msg, 7000)
@@ -417,17 +422,22 @@ class Controller(QMainWindow,  bristocontacts):
                 self.db_insert_contact_note)
         self.bristo_search.callsTableWidget.cellChanged.connect(
             self.db_insert_contact_call)
+        self.bristo_search.apptTableWidget.cellChanged.connect(
+            self.db_insert_update_appt)
         self.bristo_search.notesDetailPushButton.clicked.connect(
             self.resize_notes)
         self.bristo_search.callsDetailPushButton.clicked.connect(
             self.resize_calls)
+        self.bristo_search.apptDetailPushButton.clicked.connect(
+            self.resize_appts)
         self.bristo_search.filePushButton.clicked.connect(
             self.db_insert_contact_file)
         self.bristo_search.fileTableWidget.doubleClicked.connect(
             self.get_contact_file)
         self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
         self.bristo_search.emailRefreshPushButton.clicked.connect(self.refresh_email)
-        self.bristo_search.callsTableWidget.clicked.connect(self.live_widgets)
+        self.bristo_search.callsTableWidget.clicked.connect(self.live_call_widgets)
+        self.bristo_search.apptTableWidget.clicked.connect(self.live_appt_widgets)
         
         self._CONTACT = self._FIRSTCONTACT
         self.display_contact()
@@ -496,8 +506,9 @@ class Controller(QMainWindow,  bristocontacts):
         the database.
         
         '''
+        
         if self.connected:
-            
+            _current_id = str(self.fetch_results[self._CONTACT][self._ID])
             _company = self.bristo_search.companyLineEdit.text()
             _mrmrs = self.bristo_search.mrmrsLineEdit.text()
             _fname = self.bristo_search.firstNameLineEdit.text()
@@ -529,12 +540,10 @@ class Controller(QMainWindow,  bristocontacts):
                 bristo_contacts_ct_home, bristo_contacts_ct_email1,
                 bristo_contacts_ct_email2, bristo_contacts_ct_web,
                 bristo_contacts_ct_web2) = (%s,%s,%s,%s,%s,%s,%s,%s,
-                %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) WHERE
-                bristo_contacts_ct_co = %s AND bristo_contacts_ct_fname
-                = %s AND bristo_contacts_ct_lname =%s;""", (_company,_mrmrs,
+                %s,%s,%s,%s,%s,%s,%s,%s,%s, %s,%s) WHERE
+                bristo_contacts_ct_id = %s;""", (_company,_mrmrs,
                 _fname,_middle,_lname,_cred, _addr, _suite,_city,_st,_postal,
-                _oph,_cell,_fax, _hph,_oemail,_pemail,_oweb,_pweb, _company,
-                _fname, _lname ))
+                _oph,_cell,_fax, _hph,_oemail,_pemail,_oweb,_pweb, _current_id))
                 
             self.conn.commit()
             self.contactsStatusBar.showMessage('Contact Updated.', 3000)
@@ -549,9 +558,11 @@ class Controller(QMainWindow,  bristocontacts):
         '''
         
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(0)
-        self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0) 
+        self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0)
+        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0) 
         self.bristo_search.notesTableWidget.blockSignals(True) # block during load
         self.bristo_search.callsTableWidget.blockSignals(True)
+        self.bristo_search.apptTableWidget.blockSignals(True)
         self.bristo_search.companyLineEdit.setText(
             self.fetch_results[self._CONTACT][self._COMPANY])
         self.bristo_search.mrmrsLineEdit.setText(
@@ -597,6 +608,7 @@ class Controller(QMainWindow,  bristocontacts):
         self.bristo_search.notesTableWidget.clearContents()
         self.bristo_search.fileTableWidget.clearContents()
         self.bristo_search.callsTableWidget.clearContents()
+        self.bristo_search.apptTableWidget.clearContents()
         _tblwgt_row = 0  # Changes each record
         _tblwgt_date = 0 # static
         _tblwgt_note_col = 1 # static
@@ -667,10 +679,42 @@ class Controller(QMainWindow,  bristocontacts):
                     _tblwgt_results_col, _qwitem)
                 _tblwgt_calls_row += 1
                 
+        _tblwgt_appt_row = 0  # dynamic
+        _tblwgt_id_col = 0 # static
+        _tblwgt_appt_date = 3 # static
+        _tblwgt_complete_col = 4 #static
+        _tblwgt_purpose_col = 5 # static
+        for _contact_appt in range(len(self.fetch_appts)):
+            if self.fetch_appts[_contact_appt][self._appt_ct_id] ==\
+                self.fetch_results[self._CONTACT][self._ID]:
+                _id_row = str(self.fetch_appts[_contact_appt][self._appt_id])
+                _qwitem = QTableWidgetItem(_id_row)
+                self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
+                    _tblwgt_id_col, _qwitem)
+                _date_row = self.fetch_appts[_contact_appt][self._appt_time].strftime(
+                "%m/%d/%y %I:%M%p")
+                _qwitem = QTableWidgetItem(_date_row)
+                self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row, 
+                    _tblwgt_appt_date, _qwitem)
+                _complete_row = self.fetch_appts[_contact_appt][self._appt_complete]
+                if _complete_row:
+                    _complete_row = 'C'
+                else:
+                    _complete_row = 'O'
+                _qwitem = QTableWidgetItem(_complete_row)
+                self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
+                    _tblwgt_complete_col, _qwitem)
+                _purpose_row = self.fetch_appts[_contact_appt][self._appt_purpose]
+                _qwitem = QTableWidgetItem(_purpose_row)
+                self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
+                    _tblwgt_purpose_col, _qwitem)
+                _tblwgt_appt_row += 1
+                
         _msg = 'Contact, notes, files, calls '+str(self._CONTACT+1)+" of "\
         +str(self._LASTCONTACT+1)+" and map url fetched and loaded."
         self.bristo_search.notesTableWidget.blockSignals(False) #unblock for update
         self.bristo_search.callsTableWidget.blockSignals(False) 
+        self.bristo_search.apptTableWidget.blockSignals(False)
         self.contactsStatusBar.showMessage(_msg, 3000)
     
     def refresh_map(self):
@@ -733,7 +777,14 @@ class Controller(QMainWindow,  bristocontacts):
         
         self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(3) 
         
-
+    def resize_appts(self):
+        
+        '''
+        resize_appts resets the table widget resize mode to resize to contents.
+        '''
+        
+        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(3) 
+        
     def db_insert_contact_file(self):
         
         '''
@@ -830,7 +881,7 @@ class Controller(QMainWindow,  bristocontacts):
         p.loadFromData(picture)                             # Load Picture
         self.bristo_search.picLabel.setPixmap(p)            # Display Picture
         
-    def live_widgets(self):
+    def live_call_widgets(self):
         '''
         live_widgets is a bristosoft native abstract idea.  It postulates that
         resources should be allocated just in time.  This class method creates
@@ -876,6 +927,81 @@ class Controller(QMainWindow,  bristocontacts):
         self.conn.commit()
         self.live_set = False
         self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
+    
+    def live_appt_widgets(self):
+        
+        if not self.live_set:
+            _crow = self.bristo_search.apptTableWidget.currentRow()
+            self.live_chkbox = QCheckBox()
+            self.bristo_search.apptTableWidget.setCellWidget(
+                   _crow, self._appt_complete, self.live_chkbox)
+            if self.bristo_search.apptTableWidget.item(
+               _crow,  self._appt_id) is None:
+                self.live_dtimeedit = QDateTimeEdit()
+                self.live_dtimeedit.setCalendarPopup(True)
+                self.bristo_search.apptTableWidget.setCellWidget(
+                       _crow, self._appt_time, self.live_dtimeedit)
+            self.live_set = True # Prevents Dupes on selection
+
+            
+    def db_insert_update_appt(self):
+        _crow = self.bristo_search.apptTableWidget.currentRow()
+        if self.bristo_search.apptTableWidget.item(
+                _crow,  self._appt_id) is None:
+            self.db_insert_contact_appt()
+        else:
+            self.db_update_contact_appt()
+    
+    def db_insert_contact_appt(self):
+        
+        '''
+        db_insert_contact_appt inserts one new contact appointment into the 
+        PostgreSQL database table bristo_contacts_appt.  The serial ID, 
+        Time Date Stamp are automatically generated.  Only the date/time of
+        the appointment, open or closed and purpose need be entered.
+        
+        '''
+        
+        _crow = self.bristo_search.apptTableWidget.currentRow()
+        _id_ct = str(self.fetch_results[self._CONTACT][self._ID])
+        _qtime = self.live_dtimeedit.dateTime()
+        _time = _qtime.toPyDateTime()
+        _closed = self.live_chkbox.isChecked()
+        _purpose = self.bristo_search.apptTableWidget.cellWidget(
+            _crow, self._appt_purpose).text()
+        
+        self.cursor.execute("""INSERT INTO bristo_contacts_appt
+                (bristo_contacts_appt_ct_id, bristo_contacts_appt_time,
+                bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
+                VALUES (%s,%s, %s, %s);""", (_id_ct, _time,_closed, _purpose))
+        self.conn.commit()
+        self.live_set = False
+        self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
+        
+    def db_update_contact_appt(self):
+        
+        '''
+        db_update_contact_appt updates a contact appointment in the 
+        PostgreSQL database table bristo_contacts_appt.  Only the
+        complete/open checkbox and purpose can be updated.
+        
+        '''
+        
+        _crow = self.bristo_search.apptTableWidget.currentRow()
+        _appt_id = self.bristo_search.apptTableWidget.item(
+            _crow,  self._appt_id).text()
+        _closed = self.live_chkbox.isChecked()
+        _purpose = self.bristo_search.apptTableWidget.cellWidget(
+            _crow, self._appt_purpose).text()
+        
+        self.cursor.execute("""UPDATE bristo_contacts_appt SET
+                (bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
+                = (%s,%s) WHERE bristo_contacts_appt_id = %s;""", (_closed,
+                _purpose, _appt_id))
+        self.conn.commit()
+        self.live_set = False
+        self.contactsStatusBar.showMessage('Contact Appointment Updated.', 5000)
+        
       
     
     def db_full_vacuum(self):
