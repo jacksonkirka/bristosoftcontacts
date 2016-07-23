@@ -11,17 +11,19 @@ import platform
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
-from PyQt4.uic import *
+# from PyQt4.uic import *
 import psycopg2
 from view import *
+import contactsmain
 
 # Version assignment
 __version__ = '0.1'
 
 # contactsdialog = loadUiType('contacts_combo.ui')[0]
-bristocontacts = loadUiType('contacts_main.ui')[0]
+#bristocontacts = loadUiType('contacts_main.ui')[0]
         
-class Controller(QMainWindow,  bristocontacts):
+# class Controller(QMainWindow,  bristocontacts):
+class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
     
     Controller is the Main Application window with
@@ -136,6 +138,13 @@ class Controller(QMainWindow,  bristocontacts):
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch)
         self.actionQuit.triggered.connect(self.close_contacts)
+        self.actionFirst_Contact.triggered.connect(self.db_contact_fetch_first)
+        self.actionPrevious_Contact.triggered.connect(self.db_contact_prev)
+        self.actionNext_Contact.triggered.connect(self.db_contact_next)
+        self.actionLast_Contact.triggered.connect(self.db_contact_fetch_last)
+        self.actionSearch.triggered.connect(self.db_fetch_contact)
+        self.actionUpdate.triggered.connect(self.db_update_contact)
+        
         
         # set contactsStatusBar to red
         self.contactsStatusBar.setStyleSheet("background-color: \
@@ -400,22 +409,8 @@ class Controller(QMainWindow,  bristocontacts):
         
         self._LASTCONTACT = len(self.fetch_results) - 1
         self.bristo_search_dlg = False
-        self.bristo_search.previousContactPushButton.setAutoRepeat(True)
-        self.bristo_search.nextContactPushButton.setAutoRepeat(True)
         
         # Seach and update Signals
-        self.bristo_search.firstContactPushButton.clicked.connect(
-            self.db_contact_fetch_first)
-        self.bristo_search.previousContactPushButton.pressed.connect(
-            self.db_contact_prev)
-        self.bristo_search.nextContactPushButton.pressed.connect(
-            self.db_contact_next)
-        self.bristo_search.lastContactPushButton.clicked.connect(
-            self.db_contact_fetch_last)
-        self.bristo_search.searchContactPushButton.clicked.connect(
-            self.db_fetch_contact)
-        self.bristo_search.updateContactPushButton.clicked.connect(
-            self.db_update_contact)
         self.bristo_search.picPushButton.clicked.connect(
             self.update_pic)
         self.bristo_search.notesTableWidget.cellChanged.connect(
@@ -1053,6 +1048,10 @@ class Controller(QMainWindow,  bristocontacts):
         '''
         self.cursor.execute(query)
         self.conn.commit()
+    
+    def close_search(self):
+        
+        self.bristo_search.destroy()
     
     def db_close(self):
         '''

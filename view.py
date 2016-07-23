@@ -4,14 +4,11 @@
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 from PyQt4.uic import *
+from contacts import *
+from login import *
+from search import *
 
-# Dynamic gui interface loading during development
-contactsdialog = loadUiType('contacts.ui')[0]
-# contactsdialog = loadUiType('contacts_combo.ui')[0]
-bristologin = loadUiType('login.ui')[0]
-bristosearch = loadUiType('search.ui')[0]
-
-class bristoContactsLogin(QDialog,  bristologin):
+class bristoContactsLogin(QDialog,  Ui_loginDialog):
     '''
     
     bristoContactsLogin is the login dialog used to login
@@ -29,7 +26,7 @@ class bristoContactsLogin(QDialog,  bristologin):
         super(bristoContactsLogin,  self).__init__(parent)
         self.setupUi(self)
 
-class bristoContactsDialog(QDialog,  contactsdialog):
+class bristoContactsDialog(QDialog,  Ui_contactsDialog):
     '''
     
     bristoContactsDialog provides a GUI interface for building
@@ -46,7 +43,7 @@ class bristoContactsDialog(QDialog,  contactsdialog):
         super(bristoContactsDialog,  self).__init__(parent)
         self.setupUi(self)
 
-class bristoContactsSearchDialog(QDialog,  bristosearch):
+class bristoContactsSearchDialog(QDialog,  Ui_contactsSearchDialog):
     '''
     
     bristoContactsSearchDialog is the a dialog for traversing
@@ -79,10 +76,3 @@ class bristoMailView(QWebView):
     def __init__(self,  parent=None):
         super(bristoMailView,  self).__init__(parent)
         self.setZoomFactor(.75)
-    
-        
-if __name__ == '__main__':
-    
-    # Unit test as needed
-    login = bristoContactsLogin()
-    login.show()
