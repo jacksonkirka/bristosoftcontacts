@@ -153,7 +153,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Settings
         settings = QSettings()
         size = settings.value("MainWindow/Size",
-                              QVariant(QSize(630, 774))).toSize()
+                              QVariant(QSize(630, 735))).toSize()
         self.resize(size)
         position = settings.value("MainWindow/Position",
                                   QVariant(QPoint(320, 140))).toPoint()
@@ -181,8 +181,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         QMessageBox.about(self, "About bristoSOFT Contacts v. 0.1",
-        """ <img src='bristo_logo.png' /><br />
-        <b>About bristoSOFT Contacts</b> v %s
+        """ <b>About bristoSOFT Contacts</b> v %s
         <p>Copyright &copy; 2016 bristoSOFT 
         All rights reserved.
         <p>This is a PostgreSQL database contacts management system.  It is
@@ -1048,10 +1047,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.cursor.execute(query)
         self.conn.commit()
-    
-    def close_search(self):
-        
-        self.bristo_search.destroy()
     
     def db_close(self):
         '''

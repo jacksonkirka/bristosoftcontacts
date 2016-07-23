@@ -4,11 +4,11 @@
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 from PyQt4.uic import *
-from contacts import *
-from login import *
-from search import *
+import contacts
+import login
+import search
 
-class bristoContactsLogin(QDialog,  Ui_loginDialog):
+class bristoContactsLogin(QDialog,  login.Ui_loginDialog):
     '''
     
     bristoContactsLogin is the login dialog used to login
@@ -26,7 +26,7 @@ class bristoContactsLogin(QDialog,  Ui_loginDialog):
         super(bristoContactsLogin,  self).__init__(parent)
         self.setupUi(self)
 
-class bristoContactsDialog(QDialog,  Ui_contactsDialog):
+class bristoContactsDialog(QDialog,  contacts.Ui_contactsDialog):
     '''
     
     bristoContactsDialog provides a GUI interface for building
@@ -43,7 +43,7 @@ class bristoContactsDialog(QDialog,  Ui_contactsDialog):
         super(bristoContactsDialog,  self).__init__(parent)
         self.setupUi(self)
 
-class bristoContactsSearchDialog(QDialog,  Ui_contactsSearchDialog):
+class bristoContactsSearchDialog(QDialog,  search.Ui_contactsSearchDialog):
     '''
     
     bristoContactsSearchDialog is the a dialog for traversing
