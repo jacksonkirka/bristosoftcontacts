@@ -6,26 +6,17 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET row_security = off;
 
-
-
 COMMENT ON DATABASE bristocontacts IS 'bristoSOFT Contacts Management';
-
-
 
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
-
-
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
 
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
-
-
 
 CREATE TABLE bristo_contacts_ct (
     bristo_contacts_ct_id integer NOT NULL,
@@ -51,13 +42,9 @@ CREATE TABLE bristo_contacts_ct (
     bristo_contacts_ct_fax text
 );
 
-
 ALTER TABLE bristo_contacts_ct OWNER TO jacksonkirka;
 
-
 COMMENT ON TABLE bristo_contacts_ct IS 'Contacts';
-
-
 
 CREATE SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq
     START WITH 1
@@ -66,13 +53,9 @@ CREATE SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER TABLE bristo_constacts_ct_bristo_contacts_ct_id_seq OWNER TO jacksonkirka;
 
-
 ALTER SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq OWNED BY bristo_contacts_ct.bristo_contacts_ct_id;
-
-
 
 CREATE TABLE bristo_contacts_appt (
     bristo_contacts_appt_id integer NOT NULL,
@@ -83,13 +66,9 @@ CREATE TABLE bristo_contacts_appt (
     bristo_contacts_appt_purpose text COLLATE pg_catalog."en_US.utf8" DEFAULT 'General Meeting'::text NOT NULL
 );
 
-
 ALTER TABLE bristo_contacts_appt OWNER TO jacksonkirka;
 
-
 COMMENT ON TABLE bristo_contacts_appt IS 'Appointments and Meetings';
-
-
 
 CREATE SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq
     START WITH 1
@@ -98,12 +77,9 @@ CREATE SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER TABLE bristo_contacts_appt_bristo_contacts_appt_id_seq OWNER TO jacksonkirka;
 
-
 ALTER SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq OWNED BY bristo_contacts_appt.bristo_contacts_appt_id;
-
 
 CREATE TABLE bristo_contacts_calls (
     bristo_contacts_calls_id integer NOT NULL,
@@ -115,13 +91,9 @@ CREATE TABLE bristo_contacts_calls (
     bristo_contacts_calls_appt_id integer
 );
 
-
 ALTER TABLE bristo_contacts_calls OWNER TO jacksonkirka;
 
-
 COMMENT ON TABLE bristo_contacts_calls IS 'Telephone Calls';
-
-
 
 CREATE SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq
     START WITH 1
@@ -130,13 +102,9 @@ CREATE SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER TABLE bristo_contacts_calls_bristo_contacts_calls_id_seq OWNER TO jacksonkirka;
 
-
-
 ALTER SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq OWNED BY bristo_contacts_calls.bristo_contacts_calls_id;
-
 
 CREATE TABLE bristo_contacts_files (
     bristo_contacts_files_id integer NOT NULL,
@@ -147,12 +115,9 @@ CREATE TABLE bristo_contacts_files (
     bristo_contacts_files_appt_id integer
 );
 
-
 ALTER TABLE bristo_contacts_files OWNER TO jacksonkirka;
 
-
 COMMENT ON TABLE bristo_contacts_files IS 'Files';
-
 
 CREATE SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq
     START WITH 1
@@ -161,13 +126,9 @@ CREATE SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER TABLE bristo_contacts_file_bristo_contacts_file_id_seq OWNER TO jacksonkirka;
 
-
 ALTER SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq OWNED BY bristo_contacts_files.bristo_contacts_files_id;
-
-
 
 CREATE TABLE bristo_contacts_notes (
     bristo_contacts_notes_id integer NOT NULL,
@@ -178,13 +139,9 @@ CREATE TABLE bristo_contacts_notes (
 );
 ALTER TABLE ONLY bristo_contacts_notes ALTER COLUMN bristo_contacts_notes_ct SET STORAGE PLAIN;
 
-
 ALTER TABLE bristo_contacts_notes OWNER TO jacksonkirka;
 
-
 COMMENT ON TABLE bristo_contacts_notes IS 'Notes';
-
-
 
 CREATE SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq
     START WITH 1
@@ -193,13 +150,9 @@ CREATE SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq
     NO MAXVALUE
     CACHE 1;
 
-
 ALTER TABLE bristo_contacts_notes_bristo_contacts_notes_id_seq OWNER TO jacksonkirka;
 
-
-
 ALTER SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq OWNED BY bristo_contacts_notes.bristo_contacts_notes_id;
-
 
 CREATE TABLE bristo_contacts_users (
     bristo_contacts_users_id integer NOT NULL,
@@ -208,11 +161,9 @@ CREATE TABLE bristo_contacts_users (
     bristo_contacts_users_webmail text COLLATE pg_catalog."en_US.utf8" NOT NULL
 );
 
-
 ALTER TABLE bristo_contacts_users OWNER TO jacksonkirka;
 
 COMMENT ON TABLE bristo_contacts_users IS 'Users';
-
 
 CREATE SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq
     START WITH 1
@@ -223,92 +174,61 @@ CREATE SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq
 
 ALTER TABLE bristo_contacts_users_bristo_contacts_users_id_seq OWNER TO jacksonkirka;
 
-
 ALTER SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq OWNED BY bristo_contacts_users.bristo_contacts_users_id;
-
 
 ALTER TABLE ONLY bristo_contacts_appt ALTER COLUMN bristo_contacts_appt_id SET DEFAULT nextval('bristo_contacts_appt_bristo_contacts_appt_id_seq'::regclass);
 
-
 ALTER TABLE ONLY bristo_contacts_calls ALTER COLUMN bristo_contacts_calls_id SET DEFAULT nextval('bristo_contacts_calls_bristo_contacts_calls_id_seq'::regclass);
-
 
 ALTER TABLE ONLY bristo_contacts_ct ALTER COLUMN bristo_contacts_ct_id SET DEFAULT nextval('bristo_constacts_ct_bristo_contacts_ct_id_seq'::regclass);
 
-
 ALTER TABLE ONLY bristo_contacts_files ALTER COLUMN bristo_contacts_files_id SET DEFAULT nextval('bristo_contacts_file_bristo_contacts_file_id_seq'::regclass);
-
 
 ALTER TABLE ONLY bristo_contacts_notes ALTER COLUMN bristo_contacts_notes_id SET DEFAULT nextval('bristo_contacts_notes_bristo_contacts_notes_id_seq'::regclass);
 
-
 ALTER TABLE ONLY bristo_contacts_users ALTER COLUMN bristo_contacts_users_id SET DEFAULT nextval('bristo_contacts_users_bristo_contacts_users_id_seq'::regclass);
-
 
 ALTER TABLE ONLY bristo_contacts_appt
     ADD CONSTRAINT bristo_contacts_appt_pkey PRIMARY KEY (bristo_contacts_appt_id);
 
-
 ALTER TABLE ONLY bristo_contacts_calls
     ADD CONSTRAINT bristo_contacts_calls_pkey PRIMARY KEY (bristo_contacts_calls_id);
-
 
 ALTER TABLE ONLY bristo_contacts_ct
     ADD CONSTRAINT bristo_contacts_ct_id_unq UNIQUE (bristo_contacts_ct_id);
 
-
 ALTER TABLE ONLY bristo_contacts_ct
     ADD CONSTRAINT bristo_contacts_ct_pkey PRIMARY KEY (bristo_contacts_ct_ph_office);
-
 
 ALTER TABLE ONLY bristo_contacts_files
     ADD CONSTRAINT bristo_contacts_file_pkey PRIMARY KEY (bristo_contacts_files_id);
 
-
-
 ALTER TABLE ONLY bristo_contacts_notes
     ADD CONSTRAINT bristo_contacts_notes_pkey PRIMARY KEY (bristo_contacts_notes_id);
-
 
 ALTER TABLE ONLY bristo_contacts_users
     ADD CONSTRAINT bristo_contacts_users_pkey PRIMARY KEY (bristo_contacts_users_id);
 
-
 CREATE INDEX bristo_contacts_calls_results_idx ON bristo_contacts_calls USING btree (bristo_contacts_calls_results text_pattern_ops);
-
-
 
 CREATE INDEX bristo_contacts_ct_co_idx ON bristo_contacts_ct USING btree (bristo_contacts_ct_co COLLATE "en_US.utf8" text_pattern_ops);
 
-
 CREATE UNIQUE INDEX bristo_contacts_email1_idx ON bristo_contacts_ct USING btree (bristo_contacts_ct_email1 COLLATE "en_US.utf8" text_pattern_ops);
-
-
 
 CREATE UNIQUE INDEX bristo_contacts_files_name_idx ON bristo_contacts_files USING btree (bristo_contacts_files_name text_pattern_ops);
 
-
-
 CREATE INDEX bristo_contacts_full_name_idx ON bristo_contacts_ct USING btree (bristo_contacts_ct_fname COLLATE "en_US.utf8" text_pattern_ops, bristo_contacts_ct_middle COLLATE "en_US.utf8" text_pattern_ops, bristo_contacts_ct_lname COLLATE "en_US.utf8" text_pattern_ops);
 
-
 CREATE INDEX bristo_contacts_users_idx ON bristo_contacts_users USING btree (bristo_contacts_users_email text_pattern_ops);
-
-
 
 ALTER TABLE ONLY bristo_contacts_appt
     ADD CONSTRAINT bristo_contacts_appt_fkey FOREIGN KEY (bristo_contacts_appt_ct_id) REFERENCES bristo_contacts_ct(bristo_contacts_ct_id) MATCH FULL;
 
-
 ALTER TABLE ONLY bristo_contacts_calls
     ADD CONSTRAINT bristo_contacts_calls_fkey FOREIGN KEY (bristo_contacts_calls_ct_id) REFERENCES bristo_contacts_ct(bristo_contacts_ct_id) MATCH FULL;
 
-
-
 ALTER TABLE ONLY bristo_contacts_files
     ADD CONSTRAINT bristo_contacts_file_fkey FOREIGN KEY (bristo_contacts_files_ct) REFERENCES bristo_contacts_ct(bristo_contacts_ct_ph_office) MATCH FULL;
-
-
 
 ALTER TABLE ONLY bristo_contacts_notes
     ADD CONSTRAINT bristo_contacts_notes_fkey FOREIGN KEY (bristo_contacts_notes_ct) REFERENCES bristo_contacts_ct(bristo_contacts_ct_ph_office);
@@ -317,4 +237,3 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
-
