@@ -42,7 +42,6 @@ CREATE TABLE bristo_contacts_ct (
     bristo_contacts_ct_fax text
 );
 
-ALTER TABLE bristo_contacts_ct OWNER TO jacksonkirka;
 
 COMMENT ON TABLE bristo_contacts_ct IS 'Contacts';
 
@@ -52,8 +51,6 @@ CREATE SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-ALTER TABLE bristo_constacts_ct_bristo_contacts_ct_id_seq OWNER TO jacksonkirka;
 
 ALTER SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq OWNED BY bristo_contacts_ct.bristo_contacts_ct_id;
 
@@ -66,8 +63,6 @@ CREATE TABLE bristo_contacts_appt (
     bristo_contacts_appt_purpose text COLLATE pg_catalog."en_US.utf8" DEFAULT 'General Meeting'::text NOT NULL
 );
 
-ALTER TABLE bristo_contacts_appt OWNER TO jacksonkirka;
-
 COMMENT ON TABLE bristo_contacts_appt IS 'Appointments and Meetings';
 
 CREATE SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq
@@ -76,8 +71,6 @@ CREATE SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-ALTER TABLE bristo_contacts_appt_bristo_contacts_appt_id_seq OWNER TO jacksonkirka;
 
 ALTER SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq OWNED BY bristo_contacts_appt.bristo_contacts_appt_id;
 
@@ -91,8 +84,6 @@ CREATE TABLE bristo_contacts_calls (
     bristo_contacts_calls_appt_id integer
 );
 
-ALTER TABLE bristo_contacts_calls OWNER TO jacksonkirka;
-
 COMMENT ON TABLE bristo_contacts_calls IS 'Telephone Calls';
 
 CREATE SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq
@@ -101,8 +92,6 @@ CREATE SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-ALTER TABLE bristo_contacts_calls_bristo_contacts_calls_id_seq OWNER TO jacksonkirka;
 
 ALTER SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq OWNED BY bristo_contacts_calls.bristo_contacts_calls_id;
 
@@ -115,8 +104,6 @@ CREATE TABLE bristo_contacts_files (
     bristo_contacts_files_appt_id integer
 );
 
-ALTER TABLE bristo_contacts_files OWNER TO jacksonkirka;
-
 COMMENT ON TABLE bristo_contacts_files IS 'Files';
 
 CREATE SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq
@@ -125,8 +112,6 @@ CREATE SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-ALTER TABLE bristo_contacts_file_bristo_contacts_file_id_seq OWNER TO jacksonkirka;
 
 ALTER SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq OWNED BY bristo_contacts_files.bristo_contacts_files_id;
 
@@ -139,8 +124,6 @@ CREATE TABLE bristo_contacts_notes (
 );
 ALTER TABLE ONLY bristo_contacts_notes ALTER COLUMN bristo_contacts_notes_ct SET STORAGE PLAIN;
 
-ALTER TABLE bristo_contacts_notes OWNER TO jacksonkirka;
-
 COMMENT ON TABLE bristo_contacts_notes IS 'Notes';
 
 CREATE SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq
@@ -149,8 +132,6 @@ CREATE SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-ALTER TABLE bristo_contacts_notes_bristo_contacts_notes_id_seq OWNER TO jacksonkirka;
 
 ALTER SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq OWNED BY bristo_contacts_notes.bristo_contacts_notes_id;
 
@@ -161,8 +142,6 @@ CREATE TABLE bristo_contacts_users (
     bristo_contacts_users_webmail text COLLATE pg_catalog."en_US.utf8" NOT NULL
 );
 
-ALTER TABLE bristo_contacts_users OWNER TO jacksonkirka;
-
 COMMENT ON TABLE bristo_contacts_users IS 'Users';
 
 CREATE SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq
@@ -172,7 +151,6 @@ CREATE SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq
     NO MAXVALUE
     CACHE 1;
 
-ALTER TABLE bristo_contacts_users_bristo_contacts_users_id_seq OWNER TO jacksonkirka;
 
 ALTER SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq OWNED BY bristo_contacts_users.bristo_contacts_users_id;
 
