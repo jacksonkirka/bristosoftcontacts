@@ -112,6 +112,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._appt_time = 3
         self._appt_complete = 4
         self._appt_purpose = 5
+        self._display_appts_set = False
         
         # Calendar
         self._calendar_activated = False
@@ -789,6 +790,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _tblwgt_purpose_col, _qwitem)
                 _tblwgt_appt_row += 1
         self._calendar_activated = False
+        self._display_appts_set = False
         
     def display_appts(self):
 
@@ -831,6 +833,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_purpose_col, _qwitem)
                 _tblwgt_appt_row += 1
+        self._display_appts_set = True
 
     def display_msg(self):
         
@@ -1072,6 +1075,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         _ccol = self._appt_ct_id
         _crow = self.bristo_search.apptTableWidget.currentRow()
+        if self.bristo_search.apptTableWidget.item(
+               _crow,  self._appt_id) is None:
+                   return
         _contact_id = int(self.bristo_search.apptTableWidget.item(_crow,
             _ccol).text())
         for _index in range(len(self.fetch_results)):
@@ -1085,7 +1091,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         live_appt_widgets displays live Date and checkbox widgets to use live.
         '''
-        self.appt_display_contact()  
+        if not self._display_appts_set:
+            self.appt_display_contact()  
         if not self.live_set:
             _crow = self.bristo_search.apptTableWidget.currentRow()
             self.live_chkbox = QCheckBox()
