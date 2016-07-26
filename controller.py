@@ -223,7 +223,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             con = "host='"+ self.login.hostLineEdit.text() + "' dbname='" +\
                     self.login.databaseLineEdit.text() + "' user='" +\
                     self.login.userNameLineEdit.text() + "' password='" +\
-                    self.login.passwordLineEdit.text() + "'"
+                    self.login.passwordLineEdit.text() + "'"+\
+                    "sslmode='require'"
             self.conn = psycopg2.connect(con)
             self.connected = True
             
@@ -245,8 +246,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if self.disconnected:
                 self.contactsStatusBar.removeWidget(self.conn_msg)
             self._date = datetime.datetime.now()
-            self.conn_msg = QLabel(self._TODAY + ' | Connected to host: '+ 
-                                    self._user +"@"+
+            self.conn_msg = QLabel("ssl:"+self._user +"@"+
                                     self._host+
                                   '/'+ self._db +'.')
             self.contactsStatusBar.setStyleSheet("background-color: \
@@ -1249,8 +1249,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
         self.contactsStatusBar.removeWidget(self.conn_msg)
-        self.conn_msg = QLabel(self._TODAY+' | Disconnected from host: '+ 
-                                    self._host+
+        self.conn_msg = QLabel(self._host+
                                   '/'+ self._db+'.')
         self.contactsStatusBar.addWidget(self.conn_msg)
         self.disconnected = True
@@ -1267,8 +1266,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
             self.contactsStatusBar.removeWidget(self.conn_msg)
-            self.conn_msg = QLabel(self._TODAY + ' | Disconnected from host: '+ 
-                                    self._host+
+            self.conn_msg = QLabel(self._host+
                                   '/'+ self._db+'.')
             self.contactsStatusBar.addWidget(self.conn_msg)
                                               
