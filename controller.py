@@ -215,24 +215,33 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_login establishes a connection to a PostgreSQL database on port 
         5423 with the standard connection string.
         
+       
+        
         '''
-        if self.login.userNameLineEdit.text() and self.login.hostLineEdit.text() \
-                and self.login.databaseLineEdit.text() and \
-                self.login.passwordLineEdit.text():
-                
-            con = "host='"+ self.login.hostLineEdit.text() + "' dbname='" +\
-                    self.login.databaseLineEdit.text() + "' user='" +\
-                    self.login.userNameLineEdit.text() + "' password='" +\
-                    self.login.passwordLineEdit.text() + "'"+\
-                    "sslmode='require'"
+        
+         # Step 1 owner authentication security string
+        con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
+        dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
+        password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
+         
+        if self.login.userNameLineEdit.text() and \
+            self.login.passwordLineEdit.text():
             self.conn = psycopg2.connect(con)
             self.connected = True
             
+        # Step 2 User database authentication
             
             # Save login credentials
             self._user = self.login.userNameLineEdit.text() # User Name
-            self._host = self.login.hostLineEdit.text()     # Host Name
-            self._db = self.login.databaseLineEdit.text()   # Database Name
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             # get user webmail link for contact filter
             self.cursor = self.conn.cursor()
