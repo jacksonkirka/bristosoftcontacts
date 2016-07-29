@@ -276,9 +276,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _pwd.encode()).hexdigest() + ':' + salt
             
         
-    def validatepwd(self, _dbhashpwd, _usrpwd):
+    def authenticatepwd(self, _dbhashpwd, _usrpwd):
+        
+        '''
+        authenticatepwd authenticates the password entered by the user by
+        comparing the database hash with a hash of the user entered
+        password.
+        '''
         dbpwd, salt = _dbhashpwd.split(':')
-        return dbpwd == hashlib.sha256(salt.encode() + _usrpwd.encode()).hexdigest()
+        return dbpwd == hashlib.sha256(salt.encode() +\
+            _usrpwd.encode()).hexdigest()
     
     def db_contact_new(self):
         
