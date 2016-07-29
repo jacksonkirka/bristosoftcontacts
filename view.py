@@ -7,6 +7,7 @@ from PyQt4.uic import *
 import contacts
 import login
 import search
+import changepwd
 
 class bristoContactsLogin(QDialog,  login.Ui_loginDialog):
     '''
@@ -58,6 +59,22 @@ class bristoContactsSearchDialog(QDialog,  search.Ui_contactsSearchDialog):
         
         '''
         super(bristoContactsSearchDialog,  self).__init__(parent)
+        self.setupUi(self)
+        
+class bristoContactsChgPwdDlg(QDialog,  changepwd.Ui_changepwdDialog):
+    '''
+    
+    bristoContactsChgPwdDlg is the a dialog changing the user password.
+    
+    '''
+    def __init__(self,  parent=None):
+        ''' 
+        
+        This initialization class method initializes
+        QDialog and bristoContactsChgPwdDlg.
+        
+        '''
+        super(bristoContactsChgPwdDlg,  self).__init__(parent)
         self.setupUi(self)
         
 class bristoMapper(QWebView):

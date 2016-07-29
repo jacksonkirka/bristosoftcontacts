@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2016-07-25, 17:48:02 -->
+<!-- Saved: 2016-07-29, 15:38:34 -->
 <!-- Copyright (C) 2016 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -17,8 +17,13 @@
     <Source>__init__.py</Source>
     <Source>bristo_exceptions.py</Source>
     <Source>bristocontacts.sql</Source>
+    <Source>changepwd.py</Source>
+    <Source>contacts.py</Source>
+    <Source>contactsmain.py</Source>
     <Source>controller.py</Source>
+    <Source>login.py</Source>
     <Source>main.py</Source>
+    <Source>search.py</Source>
     <Source>view.py</Source>
   </Sources>
   <Forms/>
