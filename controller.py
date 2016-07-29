@@ -5,6 +5,8 @@ import sip # Needed for conversion to Python types
 sip.setapi('QString', 2)
 import datetime
 import ntpath
+import hashlib
+import uuid
 import os
 from bristo_exceptions import *
 import platform
@@ -262,9 +264,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                  rgb(179, 255, 188);")
             
             self.contactsStatusBar.addWidget(self.conn_msg)
+    
+    def hashpwd(self, _pwd):
+        
+        '''
+        hashpwd hashes a password by NSA Secure Hash Algorithm 2 
+        sha256 algorithm and adds a uuid prefix salt.
+        '''
+        salt = uuid.uuid4().hex
+        return hashlib.sha256(salt.encode() +\
+            _pwd.encode()).hexdigest() + ':' + salt
             
-
+        
+    def validatepwd(self, _dbhashpwd, _usrpwd):
+        dbpwd, salt = _dbhashpwd.split(':')
+        return dbpwd == hashlib.sha256(salt.encode() + _usrpwd.encode()).hexdigest()
+    
     def db_contact_new(self):
+        
         '''
         
         db_record_new displays the new contact dialog and catches the signal accept()
