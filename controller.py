@@ -242,6 +242,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.connected = True # Set connection to True
             
         # Step 2 User database authentication
+            _usr_nm_match = False
+            _usr_pwd_match = False
             
             # Save login credentials
             self._user = self.login.userNameLineEdit.text() # User Name
@@ -254,44 +256,47 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.cursor.execute("SELECT bristo_contacts_users_name FROM \
             bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
                 self._user, ))
-            _db_usrnm = self.cursor.fetchone()[0]
-            self.cursor.close()
-            if _usr_nm == _db_usrnm:
-                _usr_nm_match = True
+            if self.cursor.rowcount == 0:
+                self.incorrectlogin()
             else:
-                _usr_nm_match = False
-                
-            # Verify user password
-            self.cursor = self.conn.cursor()
-            self.cursor.execute("SELECT bristo_contacts_users_pwd FROM \
-            bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
-                self._user, ))
-            _db_usrpwdhash = self.cursor.fetchone()[0]
-            _usr_pwd_match = self.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
-            
-            if _usr_nm_match and _usr_pwd_match:
-            
-                # get user webmail link for contact filter
+                _db_usrnm = self.cursor.fetchone()[0]
+                self.cursor.close()
+                if _usr_nm == _db_usrnm:
+                    _usr_nm_match = True
+                else:
+                    _usr_nm_match = False
+                    
+                # Verify user password
                 self.cursor = self.conn.cursor()
-                self.cursor.execute("SELECT bristo_contacts_users_webmail FROM \
+                self.cursor.execute("SELECT bristo_contacts_users_pwd FROM \
                 bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
                     self._user, ))
-                self._user_webmail_tuple = self.cursor.fetchone()
-                self._user_webmail = self._user_webmail_tuple[0]
-                self.cursor.close()
+                _db_usrpwdhash = self.cursor.fetchone()[0]
+                _usr_pwd_match = self.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
+            
+                if _usr_nm_match and _usr_pwd_match:
                 
-                if self.disconnected:
-                    self.contactsStatusBar.removeWidget(self.conn_msg)
-                self._date = datetime.datetime.now()
-                self.conn_msg = QLabel("ssl:"+self._user +"@"+
-                                        self._host+
-                                      '/'+ self._db +'.')
-                self.contactsStatusBar.setStyleSheet("background-color: \
-                                                     rgb(179, 255, 188);")
-                
-                self.contactsStatusBar.addWidget(self.conn_msg)
-            else:
-                self.incorrectlogin()
+                    # get user webmail link for contact filter
+                    self.cursor = self.conn.cursor()
+                    self.cursor.execute("SELECT bristo_contacts_users_webmail FROM \
+                    bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
+                        self._user, ))
+                    self._user_webmail_tuple = self.cursor.fetchone()
+                    self._user_webmail = self._user_webmail_tuple[0]
+                    self.cursor.close()
+                    
+                    if self.disconnected:
+                        self.contactsStatusBar.removeWidget(self.conn_msg)
+                    self._date = datetime.datetime.now()
+                    self.conn_msg = QLabel("ssl:"+self._user +"@"+
+                                            self._host+
+                                          '/'+ self._db +'.')
+                    self.contactsStatusBar.setStyleSheet("background-color: \
+                                                         rgb(179, 255, 188);")
+                    
+                    self.contactsStatusBar.addWidget(self.conn_msg)
+                else:
+                    self.incorrectlogin()
                 
     def incorrectlogin(self):
         
