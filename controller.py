@@ -256,7 +256,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.cursor.execute("SELECT bristo_contacts_users_name FROM \
             bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
                 self._user, ))
-            if self.cursor.rowcount == 0:
+            if not self.cursor.rowcount:
                 self.incorrectlogin()
             else:
                 _db_usrnm = self.cursor.fetchone()[0]
