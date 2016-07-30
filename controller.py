@@ -232,8 +232,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
         password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
         
-        self._host = 'ec2-54-221-225-43.compute-1.amazonaws.com'
-        self._db = 'dtg1rerulrimn'
+        self._host = 'bristosoftcontacts'
+        self._db = 'bristocontacts'
          
         if self.login.userNameLineEdit.text() and \
             self.login.passwordLineEdit.text():
