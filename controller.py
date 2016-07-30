@@ -472,24 +472,27 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct_owner = %s ORDER by 
                 bristo_contacts_ct_co, bristo_contacts_ct_lname;""", (_user, ))
             self.fetch_results = self.cursor.fetchall() # Gets all contacts from db
-            _query = "SELECT * FROM bristo_contacts_notes ORDER by \
-                bristo_contacts_notes_ct, bristo_contacts_notes_stamp"
-            self.cursor.execute(_query)
+            self.cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
+                bristo_contacts_ct_owner = %s  ORDER by 
+                bristo_contacts_notes_ct,
+                bristo_contacts_notes_stamp""", (_user, ))
             self.fetch_notes = self.cursor.fetchall() # Get all notes
-            _query = "SELECT bristo_contacts_files_id,\
-                bristo_contacts_files_stamp, bristo_contacts_files_ct,\
-                bristo_contacts_files_name FROM\
-                bristo_contacts_files ORDER by\
-                bristo_contacts_files_ct, bristo_contacts_files_stamp"
-            self.cursor.execute(_query)
+            self.cursor.execute("""SELECT bristo_contacts_files_id,
+                bristo_contacts_files_stamp, bristo_contacts_files_ct,
+                bristo_contacts_files_name FROM
+                bristo_contacts_files WHERE bristo_contacts_ct_owner = %s
+                ORDER by bristo_contacts_files_ct,
+                bristo_contacts_files_stamp""", (_user, ))
             self.fetch_files = self.cursor.fetchall() # Get all files
-            _query = "SELECT * FROM bristo_contacts_calls ORDER by \
-                bristo_contacts_calls_ct_id, bristo_contacts_calls_stamp"
-            self.cursor.execute(_query)
+            self.cursor.execute("""SELECT * FROM bristo_contacts_calls WHERE
+                bristo_contacts_ct_owner = %s ORDER by 
+                bristo_contacts_calls_ct_id,
+                bristo_contacts_calls_stamp""",  (_user, ))
             self.fetch_calls = self.cursor.fetchall() # Get all calls
-            _query = "SELECT * FROM bristo_contacts_appt ORDER by \
-                bristo_contacts_appt_ct_id, bristo_contacts_appt_stamp"
-            self.cursor.execute(_query)
+            self.cursor.execute("""SELECT * FROM bristo_contacts_appt WHERE
+             bristo_contacts_ct_owner = %s ORDER by 
+                bristo_contacts_appt_ct_id,
+                bristo_contacts_appt_stamp""", (_user, ))
             self.fetch_appts = self.cursor.fetchall() # Get all appointments
             self.update_fetch_results()
             _msg = 'All data fetched from database.  Click red x to clear memory.'
