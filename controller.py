@@ -43,6 +43,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         super(Controller, self).__init__(parent)
         self.setupUi(self)
         
+        # Connection
+        self.conn = None
+        self.disconnected = False
+        self.connected = False
+        
         # users
         self._user = None
         self._user_email = None
@@ -130,9 +135,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._LASTCONTACT = 0
         
         
-        # Set connected to false
-        self.disconnected = False
-        self.connected = False
+    
+
 
         
         # Main Signals
@@ -156,6 +160,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         
         # set contactsStatusBar to red
+        self.conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
+        self.contactsStatusBar.addWidget(self.conn_msg)
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
     
@@ -243,6 +249,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _usr_pwd = self.login.passwordLineEdit.text() # Set Text for pasword
             
             # Verify user name
+            # If user enters incorrect user name this is not yet resolved.
             self.cursor = self.conn.cursor()
             self.cursor.execute("SELECT bristo_contacts_users_name FROM \
             bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
@@ -283,7 +290,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                      rgb(179, 255, 188);")
                 
                 self.contactsStatusBar.addWidget(self.conn_msg)
-    
+            else:
+                self.incorrectlogin()
+                
+    def incorrectlogin(self):
+        
+        '''
+        incorrectlogin displays a message in the status bar to the user informing
+        them they have not successfully logged on.
+        '''
+        
+        self.connected = False
+        self.disconnected = True
+        self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+        if self.disconnected:
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+        self.conn_msg = QLabel('Login incorrect, please try again.')
+        self.contactsStatusBar.addWidget(self.conn_msg)
+
+
     def hashpwd(self, _pwd):
         
         '''
@@ -1296,15 +1322,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         then turns the status bar red.
         
         '''
-        self.conn.close()
-        self.connected = False
-        self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(230, 128, 128);")
-        self.contactsStatusBar.removeWidget(self.conn_msg)
-        self.conn_msg = QLabel(self._host+
-                                  '/'+ self._db+'.')
-        self.contactsStatusBar.addWidget(self.conn_msg)
-        self.disconnected = True
+        if self.connected:
+            self.conn.close()
+            self.connected = False
+            self.contactsStatusBar.setStyleSheet("background-color: \
+                                                  rgb(230, 128, 128);")
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+            self.conn_msg = QLabel(self._host+
+                                      '/'+ self._db+'.')
+            self.contactsStatusBar.addWidget(self.conn_msg)
+            self.disconnected = True
     
     def close_contacts(self):
         '''
