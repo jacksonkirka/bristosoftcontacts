@@ -45,7 +45,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Connection
         self.conn = None
-        self.disconnected = False
+        self.disconnected = True
         self.connected = False
         
         # users
