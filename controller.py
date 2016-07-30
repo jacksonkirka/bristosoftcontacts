@@ -980,6 +980,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value and notice itself need be entered.
         
         '''
+        self._user = _owner
         _crow = self.bristo_search.notesTableWidget.currentRow()
         _ccol = self.bristo_search.notesTableWidget.currentColumn()
         _oph = self.bristo_search.officePhoneLineEdit.text()
@@ -987,8 +988,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                             _crow,_ccol ).text()
         
         self.cursor.execute("""INSERT INTO bristo_contacts_notes
-                (bristo_contacts_notes_ct, bristo_contacts_notes_note)
-                VALUES (%s,%s);""", (_oph,_note))
+                (bristo_contacts_notes_ct, bristo_contacts_notes_note,
+                bristo_contacts_notes_owner)
+                VALUES (%s,%s,%s);""", (_oph,_note,_owner))
         self.conn.commit()
         self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
     
@@ -1025,6 +1027,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value, file name and file need be entered.
         
         '''
+        self._user = _owner
         _oph = self.bristo_search.officePhoneLineEdit.text()
         fdlg = QFileDialog()                               
         filename = fdlg.getOpenFileName(self, 'Open file', 
@@ -1034,9 +1037,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self.connected:
             self.cursor.execute("""INSERT INTO bristo_contacts_files
                (bristo_contacts_files_ct, bristo_contacts_files_name,
-                   bristo_contacts_files_file)
-               VALUES (%s, %s, %s); """, 
-               (_oph, _fnm, psycopg2.Binary(self._file_bin)))
+                   bristo_contacts_files_file, bristo_contacts_file_owner)
+               VALUES (%s, %s, %s, %s); """, 
+               (_oph, _fnm, psycopg2.Binary(self._file_bin), _owner))
             self.conn.commit()
             self.contactsStatusBar.showMessage('New contact file inserted.', 3000)
     
@@ -1143,6 +1146,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         or outbound and results need be entered.
         
         '''
+        self._user = _owner
         _id = 0
         _crow = self.bristo_search.callsTableWidget.currentRow()
         _id_ct = str(self.fetch_results[self._CONTACT][_id])
@@ -1153,8 +1157,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         self.cursor.execute("""INSERT INTO bristo_contacts_calls
                 (bristo_contacts_calls_ct_id, bristo_contacts_calls_phone,
-                bristo_contacts_calls_type, bristo_contacts_calls_results)
-                VALUES (%s,%s, %s, %s);""", (_id_ct, _ph,_in, _results))
+                bristo_contacts_calls_type, bristo_contacts_calls_results,
+                bristo_contacts_calls_owner)
+                VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _ph,_in, _results, _owner))
         self.conn.commit()
         self.live_set = False
         self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
@@ -1218,7 +1223,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the appointment, open or closed and purpose need be entered.
         
         '''
-        
+        self._user = _owner
         _crow = self.bristo_search.apptTableWidget.currentRow()
         _id_ct = str(self.fetch_results[self._CONTACT][self._ID])
         _qtime = self.live_dtimeedit.dateTime()
@@ -1230,7 +1235,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.cursor.execute("""INSERT INTO bristo_contacts_appt
                 (bristo_contacts_appt_ct_id, bristo_contacts_appt_time,
                 bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
-                VALUES (%s,%s, %s, %s);""", (_id_ct, _time,_closed, _purpose))
+                VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _time,_closed, _purpose,
+                _owner))
         self.conn.commit()
         self.live_set = False
         self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
