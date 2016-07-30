@@ -25,6 +25,7 @@ __version__ = '0.1'
 #bristocontacts = loadUiType('contacts_main.ui')[0]
         
 # class Controller(QMainWindow,  bristocontacts):
+
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
     
@@ -47,6 +48,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.conn = None
         self.disconnected = True
         self.connected = False
+        self.conn_timer = 180000
+        self._idle = QTimer()
         
         # users
         self._user = None
@@ -134,11 +137,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._PREV = 0
         self._LASTCONTACT = 0
         
-        
-    
-
-
-        
         # Main Signals
         self.actionConnect.triggered.connect(self.db_connect)
         self.actionAbout_Qt.triggered.connect(self.aboutqt)
@@ -205,6 +203,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         __version__, platform.python_version(),
         QT_VERSION_STR, PYQT_VERSION_STR, platform.system()))
     
+    def reset_timer(self):
+        '''
+        reset_timer resets QTimer singleShot for self.conn_timer amount of time.
+        It stops existing timer and starts a new one.  When the time has elapsed
+        it calls self.db_idle and informs the user.
+        '''
+        
+        # idle
+        self._idle.stop()
+        self._idle = QTimer()
+        self._idle.singleShot(self.conn_timer,  self.db_idle)
+        self._idle.start() # start idle timer
+    
+        
     # class Database Methods
     def db_connect(self):
         '''
@@ -223,8 +235,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_login establishes a connection to a PostgreSQL database on port 
         5423 with the standard connection string.
         
-       
-        
         '''
         
          # Step 1 owner authentication security string
@@ -240,6 +250,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 
             self.conn = psycopg2.connect(con) # Authenticate and login owner
             self.connected = True # Set connection to True
+            
             
         # Step 2 User database authentication
             _usr_nm_match = False
@@ -295,8 +306,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                          rgb(179, 255, 188);")
                     
                     self.contactsStatusBar.addWidget(self.conn_msg)
+                    self.reset_timer()
                 else:
                     self.incorrectlogin()
+
                 
     def incorrectlogin(self):
         
@@ -345,6 +358,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         from the OK button then runs self.db_insert.
         
         '''
+        self.reset_timer()
         # set contactsDialog in cetralWidget
         self.bristo = bristoContactsDialog()
         self.setCentralWidget(self.bristo)
@@ -407,6 +421,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         The list is then traversed in memory on the list python object.
         
         '''
+        self.reset_timer()
         self.bristo_search = bristoContactsSearchDialog()
         
         # Hide columns on calls and appointments
@@ -601,6 +616,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the database.
         
         '''
+        self.reset_timer()
         
         if self.connected:
             _current_id = str(self.fetch_results[self._CONTACT][self._ID])
@@ -980,6 +996,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value and notice itself need be entered.
         
         '''
+        self.reset_timer()
         self._user = _owner
         _crow = self.bristo_search.notesTableWidget.currentRow()
         _ccol = self.bristo_search.notesTableWidget.currentColumn()
@@ -1027,6 +1044,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value, file name and file need be entered.
         
         '''
+        self.reset_timer()
         self._user = _owner
         _oph = self.bristo_search.officePhoneLineEdit.text()
         fdlg = QFileDialog()                               
@@ -1081,7 +1099,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_pic opens a picture provided by the PostgreSQL database user
         and displays it then returns self._image_bin to the caller dialog.
         '''
-        
+        self.reset_timer()
         fdlg = QFileDialog()                               
         fname = fdlg.getOpenFileName(self, 'Open file', 
                    "Image files (*.jpg *.gif *.png)")       # Get Filename
@@ -1146,6 +1164,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         or outbound and results need be entered.
         
         '''
+        self.reset_timer()
         self._user = _owner
         _id = 0
         _crow = self.bristo_search.callsTableWidget.currentRow()
@@ -1206,6 +1225,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_insert_update_appt calls either insert or update appointment methods
         dependent on whether the current row is empty or not.
         '''
+        self.reset_timer()
         _crow = self.bristo_search.apptTableWidget.currentRow()
         if self.bristo_search.apptTableWidget.item(
                 _crow,  self._appt_id) is None:
@@ -1249,7 +1269,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         complete/open checkbox and purpose can be updated.
         
         '''
-        
+        self.reset_timer()
         _crow = self.bristo_search.apptTableWidget.currentRow()
         _appt_id = self.bristo_search.apptTableWidget.item(
             _crow,  self._appt_id).text()
@@ -1349,6 +1369,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.addWidget(self.conn_msg)
             self.disconnected = True
     
+    def db_idle(self):
+        '''
+        
+        db_close closing the current cursor if any and database connection.  It
+        then turns the status bar red.
+        
+        '''
+        if self.connected:
+            self.conn.close()
+            self.connected = False
+            self.contactsStatusBar.setStyleSheet("background-color: \
+                                                  rgb(230, 128, 128);")
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+            self.conn_msg = QLabel(self._user+'@'+self._host+
+                                      '/'+ self._db+' logged out due to inactivity.')
+            self.contactsStatusBar.addWidget(self.conn_msg)
+            self.disconnected = True
+            
     def close_contacts(self):
         '''
         
