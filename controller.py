@@ -304,7 +304,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         incorrectlogin displays a message in the status bar to the user informing
         them they have not successfully logged on.
         '''
-        
+        self.conn.close()
         self.connected = False
         self.disconnected = True
         self.contactsStatusBar.setStyleSheet("background-color: \
