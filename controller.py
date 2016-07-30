@@ -355,8 +355,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_insert(self):
         '''
         
-        db_insert inserts one new contact into the PostgreSQL database table with
-        bytea picture.
+        db_insert inserts one new contact into the PostgreSQL database table.
         
         '''
         _company = self.bristo.companyLineEdit.text()
@@ -378,6 +377,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _pemail = self.bristo.personalEmailLineEdit.text()
         _oweb = self.bristo.officeWebLineEdit.text()
         _pweb = self.bristo.personalWebLineEdit.text()
+        _owner = self._user
         
         self.cursor.execute("""INSERT INTO bristo_contacts_ct
                 (bristo_contacts_ct_co, bristo_contacts_ct_title,
@@ -389,11 +389,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
                 bristo_contacts_ct_home,bristo_contacts_ct_email1,
                 bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                bristo_contacts_ct_web2) VALUES (%s,%s,%s,%s,%s,
-                %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                bristo_contacts_ct_web2, bristo_contacts_ct_owner)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                %s,%s,%s,%s,%s, %s);""", 
                 (_company,_mrmrs,_fname,_middle,_lname,
                 _cred, _addr, _suite,_city,_st, _postal,_oph,_cell, _fax
-                ,_hph,_oemail,_pemail,_oweb,_pweb))
+                ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
         self.conn.commit()
         self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
     
@@ -464,11 +465,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._appt_complete, 28)
         
         # Fetch Data from tables --> Python lists
+        _user = self._user
         if self.connected:
             self.cursor = self.conn.cursor()
-            _query = "SELECT * FROM bristo_contacts_ct ORDER by \
-                bristo_contacts_ct_co, bristo_contacts_ct_lname"
-            self.cursor.execute(_query)
+            self.cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
+                bristo_contacts_ct_owner = %s ORDER by 
+                bristo_contacts_ct_co, bristo_contacts_ct_lname;""", (_user, ))
             self.fetch_results = self.cursor.fetchall() # Gets all contacts from db
             _query = "SELECT * FROM bristo_contacts_notes ORDER by \
                 bristo_contacts_notes_ct, bristo_contacts_notes_stamp"
