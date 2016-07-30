@@ -473,24 +473,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct_co, bristo_contacts_ct_lname;""", (_user, ))
             self.fetch_results = self.cursor.fetchall() # Gets all contacts from db
             self.cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
-                bristo_contacts_ct_owner = %s  ORDER by 
+                bristo_contacts_notes_owner = %s  ORDER by 
                 bristo_contacts_notes_ct,
                 bristo_contacts_notes_stamp""", (_user, ))
             self.fetch_notes = self.cursor.fetchall() # Get all notes
             self.cursor.execute("""SELECT bristo_contacts_files_id,
                 bristo_contacts_files_stamp, bristo_contacts_files_ct,
                 bristo_contacts_files_name FROM
-                bristo_contacts_files WHERE bristo_contacts_ct_owner = %s
+                bristo_contacts_files WHERE bristo_contacts_files_owner = %s
                 ORDER by bristo_contacts_files_ct,
                 bristo_contacts_files_stamp""", (_user, ))
             self.fetch_files = self.cursor.fetchall() # Get all files
             self.cursor.execute("""SELECT * FROM bristo_contacts_calls WHERE
-                bristo_contacts_ct_owner = %s ORDER by 
+                bristo_contacts_calls_owner = %s ORDER by 
                 bristo_contacts_calls_ct_id,
                 bristo_contacts_calls_stamp""",  (_user, ))
             self.fetch_calls = self.cursor.fetchall() # Get all calls
             self.cursor.execute("""SELECT * FROM bristo_contacts_appt WHERE
-             bristo_contacts_ct_owner = %s ORDER by 
+             bristo_contacts_appt_owner = %s ORDER by 
                 bristo_contacts_appt_ct_id,
                 bristo_contacts_appt_stamp""", (_user, ))
             self.fetch_appts = self.cursor.fetchall() # Get all appointments
