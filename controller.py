@@ -335,32 +335,25 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _oldpwd = self.chgpwd.oldPasswordLineEdit.text()
         _newpwd = self.chgpwd.newPasswordLineEdit.text()
         _reenter = self.chgpwd.reenterPasswordLineEdit.text()
-        
-        # Step 1 Login
         self._user = _usrnm
         self._passwd = _oldpwd
         self._chgpwd = True
         self.db_login()
-        # Step 2 Hash the New password
-        if _newpwd == _reenter:
+        if self.connected and _newpwd == _reenter:
             _newpwdhash = self.hashpwd(_newpwd) # Hash new password
-
-            # Step 3 Change the password hash in the db
             self.cursor = self.conn.cursor()
             _username = self._user
             self.cursor.execute("""UPDATE bristo_contacts_users SET 
             (bristo_contacts_users_pwd) = (%s) WHERE 
             bristo_contacts_users_name = %s;""", (_newpwdhash, _username))
             self.conn.commit()
-            self.contactsStatusBar.showMessage("Successful.  Log out and log \
-            back in with new password.",
-              10000)
+            self.contactsStatusBar.showMessage(
+            "Successful.  Log out and log back in with new password.", 10000)
             self._chgpwd = False
-                   
         else:
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-            self.contactsStatusBar.showMessage('Passwords do not match, Please \
+            self.contactsStatusBar.showMessage('Incorrect.  Please \
             close dialog and try again.', 10000)
                 
     def incorrectlogin(self):
