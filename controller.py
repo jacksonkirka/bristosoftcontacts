@@ -50,9 +50,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.connected = False
         self.conn_timer = 180000
         self._idle = QTimer()
+        self._chgpwd = False
         
         # users
         self._user = None
+        self._passwd = None
         self._user_email = None
         self._user_webmail = None
         
@@ -228,7 +230,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.login = bristoContactsLogin()
         self.login.show()
-        self.login.accepted.connected(self.db_login)
+        self.login.accepted.connect(self.db_login_get_cred)
+        
+    def db_login_get_cred(self):
+        
+        '''
+        db_login_get_cred gets credentials from login dialog then
+        calls db_login.
+        '''
+        self._user = self.login.userNameLineEdit.text()
+        self._passwd = self.login.passwordLineEdit.text()
+        self.db_login()
 
     def db_login(self):
         ''' 
@@ -246,21 +258,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._host = 'bristosoftcontacts'
         self._db = 'bristocontacts'
          
-        if self.login.userNameLineEdit.text() and \
-            self.login.passwordLineEdit.text():
+        if self._user and self._passwd:
                 
             self.conn = psycopg2.connect(con) # Authenticate and login owner
             self.connected = True # Set connection to True
             
             
-        # Step 2 User database authentication
+            # Step 2 User database authentication
             _usr_nm_match = False
             _usr_pwd_match = False
             
             # Save login credentials
-            self._user = self.login.userNameLineEdit.text() # User Name
             _usr_nm = self._user # Set Text for User Name
-            _usr_pwd = self.login.passwordLineEdit.text() # Set Text for pasword
+            _usr_pwd = self._passwd # Set Text for password
             
             # Verify user name
             # If user enters incorrect user name this is not yet resolved.
@@ -299,15 +309,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     
                     if self.disconnected:
                         self.contactsStatusBar.removeWidget(self.conn_msg)
-                    self._date = datetime.datetime.now()
                     self.conn_msg = QLabel("ssl:"+self._user +"@"+
                                             self._host+
                                           '/'+ self._db +'.')
                     self.contactsStatusBar.setStyleSheet("background-color: \
                                                          rgb(179, 255, 188);")
+                    if not self._chgpwd:
+                        self.contactsStatusBar.addWidget(self.conn_msg)
                     
-                    self.contactsStatusBar.addWidget(self.conn_msg)
-                    self.reset_timer()
                 else:
                     self.incorrectlogin()
                     
@@ -315,17 +324,44 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         self.chgpwd = bristoContactsChgPwdDlg()
         self.chgpwd.show()
+        self.chgpwd.accepted.connect(self.changepasswd)
         
     def changepasswd(self):
         '''
         changepwd establishes a connection to a PostgreSQL database on port 
         5423 with the standard connection string then changes the password.
         '''
-        #_usrnm = self.chgpwd.userNameLineEdit.text()
-        #_oldpwd = self.chgpwd.oldPasswordLineEdit.text()
-        #_newpwd = self.chgpwd.newPasswordLineEdit.text()
-        #_reenter = self.chgpwd.reenterPasswordLineEdit.text()
-        pass
+        _usrnm = self.chgpwd.userNameLineEdit.text()
+        _oldpwd = self.chgpwd.oldPasswordLineEdit.text()
+        _newpwd = self.chgpwd.newPasswordLineEdit.text()
+        _reenter = self.chgpwd.reenterPasswordLineEdit.text()
+        
+        # Step 1 Login
+        self._user = _usrnm
+        self._passwd = _oldpwd
+        self._chgpwd = True
+        self.db_login()
+        # Step 2 Hash the New password
+        if _newpwd == _reenter:
+            _newpwdhash = self.hashpwd(_newpwd) # Hash new password
+
+            # Step 3 Change the password hash in the db
+            self.cursor = self.conn.cursor()
+            _username = self._user
+            self.cursor.execute("""UPDATE bristo_contacts_users SET 
+            (bristo_contacts_users_pwd) = (%s) WHERE 
+            bristo_contacts_users_name = %s;""", (_newpwdhash, _username))
+            self.conn.commit()
+            self.contactsStatusBar.showMessage("Successful.  Log out and log \
+            back in with new password.",
+              10000)
+            self._chgpwd = False
+                   
+        else:
+            self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+            self.contactsStatusBar.showMessage('Passwords do not match, Please \
+            close dialog and try again.', 10000)
                 
     def incorrectlogin(self):
         
