@@ -146,6 +146,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionNew.triggered.connect(self.db_contact_new)
         self.actionVacuum.triggered.connect(self.db_full_vacuum)
         self.actionReIndex.triggered.connect(self.db_reindex)
+        self.actionChangePassword.triggered.connect(self.chgpwddlg)
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch)
         self.actionQuit.triggered.connect(self.close_contacts)
@@ -227,7 +228,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.login = bristoContactsLogin()
         self.login.show()
-        self.connect(self.login, SIGNAL('accepted()'),  self.db_login)
+        self.login.accepted.connected(self.db_login)
 
     def db_login(self):
         ''' 
@@ -309,6 +310,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self.reset_timer()
                 else:
                     self.incorrectlogin()
+                    
+    def chgpwddlg(self):
+        
+        self.chgpwd = bristoContactsChgPwdDlg()
+        self.chgpwd.show()
+        
 
                 
     def incorrectlogin(self):
