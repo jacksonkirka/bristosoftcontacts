@@ -316,7 +316,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.chgpwd = bristoContactsChgPwdDlg()
         self.chgpwd.show()
         
-
+    def changepasswd(self):
+        '''
+        changepwd establishes a connection to a PostgreSQL database on port 
+        5423 with the standard connection string then changes the password.
+        '''
+        #_usrnm = self.chgpwd.userNameLineEdit.text()
+        #_oldpwd = self.chgpwd.oldPasswordLineEdit.text()
+        #_newpwd = self.chgpwd.newPasswordLineEdit.text()
+        #_reenter = self.chgpwd.reenterPasswordLineEdit.text()
+        pass
                 
     def incorrectlogin(self):
         
