@@ -7,6 +7,7 @@ import datetime
 import ntpath
 import hashlib
 import uuid
+import re
 import os
 from bristo_exceptions import *
 import platform
@@ -335,11 +336,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _oldpwd = self.chgpwd.oldPasswordLineEdit.text()
         _newpwd = self.chgpwd.newPasswordLineEdit.text()
         _reenter = self.chgpwd.reenterPasswordLineEdit.text()
+        _complex = mincomplex(_newpwd)
         self._user = _usrnm
         self._passwd = _oldpwd
         self._chgpwd = True
         self.db_login()
-        if self.connected and _newpwd == _reenter:
+        if self.connected and _newpwd == _reenter and _complex:
             _newpwdhash = self.hashpwd(_newpwd) # Hash new password
             self.cursor = self.conn.cursor()
             _username = self._user
@@ -353,8 +355,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-            self.contactsStatusBar.showMessage('Incorrect.  Please \
-            close dialog and try again.', 10000)
+            self.contactsStatusBar.showMessage(
+            "Disconnected, New Password didn't match or password uncomplex.", 5000)
+            self.contactsStatusBar.showMessage(
+            "At least one upper, lower, number and special character.", 10000)
+    
+    def mincomplex(self, _pwd):
+        '''
+        mincomplex evaluates a plain text password and returns true if the
+        password evaluated contains 1) uppercase letter, 2) lowercase letter,
+        3) a digit 0 - 9, 4) a special character and 5) is 8 characters.
+        '''
+        _digit = re.search('[0-9]', _pwd)
+        _lower = re.search('[a-z]', _pwd)
+        _upper = re.search('[A-Z]',_pwd)
+        _special = re.search('.[!@#$%^&*()_~-]',_pwd)
+        
+        if len(_pwd) > 7 and _digit and _lower and _upper and _special:
+            return True
+        else:
+            return False
                 
     def incorrectlogin(self):
         
