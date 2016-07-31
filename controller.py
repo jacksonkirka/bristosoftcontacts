@@ -997,7 +997,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         self.reset_timer()
-        self._user = _owner
+        _owner = self._user
         _crow = self.bristo_search.notesTableWidget.currentRow()
         _ccol = self.bristo_search.notesTableWidget.currentColumn()
         _oph = self.bristo_search.officePhoneLineEdit.text()
@@ -1045,7 +1045,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         self.reset_timer()
-        self._user = _owner
+        _owner = self._user
         _oph = self.bristo_search.officePhoneLineEdit.text()
         fdlg = QFileDialog()                               
         filename = fdlg.getOpenFileName(self, 'Open file', 
@@ -1165,7 +1165,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         self.reset_timer()
-        self._user = _owner
+        _owner = self._user
         _id = 0
         _crow = self.bristo_search.callsTableWidget.currentRow()
         _id_ct = str(self.fetch_results[self._CONTACT][_id])
@@ -1243,7 +1243,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the appointment, open or closed and purpose need be entered.
         
         '''
-        self._user = _owner
+        _owner = self._user
         _crow = self.bristo_search.apptTableWidget.currentRow()
         _id_ct = str(self.fetch_results[self._CONTACT][self._ID])
         _qtime = self.live_dtimeedit.dateTime()
