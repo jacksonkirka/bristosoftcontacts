@@ -656,21 +656,42 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_fetch_contact(self):
         '''
         
-        db_fetch_contact fetches the first occurence of the company name
-        entered in the company search field.  The database is already
-        sorted by Company and then by Last name of contact.
+        db_fetch_contact fetches the first occurence of the company name,
+        first name, or last name entered in the company search field.
+        The database is already sorted by Company and then by Last name
+        of contact.
         
         '''
-        for _company_idx in range(self._LASTCONTACT):
+        _company_qry = self.bristo_search.companyLineEdit.text()
+        _lname_qry = self.bristo_search.lastNameLineEdit.text()
+        _fname_qry = self.bristo_search.firstNameLineEdit.text()
+        
+        if _company_qry:
+            for _company_idx in range(self._LASTCONTACT):
+                _company = self.fetch_results[_company_idx][self._COMPANY]
+                if _company_qry in _company:
+                    self._CONTACT = _company_idx
+                    self.display_data()
+                    return
+                    
+        elif _lname_qry:
             
-            _company = self.fetch_results[_company_idx][self._COMPANY]
-            if self.bristo_search.companyLineEdit.text() in _company:
-                self._CONTACT = _company_idx
-                self.display_data()
-                return
+            for _company_idx in range(self._LASTCONTACT):
+                _lname = self.fetch_results[_company_idx][self._LNAME]
+                if _lname_qry in _lname:
+                    self._CONTACT = _company_idx
+                    self.display_data()
+                    return
+        elif _fname_qry:
+            
+            for _company_idx in range(self._LASTCONTACT):
+                _fname = self.fetch_results[_company_idx][self._FNAME]
+                if _fname_qry in _fname:
+                    self._CONTACT = _company_idx
+                    self.display_data()
+                    return
 
-        _msg = 'Pattern ' +"'"+self.bristo_search.companyLineEdit.text() + \
-                       "'"+' not found.'
+        _msg = 'Pattern not found.'
         self.contactsStatusBar.showMessage(_msg, 3000)
     
     def db_update_contact(self):
