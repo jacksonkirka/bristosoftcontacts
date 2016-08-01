@@ -657,7 +657,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
         db_fetch_contact fetches the first occurence of the company name,
-        first name, or last name entered in the company search field.
+        first name, or last name entered in the relevant search field.
         The database is already sorted by Company and then by Last name
         of contact.
         
