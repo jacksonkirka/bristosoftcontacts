@@ -53,6 +53,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._idle = QTimer()
         self._chgpwd = False
         
+        # Dialogs
+        self.bristo_search = None
+        self.bristo = None
+        
         # users
         self._user = None
         self._passwd = None
@@ -87,6 +91,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Table Rows
         self._table_rows_count = 2000
         
+        
         # Notes
         self._stamp = 1
         self._note = 3
@@ -117,6 +122,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._calls_in = 4
         self._calls_results = 5
         self.live_set = False
+        
+        # Search
+        self._clear = False
         
         # Appointment
         self._appt_id = 0
@@ -662,37 +670,56 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         of contact.
         
         '''
-        _company_qry = self.bristo_search.companyLineEdit.text()
-        _lname_qry = self.bristo_search.lastNameLineEdit.text()
-        _fname_qry = self.bristo_search.firstNameLineEdit.text()
+        if self._clear == False:
+            self.clear_search_fields()
+            self._clear = True
+        else:
+            _company_qry = self.bristo_search.companyLineEdit.text()
+            _lname_qry = self.bristo_search.lastNameLineEdit.text()
+            _fname_qry = self.bristo_search.firstNameLineEdit.text()
+            
+            if _company_qry:
+                for _company_idx in range(self._LASTCONTACT):
+                    _company = self.fetch_results[_company_idx][self._COMPANY]
+                    if _company_qry in _company:
+                        self._CONTACT = _company_idx
+                        self.display_data()
+                        self._clear = False
+                        return
+                        
+            elif _lname_qry:
+                
+                for _company_idx in range(self._LASTCONTACT):
+                    _lname = self.fetch_results[_company_idx][self._LNAME]
+                    if _lname_qry in _lname:
+                        self._CONTACT = _company_idx
+                        self.display_data()
+                        self._clear = False
+                        return
+            elif _fname_qry:
+                
+                for _company_idx in range(self._LASTCONTACT):
+                    _fname = self.fetch_results[_company_idx][self._FNAME]
+                    if _fname_qry in _fname:
+                        self._CONTACT = _company_idx
+                        self.display_data()
+                        self._clear = False
+                        return
+    
+            _msg = 'Pattern not found.'
+            self.contactsStatusBar.showMessage(_msg, 3000)
+           
         
-        if _company_qry:
-            for _company_idx in range(self._LASTCONTACT):
-                _company = self.fetch_results[_company_idx][self._COMPANY]
-                if _company_qry in _company:
-                    self._CONTACT = _company_idx
-                    self.display_data()
-                    return
-                    
-        elif _lname_qry:
-            
-            for _company_idx in range(self._LASTCONTACT):
-                _lname = self.fetch_results[_company_idx][self._LNAME]
-                if _lname_qry in _lname:
-                    self._CONTACT = _company_idx
-                    self.display_data()
-                    return
-        elif _fname_qry:
-            
-            for _company_idx in range(self._LASTCONTACT):
-                _fname = self.fetch_results[_company_idx][self._FNAME]
-                if _fname_qry in _fname:
-                    self._CONTACT = _company_idx
-                    self.display_data()
-                    return
-
-        _msg = 'Pattern not found.'
-        self.contactsStatusBar.showMessage(_msg, 3000)
+    def clear_search_fields(self):
+        
+        '''
+        clear_search_fields clears the search fields in the search dialog.
+        '''
+        if self.bristo_search:
+            self.bristo_search.companyLineEdit.clear()
+            self.bristo_search.firstNameLineEdit.clear()
+            self.bristo_search.lastNameLineEdit.clear()
+        
     
     def db_update_contact(self):
         '''
