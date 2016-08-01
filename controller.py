@@ -336,7 +336,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _oldpwd = self.chgpwd.oldPasswordLineEdit.text()
         _newpwd = self.chgpwd.newPasswordLineEdit.text()
         _reenter = self.chgpwd.reenterPasswordLineEdit.text()
-        _complex = mincomplex(_newpwd)
+        _complex = self.mincomplex(_newpwd)
         self._user = _usrnm
         self._passwd = _oldpwd
         self._chgpwd = True
@@ -356,10 +356,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
             self.contactsStatusBar.showMessage(
-            "Disconnected, New Password didn't match or password uncomplex.", 5000)
-            self.contactsStatusBar.showMessage(
-            "At least one upper, lower, number and special character.", 10000)
-    
+            "Disconnected, New Password didn't match or password uncomplex.", 10000)
+  
     def mincomplex(self, _pwd):
         '''
         mincomplex evaluates a plain text password and returns true if the
