@@ -708,6 +708,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     
             _msg = 'Pattern not found.'
             self.contactsStatusBar.showMessage(_msg, 3000)
+            self._clear = False
            
         
     def clear_search_fields(self):
