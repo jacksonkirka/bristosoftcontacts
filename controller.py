@@ -662,12 +662,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         for _company_idx in range(self._LASTCONTACT):
-            if self.fetch_results[_company_idx][self._COMPANY].find(
-                self.bristo_search.companyLineEdit.text()) > -1:
+            
+            _company = self.fetch_results[_company_idx][self._COMPANY]
+            if self.bristo_search.companyLineEdit.text() in _company:
                 self._CONTACT = _company_idx
                 self.display_data()
                 return
-        
+
         _msg = 'Pattern ' +"'"+self.bristo_search.companyLineEdit.text() + \
                        "'"+' not found.'
         self.contactsStatusBar.showMessage(_msg, 3000)
