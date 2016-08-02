@@ -177,7 +177,7 @@ class Ui_bristosoftContacts(object):
         QtCore.QMetaObject.connectSlotsByName(bristosoftContacts)
 
     def retranslateUi(self, bristosoftContacts):
-        bristosoftContacts.setWindowTitle(_translate("bristosoftContacts", "bristoSOFT Contacts v 0.1", None))
+        bristosoftContacts.setWindowTitle(_translate("bristosoftContacts", "bristoSOFT Contacts v. 0.1", None))
         self.menuContacts.setTitle(_translate("bristosoftContacts", "Contacts", None))
         self.menuAbout.setTitle(_translate("bristosoftContacts", "About", None))
         self.menuMaintenance.setTitle(_translate("bristosoftContacts", "Maintenance", None))
