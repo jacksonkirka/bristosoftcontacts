@@ -340,9 +340,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         chngpwddlg displays the change password dialog and accepts user input
         based on accepted signal.
         '''
-        self.chgpwd = bristoContactsChgPwdDlg()
-        self.chgpwd.show()
-        self.chgpwd.accepted.connect(self.changepasswd)
+        if not self.connected:
+            self.chgpwd = bristoContactsChgPwdDlg()
+            self.chgpwd.show()
+            self.chgpwd.accepted.connect(self.changepasswd)
         
     def changepasswd(self):
         '''
