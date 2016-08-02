@@ -260,9 +260,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
          # Step 1 owner authentication security string
-        con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
-        dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
-        password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
+        #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
+        #dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
+        #password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
+        
+        con = "host='aws-us-east-1-portal.9.dblayer.com' \
+        dbname='compose' user='admin' password='BKZDUNJTMJCNJLKJ' \
+        sslmode='require'"
+        
         
         self._host = 'bristosoftcontacts'
         self._db = 'bristocontacts'
