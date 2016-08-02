@@ -98,7 +98,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._notes_ct = 2
         self._note_column = 1
         
-        self._displayed_apptsbydate = False
+        
 
         # Image
         self._image = QPixmap()
@@ -134,6 +134,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._appt_complete = 4
         self._appt_purpose = 5
         self._display_appts_set = False
+        self._displayed_apptsbydate = False
         
         # Calendar
         self._calendar_activated = False
@@ -260,13 +261,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
          # Step 1 owner authentication security string
-        con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
-        dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
-        password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
+        #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
+        #dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
+        #password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
         
-        #con = "host='aws-us-east-1-portal.9.dblayer.com' \
-        #dbname='compose' user='admin' password='BKZDUNJTMJCNJLKJ' \
-        #sslmode='require' port='11263'"
+        con = "host='aws-us-east-1-portal.9.dblayer.com' \
+        dbname='bristocontacts' user='admin' password='QOYUVWTHNYOGRXFF' \
+        sslmode='require' port='11270'"
         
         
         self._host = 'bristosoftcontacts'
@@ -335,7 +336,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self.incorrectlogin()
                     
     def chgpwddlg(self):
-        
+        '''
+        chngpwddlg displays the change password dialog and accepts user input
+        based on accepted signal.
+        '''
         self.chgpwd = bristoContactsChgPwdDlg()
         self.chgpwd.show()
         self.chgpwd.accepted.connect(self.changepasswd)
@@ -448,45 +452,47 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_insert inserts one new contact into the PostgreSQL database table.
         
         '''
-        _company = self.bristo.companyLineEdit.text()
-        _mrmrs = self.bristo.mrmrsLineEdit.text()
-        _fname = self.bristo.firstNameLineEdit.text()
-        _middle = self.bristo.middleNameLineEdit.text()
-        _lname = self.bristo.lastNameLineEdit.text()
-        _cred = self.bristo.credLineEdit.text()
-        _addr = self.bristo.addressLineEdit.text()
-        _suite = self.bristo.suiteLineEdit.text()
-        _city = self.bristo.cityLineEdit.text()
-        _st = self.bristo.stateLineEdit.text()
-        _postal = self.bristo.postalLineEdit.text()
-        _oph = self.bristo.officePhoneLineEdit.text()
-        _cell = self.bristo.cellPhoneLineEdit.text()
-        _fax = self.bristo.officeFaxLineEdit.text()
-        _hph = self.bristo.homePhoneLineEdit.text()
-        _oemail = self.bristo.officeEmailLineEdit.text()
-        _pemail = self.bristo.personalEmailLineEdit.text()
-        _oweb = self.bristo.officeWebLineEdit.text()
-        _pweb = self.bristo.personalWebLineEdit.text()
-        _owner = self._user
-        
-        self.cursor.execute("""INSERT INTO bristo_contacts_ct
-                (bristo_contacts_ct_co, bristo_contacts_ct_title,
-                bristo_contacts_ct_fname, bristo_contacts_ct_middle,
-                bristo_contacts_ct_lname, bristo_contacts_ct_cred,
-                bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
-                bristo_contacts_ct_city, bristo_contacts_ct_state,
-                bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
-                bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
-                bristo_contacts_ct_home,bristo_contacts_ct_email1,
-                bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                bristo_contacts_ct_web2, bristo_contacts_ct_owner)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                %s,%s,%s,%s,%s, %s);""", 
-                (_company,_mrmrs,_fname,_middle,_lname,
-                _cred, _addr, _suite,_city,_st, _postal,_oph,_cell, _fax
-                ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
-        self.conn.commit()
-        self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
+        if self.connected:
+            self.reset_timer()
+            _company = self.bristo.companyLineEdit.text()
+            _mrmrs = self.bristo.mrmrsLineEdit.text()
+            _fname = self.bristo.firstNameLineEdit.text()
+            _middle = self.bristo.middleNameLineEdit.text()
+            _lname = self.bristo.lastNameLineEdit.text()
+            _cred = self.bristo.credLineEdit.text()
+            _addr = self.bristo.addressLineEdit.text()
+            _suite = self.bristo.suiteLineEdit.text()
+            _city = self.bristo.cityLineEdit.text()
+            _st = self.bristo.stateLineEdit.text()
+            _postal = self.bristo.postalLineEdit.text()
+            _oph = self.bristo.officePhoneLineEdit.text()
+            _cell = self.bristo.cellPhoneLineEdit.text()
+            _fax = self.bristo.officeFaxLineEdit.text()
+            _hph = self.bristo.homePhoneLineEdit.text()
+            _oemail = self.bristo.officeEmailLineEdit.text()
+            _pemail = self.bristo.personalEmailLineEdit.text()
+            _oweb = self.bristo.officeWebLineEdit.text()
+            _pweb = self.bristo.personalWebLineEdit.text()
+            _owner = self._user
+            
+            self.cursor.execute("""INSERT INTO bristo_contacts_ct
+                    (bristo_contacts_ct_co, bristo_contacts_ct_title,
+                    bristo_contacts_ct_fname, bristo_contacts_ct_middle,
+                    bristo_contacts_ct_lname, bristo_contacts_ct_cred,
+                    bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
+                    bristo_contacts_ct_city, bristo_contacts_ct_state,
+                    bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
+                    bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
+                    bristo_contacts_ct_home,bristo_contacts_ct_email1,
+                    bristo_contacts_ct_email2, bristo_contacts_ct_web,
+                    bristo_contacts_ct_web2, bristo_contacts_ct_owner)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                    %s,%s,%s,%s,%s, %s);""", 
+                    (_company,_mrmrs,_fname,_middle,_lname,
+                    _cred, _addr, _suite,_city,_st, _postal,_oph,_cell, _fax
+                    ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
+            self.conn.commit()
+            self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
     
     def db_contacts_fetch(self):
         '''
@@ -734,9 +740,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the database.
         
         '''
-        self.reset_timer()
-        
         if self.connected:
+            self.reset_timer()
             _current_id = str(self.fetch_results[self._CONTACT][self._ID])
             _company = self.bristo_search.companyLineEdit.text()
             _mrmrs = self.bristo_search.mrmrsLineEdit.text()
@@ -1114,20 +1119,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value and notice itself need be entered.
         
         '''
-        self.reset_timer()
-        _owner = self._user
-        _crow = self.bristo_search.notesTableWidget.currentRow()
-        _ccol = self.bristo_search.notesTableWidget.currentColumn()
-        _oph = self.bristo_search.officePhoneLineEdit.text()
-        _note = self.bristo_search.notesTableWidget.cellWidget(
-                                            _crow,_ccol ).text()
-        
-        self.cursor.execute("""INSERT INTO bristo_contacts_notes
-                (bristo_contacts_notes_ct, bristo_contacts_notes_note,
-                bristo_contacts_notes_owner)
-                VALUES (%s,%s,%s);""", (_oph,_note,_owner))
-        self.conn.commit()
-        self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
+        if self.connected:
+            self.reset_timer()
+            _owner = self._user
+            _crow = self.bristo_search.notesTableWidget.currentRow()
+            _ccol = self.bristo_search.notesTableWidget.currentColumn()
+            _oph = self.bristo_search.officePhoneLineEdit.text()
+            _note = self.bristo_search.notesTableWidget.cellWidget(
+                                                _crow,_ccol ).text()
+            
+            self.cursor.execute("""INSERT INTO bristo_contacts_notes
+                    (bristo_contacts_notes_ct, bristo_contacts_notes_note,
+                    bristo_contacts_notes_owner)
+                    VALUES (%s,%s,%s);""", (_oph,_note,_owner))
+            self.conn.commit()
+            self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
     
     def resize_notes(self):
         
@@ -1162,15 +1168,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value, file name and file need be entered.
         
         '''
-        self.reset_timer()
-        _owner = self._user
-        _oph = self.bristo_search.officePhoneLineEdit.text()
-        fdlg = QFileDialog()                               
-        filename = fdlg.getOpenFileName(self, 'Open file', 
-                   "Image files (*.jpg *.gif *.png)")       # Get Filename Path
-        _fnm = self.get_path_filename(filename)             # Get name to write
-        self._file_bin = open(filename, 'rb').read()        # Read > pointer
         if self.connected:
+            self.reset_timer()
+            _owner = self._user
+            _oph = self.bristo_search.officePhoneLineEdit.text()
+            fdlg = QFileDialog()                               
+            filename = fdlg.getOpenFileName(self, 'Open file', 
+                       "Image files (*.jpg *.gif *.png)")       # Get Filename Path
+            _fnm = self.get_path_filename(filename)             # Get name to write
+            self._file_bin = open(filename, 'rb').read()        # Read > pointer
             self.cursor.execute("""INSERT INTO bristo_contacts_files
                (bristo_contacts_files_ct, bristo_contacts_files_name,
                    bristo_contacts_files_file, bristo_contacts_file_owner)
@@ -1185,21 +1191,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         get_contact_file retrieves binary files from the database and saves them to
         the users desktop.
         '''
-        
-        _crow = self.bristo_search.fileTableWidget.currentRow() # Critical tested
-        _ccol = self._file_id
-        _file_id = self.bristo_search.fileTableWidget.item(_crow, _ccol).text()
-        self.cursor.execute("SELECT * FROM\
-            bristo_contacts_files WHERE bristo_contacts_files_id = %s", (_file_id,))
-        _file_row = self.cursor.fetchone()
-        _file_row_name = _file_row[self._file_name]
-        _file = _file_row[self._file_file] # binary file
-        path = os.path.join(os.path.expanduser("~"), "Desktop", _file_row_name)
-        with open(path, 'wb') as f:
-            f.write(_file) # writes file to desktop
-            f.close()      # close file
-        self.contactsStatusBar.showMessage(_file_row_name+' '\
-                                           +'saved on Desktop.', 2000)
+        if self.connected:
+            _crow = self.bristo_search.fileTableWidget.currentRow() # Critical tested
+            _ccol = self._file_id
+            _file_id = self.bristo_search.fileTableWidget.item(_crow, _ccol).text()
+            self.cursor.execute("SELECT * FROM\
+                bristo_contacts_files WHERE bristo_contacts_files_id = %s", (_file_id,))
+            _file_row = self.cursor.fetchone()
+            _file_row_name = _file_row[self._file_name]
+            _file = _file_row[self._file_file] # binary file
+            path = os.path.join(os.path.expanduser("~"), "Desktop", _file_row_name)
+            with open(path, 'wb') as f:
+                f.write(_file) # writes file to desktop
+                f.close()      # close file
+            self.contactsStatusBar.showMessage(_file_row_name+' '\
+                                               +'saved on Desktop.', 2000)
     
     def get_path_filename(self,  _path):
         
@@ -1217,6 +1223,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_pic opens a picture provided by the PostgreSQL database user
         and displays it then returns self._image_bin to the caller dialog.
         '''
+        
         self.reset_timer()
         fdlg = QFileDialog()                               
         fname = fdlg.getOpenFileName(self, 'Open file', 
@@ -1282,24 +1289,25 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         or outbound and results need be entered.
         
         '''
-        self.reset_timer()
-        _owner = self._user
-        _id = 0
-        _crow = self.bristo_search.callsTableWidget.currentRow()
-        _id_ct = str(self.fetch_results[self._CONTACT][_id])
-        _ph = self.live_combobox.currentText()
-        _in = self.live_chkbox.isChecked()
-        _results = self.bristo_search.callsTableWidget.cellWidget(
-            _crow, self._calls_results).text()
-        
-        self.cursor.execute("""INSERT INTO bristo_contacts_calls
-                (bristo_contacts_calls_ct_id, bristo_contacts_calls_phone,
-                bristo_contacts_calls_type, bristo_contacts_calls_results,
-                bristo_contacts_calls_owner)
-                VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _ph,_in, _results, _owner))
-        self.conn.commit()
-        self.live_set = False
-        self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
+        if self.connected:
+            self.reset_timer()
+            _owner = self._user
+            _id = 0
+            _crow = self.bristo_search.callsTableWidget.currentRow()
+            _id_ct = str(self.fetch_results[self._CONTACT][_id])
+            _ph = self.live_combobox.currentText()
+            _in = self.live_chkbox.isChecked()
+            _results = self.bristo_search.callsTableWidget.cellWidget(
+                _crow, self._calls_results).text()
+            
+            self.cursor.execute("""INSERT INTO bristo_contacts_calls
+                    (bristo_contacts_calls_ct_id, bristo_contacts_calls_phone,
+                    bristo_contacts_calls_type, bristo_contacts_calls_results,
+                    bristo_contacts_calls_owner)
+                    VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _ph,_in, _results, _owner))
+            self.conn.commit()
+            self.live_set = False
+            self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
         
     def appt_display_contact(self):
         
@@ -1361,23 +1369,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the appointment, open or closed and purpose need be entered.
         
         '''
-        _owner = self._user
-        _crow = self.bristo_search.apptTableWidget.currentRow()
-        _id_ct = str(self.fetch_results[self._CONTACT][self._ID])
-        _qtime = self.live_dtimeedit.dateTime()
-        _time = _qtime.toPyDateTime()
-        _closed = self.live_chkbox.isChecked()
-        _purpose = self.bristo_search.apptTableWidget.cellWidget(
-            _crow, self._appt_purpose).text()
-        
-        self.cursor.execute("""INSERT INTO bristo_contacts_appt
-                (bristo_contacts_appt_ct_id, bristo_contacts_appt_time,
-                bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
-                VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _time,_closed, _purpose,
-                _owner))
-        self.conn.commit()
-        self.live_set = False
-        self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
+        if self.connected:
+            _owner = self._user
+            _crow = self.bristo_search.apptTableWidget.currentRow()
+            _id_ct = str(self.fetch_results[self._CONTACT][self._ID])
+            _qtime = self.live_dtimeedit.dateTime()
+            _time = _qtime.toPyDateTime()
+            _closed = self.live_chkbox.isChecked()
+            _purpose = self.bristo_search.apptTableWidget.cellWidget(
+                _crow, self._appt_purpose).text()
+            
+            self.cursor.execute("""INSERT INTO bristo_contacts_appt
+                    (bristo_contacts_appt_ct_id, bristo_contacts_appt_time,
+                    bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
+                    VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _time,_closed, _purpose,
+                    _owner))
+            self.conn.commit()
+            self.live_set = False
+            self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
         
     def db_update_contact_appt(self):
         
