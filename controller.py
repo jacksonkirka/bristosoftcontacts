@@ -536,13 +536,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self.connected and _pwd_match and _complex:
             self.reset_timer()
             _hashedpwd = self.hashpwd(_pwd)
+            self.cursor = self.conn.cursor()
             self.cursor.execute("""INSERT INTO bristo_contacts_groups
-                    (bristo_contacts_groups_owner, bristo_contacts_ct_title,
-                    bristo_contacts_ct_fname, bristo_contacts_ct_middle)
+                    (bristo_contacts_groups_owner, bristo_contacts_groups_group,
+                    bristo_contacts_groups_pwd, bristo_contacts_groups_desc)
                     VALUES (%s,%s,%s,%s);""", 
                     (_usr,_group,_hashedpwd,_desc))
             self.conn.commit()
+            self.cursor.close()
             self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
+            
     
     def db_contacts_fetch(self):
         '''
