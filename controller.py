@@ -575,11 +575,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Fetch Data from tables --> Python lists
         _user = self._user
+        _email = self._user_email
         if self.connected:
             self.cursor = self.conn.cursor()
             self.cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
-                bristo_contacts_ct_owner = %s ORDER by 
-                bristo_contacts_ct_co, bristo_contacts_ct_lname;""", (_user, ))
+                bristo_contacts_ct_owner = %s OR bristo_contacts_ct_email1 = %s
+                ORDER by bristo_contacts_ct_co, bristo_contacts_ct_lname;""",
+                (_user, _email ))
             self.fetch_results = self.cursor.fetchall() # Gets all contacts from db
             self.cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
                 bristo_contacts_notes_owner = %s  ORDER by 
