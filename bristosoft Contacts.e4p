@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2016-07-30, 11:54:20 -->
+<!-- Saved: 2016-08-03, 17:23:21 -->
 <!-- Copyright (C) 2016 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -23,6 +23,7 @@
     <Source>controller.py</Source>
     <Source>login.py</Source>
     <Source>main.py</Source>
+    <Source>newgroup.py</Source>
     <Source>resources_rc.py</Source>
     <Source>search.py</Source>
     <Source>view.py</Source>
