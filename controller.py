@@ -62,6 +62,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._passwd = None
         self._user_email = None
         self._user_webmail = None
+        self._USERNM = 1
+        self._USEREMAIL = 2
         
         # Database constants cursor list return
         self._CONTACT = 0
@@ -87,6 +89,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._PWEB = 18
         self._PIC = 19
         self._FAX = 20
+        self._OWNER = 21
+        self._AVAIL = 22
         
         # Table Rows
         self._table_rows_count = 2000
@@ -290,13 +294,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # Verify user name
             # If user enters incorrect user name this is not yet resolved.
             self.cursor = self.conn.cursor()
-            self.cursor.execute("SELECT bristo_contacts_users_name FROM \
-            bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
+            self.cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
+            bristo_contacts_users_name = %s", (
                 self._user, ))
             if not self.cursor.rowcount:
                 self.incorrectlogin()
             else:
-                _db_usrnm = self.cursor.fetchone()[0]
+                _temp = self.cursor.fetchone()
+                _db_usrnm = _temp[self._USERNM]
+            
+                
+                # Need user email for availability
+                self._user_email = _temp[self._USEREMAIL] 
+                
                 self.cursor.close()
                 if _usr_nm == _db_usrnm:
                     _usr_nm_match = True
@@ -507,6 +517,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.reset_timer()
         self.bristo_search = bristoContactsSearchDialog()
         
+        
         # Hide columns on calls and appointments
         self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
         self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
@@ -610,6 +621,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Seach and update Signals
         self.bristo_search.picPushButton.clicked.connect(
             self.update_pic)
+        self.bristo_search.availabilityPushButton.clicked.connect(
+            self.update_usercontact_availablity)
         self.bristo_search.notesTableWidget.cellChanged.connect(
                 self.db_insert_contact_note)
         self.bristo_search.callsTableWidget.cellChanged.connect(
@@ -782,8 +795,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 
             self.conn.commit()
             self.contactsStatusBar.showMessage('Contact Updated.', 3000)
-  
         
+    def update_usercontact_availablity(self):
+        
+        _current_id = str(self.fetch_results[self._CONTACT][self._ID])
+        if self.connected and self._user_email == \
+        self.fetch_results[self._CONTACT][self._OEMAIL]:
+                _avail = self.bristo_search.availabilityPushButton.isFlat()
+                self.cursor = self.conn.cursor()
+                self.cursor.execute("UPDATE bristo_contacts_ct SET \
+                    bristo_contacts_ct_available = %s WHERE \
+                    bristo_contacts_ct_id = %s",  (_avail,  _current_id))
+                self.conn.commit()
+                self.cursor.close()
+                self.contactsStatusBar.showMessage('User Contact Availability Updated.', 3000)
+            
     def display_data(self):
         '''
         
@@ -885,7 +911,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.fetch_results[self._CONTACT][self._PWEB])
         self._image_bytea = self.fetch_results[self._CONTACT][self._PIC]
         self.display_pic(self._image_bytea)
+        if self.fetch_results[self._CONTACT][self._AVAIL]:
+            self.bristo_search.availabilityPushButton.setFlat(False)
+            self.bristo_search.availabilityPushButton.setStyleSheet(
+            "background-color: rgb(0, 255, 0)")
+        else:
+            self.bristo_search.availabilityPushButton.setFlat(True)
+            self.bristo_search.availabilityPushButton.setStyleSheet(
+            "border: solid; background-color: rgb(255, 0, 0)")
         
+            
     def display_notes(self):
         
         '''
