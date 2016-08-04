@@ -164,6 +164,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionReIndex.triggered.connect(self.db_reindex)
         self.actionChangePassword.triggered.connect(self.chgpwddlg)
         self.action_Add_Group.triggered.connect(self.db_new_group_dlg)
+        sefl.actionSearchGroupsDialog.triggered.connect()
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch)
         self.actionQuit.triggered.connect(self.close_contacts)
@@ -545,7 +546,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.conn.commit()
             self.cursor.close()
             self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
-            
+    
+    def search_groups_dlg(self):
+        '''
+        search_groups_dlg opens the search groups dialog to get users
+        groups to view and edit.
+        '''
+        self.search_groups = bristoSearchGroupDlg()
+        self.setCentralWidget(self.search_groups)
+
     
     def db_contacts_fetch(self):
         '''

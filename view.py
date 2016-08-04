@@ -9,6 +9,7 @@ import login
 import search
 import changepwd
 import newgroup
+import searchgroup
 
 class bristoContactsLogin(QDialog,  login.Ui_loginDialog):
     '''
@@ -92,6 +93,22 @@ class bristoNewGroupDlg(QDialog,  newgroup.Ui_newGroupDialog):
         
         '''
         super(bristoNewGroupDlg,  self).__init__(parent)
+        self.setupUi(self)
+
+class bristoSearchGroupDlg(QDialog,  searchgroup.Ui_searchGroupDialog):
+    '''
+    
+    bristoSearchGroupDlg is the a dialog for navigating groups.
+    
+    '''
+    def __init__(self,  parent=None):
+        ''' 
+        
+        This initialization class method initializes
+        QDialog and bristoSearchGroupDlg.
+        
+        '''
+        super(bristoSearchGroupDlg,  self).__init__(parent)
         self.setupUi(self)
         
 class bristoMapper(QWebView):
