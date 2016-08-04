@@ -167,10 +167,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch)
         self.actionQuit.triggered.connect(self.close_contacts)
-        self.actionFirst_Contact.triggered.connect(self.db_contact_fetch_first)
-        self.actionPrevious_Contact.triggered.connect(self.db_contact_prev)
-        self.actionNext_Contact.triggered.connect(self.db_contact_next)
-        self.actionLast_Contact.triggered.connect(self.db_contact_fetch_last)
+        self.actionFirst_Item.triggered.connect(self.db_item_fetch_first)
+        self.actionPrevious_Item.triggered.connect(self.db_item_prev)
+        self.actionNext_Item.triggered.connect(self.db_item_next)
+        self.actionLast_Item.triggered.connect(self.db_item_fetch_last)
         self.actionSearch.triggered.connect(self.db_fetch_contact)
         self.actionUpdate.triggered.connect(self.db_update_contact)
         
@@ -693,38 +693,38 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.display_data()
         
         
-    def db_contact_fetch_first(self):
+    def db_item_fetch_first(self):
         '''
         
-        db_contact_fetch_first fetches the first contact in the bristo_contacts_ct table.
+        db_item_fetch_first fetches the first item in the results set.
         
         '''
         self._ITEM = self._FIRSTITEM
         self.display_data()
     
-    def db_contact_fetch_last(self):
+    def db_item_fetch_last(self):
         '''
         
-        db_contact_fetch_first fetches the first contact in the bristo_contacts_ct table.
+        db_item_fetch_last fetches the last item in the result set.
         
         '''
         self._ITEM = self._LASTITEM
         self.display_data()
 
 
-    def db_contact_prev(self):
+    def db_item_prev(self):
         '''
-        db_contact_prev fetches the previous contact before the current contact base on
-        index in the python list self.fetch_results.
+        db_item_prev fetches the previous item before the current item based on
+        index in the python list result set.
         '''
         if not self._ITEM <= self._FIRSTITEM:
             self._ITEM -= 1
             self.display_data()
 
-    def db_contact_next(self):
+    def db_item_next(self):
         '''
-        db_contact_next fetches the next contact after the current contact based on
-        index in the python list self.fetch_results.
+        db_item_next fetches the next item after the current item based on
+        index in the python list results set.
         '''
         if not self._ITEM >= self._LASTITEM:
             self._ITEM += 1
