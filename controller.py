@@ -66,8 +66,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._USEREMAIL = 2
         
         # Database constants cursor list return
-        self._CONTACT = 0
-        self._FIRSTCONTACT = 0
+        self._ITEM = 0
+        self._FIRSTITEM = 0
         self._ID = 0
         self._COMPANY = 1
         self._MRMRS = 2
@@ -151,7 +151,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Next/Prev
         self._NEXT = 0
         self._PREV = 0
-        self._LASTCONTACT = 0
+        self._LASTITEM = 0
         
         # Main Signals
         self.actionConnect.triggered.connect(self.db_connect)
@@ -659,7 +659,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         
-        self._LASTCONTACT = len(self.fetch_results) - 1
+        self._LASTITEM = len(self.fetch_results) - 1
         self.bristo_search_dlg = False
         
         # Seach and update Signals
@@ -689,7 +689,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.clicked.connect(self.live_appt_widgets)
         self.bristo_search.calendarWidget.activated.connect(self.display_appts_bydate)
         
-        self._CONTACT = self._FIRSTCONTACT
+        self._ITEM = self._FIRSTITEM
         self.display_data()
         
         
@@ -699,7 +699,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_contact_fetch_first fetches the first contact in the bristo_contacts_ct table.
         
         '''
-        self._CONTACT = self._FIRSTCONTACT
+        self._ITEM = self._FIRSTITEM
         self.display_data()
     
     def db_contact_fetch_last(self):
@@ -708,7 +708,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_contact_fetch_first fetches the first contact in the bristo_contacts_ct table.
         
         '''
-        self._CONTACT = self._LASTCONTACT
+        self._ITEM = self._LASTITEM
         self.display_data()
 
 
@@ -717,8 +717,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_contact_prev fetches the previous contact before the current contact base on
         index in the python list self.fetch_results.
         '''
-        if not self._CONTACT <= self._FIRSTCONTACT:
-            self._CONTACT -= 1
+        if not self._ITEM <= self._FIRSTITEM:
+            self._ITEM -= 1
             self.display_data()
 
     def db_contact_next(self):
@@ -726,8 +726,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_contact_next fetches the next contact after the current contact based on
         index in the python list self.fetch_results.
         '''
-        if not self._CONTACT >= self._LASTCONTACT:
-            self._CONTACT += 1
+        if not self._ITEM >= self._LASTITEM:
+            self._ITEM += 1
             self.display_data()
             
     def db_fetch_contact(self):
@@ -748,29 +748,29 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _fname_qry = self.bristo_search.firstNameLineEdit.text()
             
             if _company_qry:
-                for _company_idx in range(self._LASTCONTACT):
+                for _company_idx in range(self._LASTITEM):
                     _company = self.fetch_results[_company_idx][self._COMPANY]
                     if _company_qry in _company:
-                        self._CONTACT = _company_idx
+                        self._ITEM = _company_idx
                         self.display_data()
                         self._clear = False
                         return
                         
             elif _lname_qry:
                 
-                for _company_idx in range(self._LASTCONTACT):
+                for _company_idx in range(self._LASTITEM):
                     _lname = self.fetch_results[_company_idx][self._LNAME]
                     if _lname_qry in _lname:
-                        self._CONTACT = _company_idx
+                        self._ITEM = _company_idx
                         self.display_data()
                         self._clear = False
                         return
             elif _fname_qry:
                 
-                for _company_idx in range(self._LASTCONTACT):
+                for _company_idx in range(self._LASTITEM):
                     _fname = self.fetch_results[_company_idx][self._FNAME]
                     if _fname_qry in _fname:
-                        self._CONTACT = _company_idx
+                        self._ITEM = _company_idx
                         self.display_data()
                         self._clear = False
                         return
@@ -800,7 +800,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         if self.connected:
             self.reset_timer()
-            _current_id = str(self.fetch_results[self._CONTACT][self._ID])
+            _current_id = str(self.fetch_results[self._ITEM][self._ID])
             _company = self.bristo_search.companyLineEdit.text()
             _mrmrs = self.bristo_search.mrmrsLineEdit.text()
             _fname = self.bristo_search.firstNameLineEdit.text()
@@ -842,9 +842,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
     def update_usercontact_availablity(self):
         
-        _current_id = str(self.fetch_results[self._CONTACT][self._ID])
+        _current_id = str(self.fetch_results[self._ITEM][self._ID])
         if self.connected and self._user_email == \
-        self.fetch_results[self._CONTACT][self._OEMAIL]:
+        self.fetch_results[self._ITEM][self._OEMAIL]:
                 _avail = self.bristo_search.availabilityPushButton.isFlat()
                 self.cursor = self.conn.cursor()
                 self.cursor.execute("UPDATE bristo_contacts_ct SET \
@@ -916,46 +916,46 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
 
         self.bristo_search.companyLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._COMPANY])
+            self.fetch_results[self._ITEM][self._COMPANY])
         self.bristo_search.mrmrsLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._MRMRS])
+            self.fetch_results[self._ITEM][self._MRMRS])
         self.bristo_search.firstNameLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._FNAME])
+            self.fetch_results[self._ITEM][self._FNAME])
         self.bristo_search.middleNameLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._MIDDLE])
+            self.fetch_results[self._ITEM][self._MIDDLE])
         self.bristo_search.lastNameLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._LNAME])
+            self.fetch_results[self._ITEM][self._LNAME])
         self.bristo_search.credLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._CRED])
+            self.fetch_results[self._ITEM][self._CRED])
         self.bristo_search.addressLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._ADDR])
+            self.fetch_results[self._ITEM][self._ADDR])
         self.bristo_search.suiteLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._SUITE])
+            self.fetch_results[self._ITEM][self._SUITE])
         self.bristo_search.cityLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._CITY])
+            self.fetch_results[self._ITEM][self._CITY])
         self.bristo_search.stateLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._ST])
+            self.fetch_results[self._ITEM][self._ST])
         self.bristo_search.postalLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._POSTAL])
+            self.fetch_results[self._ITEM][self._POSTAL])
         self.bristo_search.officePhoneLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._OPHONE])
+            self.fetch_results[self._ITEM][self._OPHONE])
         self.bristo_search.cellPhoneLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._CELL])
+            self.fetch_results[self._ITEM][self._CELL])
         self.bristo_search.officeFaxLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._FAX])
+            self.fetch_results[self._ITEM][self._FAX])
         self.bristo_search.homePhoneLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._HPHONE])
+            self.fetch_results[self._ITEM][self._HPHONE])
         self.bristo_search.officeEmailLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._OEMAIL])
+            self.fetch_results[self._ITEM][self._OEMAIL])
         self.bristo_search.personalEmailLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._PEMAIL])
+            self.fetch_results[self._ITEM][self._PEMAIL])
         self.bristo_search.officeWebLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._OWEB])
+            self.fetch_results[self._ITEM][self._OWEB])
         self.bristo_search.personalWebLineEdit.setText(
-            self.fetch_results[self._CONTACT][self._PWEB])
-        self._image_bytea = self.fetch_results[self._CONTACT][self._PIC]
+            self.fetch_results[self._ITEM][self._PWEB])
+        self._image_bytea = self.fetch_results[self._ITEM][self._PIC]
         self.display_pic(self._image_bytea)
-        if self.fetch_results[self._CONTACT][self._AVAIL]:
+        if self.fetch_results[self._ITEM][self._AVAIL]:
             self.bristo_search.availabilityPushButton.setFlat(False)
             self.bristo_search.availabilityPushButton.setStyleSheet(
             "background-color: rgb(0, 255, 0)")
@@ -976,7 +976,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_note_col = 1 # static
         for _contact_note in range(len(self.fetch_notes)):
             if self.fetch_notes[_contact_note][self._notes_ct] ==\
-                self.fetch_results[self._CONTACT][self._OPHONE]:
+                self.fetch_results[self._ITEM][self._OPHONE]:
                 _date_row = self.fetch_notes[_contact_note][self._stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
@@ -1000,7 +1000,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_filename_col = 2 # static
         for _contact_file in range(len(self.fetch_files)):
             if self.fetch_files[_contact_file][self._file_ct] ==\
-                self.fetch_results[self._CONTACT][self._OPHONE]:
+                self.fetch_results[self._ITEM][self._OPHONE]:
                 _id_row = str(self.fetch_files[_contact_file][self._file_id])
                 _qwitem = QTableWidgetItem(_id_row)
                 self.bristo_search.fileTableWidget.setItem(_tblwgt_file_row,
@@ -1030,7 +1030,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         for _contact_call in range(len(self.fetch_calls)):
             if self.fetch_calls[_contact_call][self._calls_ct_id] ==\
-                self.fetch_results[self._CONTACT][self._ID]:
+                self.fetch_results[self._ITEM][self._ID]:
                 _date_row = self.fetch_calls[_contact_call][self._calls_stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
@@ -1113,7 +1113,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.clearContents()
         for _contact_appt in range(len(self.fetch_appts)):
             if self.fetch_appts[_contact_appt][self._appt_ct_id] ==\
-                self.fetch_results[self._CONTACT][self._ID]:
+                self.fetch_results[self._ITEM][self._ID]:
                 _id_row = str(self.fetch_appts[_contact_appt][self._appt_id])
                 _qwitem = QTableWidgetItem(_id_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
@@ -1147,8 +1147,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         display_msg displays a message in the status bar after update of information.
         '''
-        _msg = 'Contact, notes, files, calls '+str(self._CONTACT+1)+" of "\
-        +str(self._LASTCONTACT+1)+" and map url fetched and loaded."
+        _msg = 'Contact, notes, files, calls '+str(self._ITEM+1)+" of "\
+        +str(self._LASTITEM+1)+" and map url fetched and loaded."
         self.contactsStatusBar.showMessage(_msg, 3000)
     
     def unblock_signals(self):
@@ -1168,8 +1168,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         refresh_map refreshes the google map page when the user clicks the refresh
         button.
         '''
-        _map_addr = self.fetch_results[self._CONTACT][self._ADDR]
-        _map_zip = self.fetch_results[self._CONTACT][self._POSTAL]
+        _map_addr = self.fetch_results[self._ITEM][self._ADDR]
+        _map_zip = self.fetch_results[self._ITEM][self._POSTAL]
         _google = 'https://www.google.com/maps/place/'
         _loc = _google+_map_addr+_map_zip
         self.google_com.load(QUrl(_loc))
@@ -1181,7 +1181,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         button.
         '''
        
-        _email_addr_filter = self.fetch_results[self._CONTACT][self._OEMAIL]
+        _email_addr_filter = self.fetch_results[self._ITEM][self._OEMAIL]
         _mail_search = self._user_webmail
         if self._calendar_activated:
             _date = self._qcal_date.toPyDate().strftime("%A %B %d, %Y")
@@ -1352,9 +1352,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                    _crow, self._calls_phone, self.live_combobox)
             self.live_combobox.setFrame(False)
             self.live_combobox.setEditable(True)
-            self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._OPHONE])
-            self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._CELL])
-            self.live_combobox.addItem(self.fetch_results[self._CONTACT][self._HPHONE])
+            self.live_combobox.addItem(self.fetch_results[self._ITEM][self._OPHONE])
+            self.live_combobox.addItem(self.fetch_results[self._ITEM][self._CELL])
+            self.live_combobox.addItem(self.fetch_results[self._ITEM][self._HPHONE])
             self.live_chkbox = QCheckBox()
             self.bristo_search.callsTableWidget.setCellWidget(
                    _crow, self._calls_in, self.live_chkbox)
@@ -1374,7 +1374,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _owner = self._user
             _id = 0
             _crow = self.bristo_search.callsTableWidget.currentRow()
-            _id_ct = str(self.fetch_results[self._CONTACT][_id])
+            _id_ct = str(self.fetch_results[self._ITEM][_id])
             _ph = self.live_combobox.currentText()
             _in = self.live_chkbox.isChecked()
             _results = self.bristo_search.callsTableWidget.cellWidget(
@@ -1401,7 +1401,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         for _index in range(len(self.fetch_results)):
             if self.fetch_results[_index][self._ID] == _contact_id:
                 break
-        self._CONTACT = _index
+        self._ITEM = _index
         self.display_data_not_appts()
     
 
@@ -1452,7 +1452,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self.connected:
             _owner = self._user
             _crow = self.bristo_search.apptTableWidget.currentRow()
-            _id_ct = str(self.fetch_results[self._CONTACT][self._ID])
+            _id_ct = str(self.fetch_results[self._ITEM][self._ID])
             _qtime = self.live_dtimeedit.dateTime()
             _time = _qtime.toPyDateTime()
             _closed = self.live_chkbox.isChecked()
