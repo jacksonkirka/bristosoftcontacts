@@ -701,8 +701,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search_dlg = False
         
         # Seach and update Signals
-        self.bristo_search.picPushButton.clicked.connect(
-            self.update_pic)
+        self.bristo_search.picPushButton.clicked.connect(lambda:
+            self.update_pic(self.bristo_search.picLabel, self.fetch_results, 
+            self._ITEM, self._ID ))
         self.bristo_search.availabilityPushButton.clicked.connect(
             self.update_usercontact_availablity)
         self.bristo_search.notesTableWidget.cellChanged.connect(
@@ -1002,7 +1003,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.groupNameLineEdit.setText(
             self.fetch_results[self._ITEM][self._GROUP])
         self._image_bytea = self.fetch_results[self._ITEM][self._PIC]
-        self.display_pic(self._image_bytea)
+        self.display_pic(self.bristo_search.picLabel, self._image_bytea)
         if self.fetch_results[self._ITEM][self._AVAIL]:
             self.bristo_search.availabilityPushButton.setFlat(False)
             self.bristo_search.availabilityPushButton.setStyleSheet(
@@ -1362,7 +1363,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         head, tail = ntpath.split(_path)
         return tail
 
-    def update_pic(self):
+    def update_pic(self,  _qobject,  _resultset,  _index,  _offset):
     
         '''
         update_pic opens a picture provided by the PostgreSQL database user
@@ -1375,33 +1376,27 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                    "Image files (*.jpg *.gif *.png)")       # Get Filename
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
-        self.bristo_search.picLabel.setPixmap(self._image)  # Display
+        _qobject.setPixmap(self._image)  # Display
         if self.connected:
-            _company = self.bristo_search.companyLineEdit.text()
-            _fname = self.bristo_search.firstNameLineEdit.text()
-            _lname = self.bristo_search.lastNameLineEdit.text()
-       
+            _id = _resultset[_index][_offset]
+            self.cursor = self.conn.cursor()
             self.cursor.execute("""UPDATE bristo_contacts_ct SET
                (bristo_contacts_ct_picture)
-               = (%s) WHERE bristo_contacts_ct_co = %s 
-               AND bristo_contacts_ct_fname = %s AND
-               bristo_contacts_ct_lname =%s;""", 
-               (psycopg2.Binary(self._image_bin), _company,
-               _fname,_lname ))
+               = (%s) WHERE bristo_contacts_ct_id =%s;""", 
+               (psycopg2.Binary(self._image_bin), _id,))
             self.conn.commit()
-            self.contactsStatusBar.showMessage('Contact picture updated.', 3000)
+            self.contactsStatusBar.showMessage('Image updated.', 3000)
             
-    def display_pic(self,  _buffer):
+    
+    def display_pic(self,  _qobject, _buffer):
         '''
-        
-        display_pic accepts a buffer returned by a psycopg2 driver from a
-        PostgreSQL database and displays a QPixmap to a widget ie QDialog.
-        
+        display_pic accepts a qobject and a buffer returned by psycopg2 database
+        driver.
         '''
-        picture = bytes(_buffer)                            # Unpack to bytes
-        p = QPixmap()                                       # Create QPixmap
-        p.loadFromData(picture)                             # Load Picture
-        self.bristo_search.picLabel.setPixmap(p)            # Display Picture
+        picture = bytes(_buffer)    # Unpack to bytes
+        p = QPixmap()               # Create QPixmap
+        p.loadFromData(picture)     # Load picture from data
+        _qobject.setPixmap(p)       # Display picture on object
         
     def live_call_widgets(self):
         '''
