@@ -91,6 +91,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._FAX = 20
         self._OWNER = 21
         self._AVAIL = 22
+        self._GROUP = 23
+    
+        # Groups
+        self._GROUPID = 0
+        self._GRPSTAMP = 1
+        self._GRPNAME = 2
+        self._GRPOWNER = 3
+        self._GRPPWD = 4
+        self._GRPDESC = 5
+        self._groups = False
         
         # Table Rows
         self._table_rows_count = 2000
@@ -554,8 +564,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.search_groups = bristoSearchGroupDlg()
         self.setCentralWidget(self.search_groups)
-
+        self.db_groups_fetch()
     
+    def db_groups_fetch(self):
+        '''
+        db_groups_fetch fetches the groups owned by the the user.
+        '''
+        self.reset_timer()
+        _user = self._user
+        if self.connected:
+            self.cursor = self.conn.cursor()
+            self.cursor.execute("""SELECT * FROM bristo_contacts_groups 
+                WHERE bristo_contacts_groups_owner = %s
+                ORDER by bristo_contacts_groups_group;""",
+                (_user, ))
+            self.fetch_groups = self.cursor.fetchall() # Gets user owned groups
+            self._LASTITEM = len(self.fetch_groups) - 1
+            self._groups = True
+            self._ITEM = self._FIRSTITEM
+            self.display_data()
+        
     def db_contacts_fetch(self):
         '''
         
@@ -566,6 +594,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         self.reset_timer()
+        self._groups = False
         self.bristo_search = bristoContactsSearchDialog()
         
         
@@ -868,17 +897,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def display_data(self):
         '''
         
-        display_data simply displays a contact based on the contact
-        index integer value in self_CONTACT.
+        display_data simply displays a data based on the date
+        index integer value in self_IITEM.
         
         '''
-        self.resize_mode_zero()
         self.block_signals()
-        self.display_contact()
-        self.display_notes()
-        self.display_files()
-        self.display_calls()
-        self.display_appts()
+        if not self._groups:
+            self.resize_mode_zero()
+            self.display_contact()
+            self.display_notes()
+            self.display_files()
+            self.display_calls()
+            self.display_appts()
+        if self._groups:
+            self.display_group()
         self.display_msg()
         self.unblock_signals()
         
@@ -917,9 +949,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         programatic loading of data to the widgets.
         '''
         
-        self.bristo_search.notesTableWidget.blockSignals(True) # block during load
-        self.bristo_search.callsTableWidget.blockSignals(True)
-        self.bristo_search.apptTableWidget.blockSignals(True)
+        if not self._groups:
+            self.bristo_search.notesTableWidget.blockSignals(True) # block during load
+            self.bristo_search.callsTableWidget.blockSignals(True)
+            self.bristo_search.apptTableWidget.blockSignals(True)
+        if self._groups:    
+            self.search_groups.blockSignals(True)
         
     def display_contact(self):
         '''
@@ -964,6 +999,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.fetch_results[self._ITEM][self._OWEB])
         self.bristo_search.personalWebLineEdit.setText(
             self.fetch_results[self._ITEM][self._PWEB])
+        self.bristo_search.groupNameLineEdit.setText(
+            self.fetch_results[self._ITEM][self._GROUP])
         self._image_bytea = self.fetch_results[self._ITEM][self._PIC]
         self.display_pic(self._image_bytea)
         if self.fetch_results[self._ITEM][self._AVAIL]:
@@ -975,7 +1012,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.availabilityPushButton.setStyleSheet(
             "border: solid; background-color: rgb(255, 0, 0)")
         
-            
+    def display_group(self):
+        '''
+        display_group displays group information.
+        '''
+        self.search_groups.descTextEdit.clear()
+        self.search_groups.searchGroupLineEdit.setText(
+            self.fetch_groups[self._ITEM][self._GRPNAME])
+        self.search_groups.descTextEdit.insertPlainText(
+            self.fetch_groups[self._ITEM][self._GRPDESC])
+
+
     def display_notes(self):
         
         '''
@@ -1158,19 +1205,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         display_msg displays a message in the status bar after update of information.
         '''
-        _msg = 'Contact, notes, files, calls '+str(self._ITEM+1)+" of "\
-        +str(self._LASTITEM+1)+" and map url fetched and loaded."
-        self.contactsStatusBar.showMessage(_msg, 3000)
+        if not self._groups:
+            _msg = 'Contact, notes, files, calls '+str(self._ITEM+1)+" of "\
+            +str(self._LASTITEM+1)+" and map url fetched and loaded."
+            self.contactsStatusBar.showMessage(_msg, 3000)
+        if self._groups:
+            _msg = 'Group '+str(self._ITEM+1)+" of "\
+            +str(self._LASTITEM+1)+" fetched and loaded."
+            self.contactsStatusBar.showMessage(_msg, 3000)
     
     def unblock_signals(self):
         
         '''
         unblock_signals unblocks all signals after information has been loaded.
         '''
-        
-        self.bristo_search.notesTableWidget.blockSignals(False) #unblock for update
-        self.bristo_search.callsTableWidget.blockSignals(False) 
-        self.bristo_search.apptTableWidget.blockSignals(False)
+        if not self._groups:
+            self.bristo_search.notesTableWidget.blockSignals(False) #unblock for update
+            self.bristo_search.callsTableWidget.blockSignals(False) 
+            self.bristo_search.apptTableWidget.blockSignals(False)
+        if self._groups:
+             self.search_groups.blockSignals(False)
         
     
     def refresh_map(self):
