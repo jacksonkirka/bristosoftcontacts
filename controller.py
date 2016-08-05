@@ -829,6 +829,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _pemail = self.bristo_search.personalEmailLineEdit.text()
             _oweb = self.bristo_search.officeWebLineEdit.text()
             _pweb = self.bristo_search.personalWebLineEdit.text()
+            _gname = self.bristo_search.groupNameLineEdit.text()
             
             self.cursor.execute("""UPDATE bristo_contacts_ct SET
                 (bristo_contacts_ct_co, bristo_contacts_ct_title,
@@ -840,11 +841,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
                 bristo_contacts_ct_home, bristo_contacts_ct_email1,
                 bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                bristo_contacts_ct_web2) = (%s,%s,%s,%s,%s,%s,%s,%s,
-                %s,%s,%s,%s,%s,%s,%s,%s,%s, %s,%s) WHERE
-                bristo_contacts_ct_id = %s;""", (_company,_mrmrs,
-                _fname,_middle,_lname,_cred, _addr, _suite,_city,_st,_postal,
-                _oph,_cell,_fax, _hph,_oemail,_pemail,_oweb,_pweb, _current_id))
+                bristo_contacts_ct_web2, bristo_contacts_ct_group)
+                = (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                %s, %s,%s,%s) WHERE bristo_contacts_ct_id = %s;""",
+                (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
+                _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
+                _pemail,_oweb,_pweb,_gname, _current_id))
                 
             self.conn.commit()
             self.contactsStatusBar.showMessage('Contact Updated.', 3000)
