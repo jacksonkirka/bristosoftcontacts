@@ -164,7 +164,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionReIndex.triggered.connect(self.db_reindex)
         self.actionChangePassword.triggered.connect(self.chgpwddlg)
         self.action_Add_Group.triggered.connect(self.db_new_group_dlg)
-        self.actionSearchGroupsDialog.triggered.connect(self.search_groups)
+        self.actionSearchGroupsDialog.triggered.connect(self.search_groups_dlg)
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch)
         self.actionQuit.triggered.connect(self.close_contacts)
