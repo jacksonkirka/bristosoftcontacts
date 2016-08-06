@@ -100,6 +100,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._GRPOWNER = 3
         self._GRPPWD = 4
         self._GRPDESC = 5
+        self._GRPPIC = 6
         self._groups = False
         
         # Table Rows
@@ -570,6 +571,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         db_groups_fetch fetches the groups owned by the the user.
         '''
+       
         self.reset_timer()
         _user = self._user
         if self.connected:
@@ -583,6 +585,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._groups = True
             self._ITEM = self._FIRSTITEM
             self.display_data()
+            self.search_groups.picPushButton.clicked.connect(
+                self.update_group_pic)
         
     def db_contacts_fetch(self):
         '''
@@ -701,9 +705,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search_dlg = False
         
         # Seach and update Signals
-        self.bristo_search.picPushButton.clicked.connect(lambda:
-            self.update_pic(self.bristo_search.picLabel, self.fetch_results, 
-            self._ITEM, self._ID ))
+        self.bristo_search.picPushButton.clicked.connect(self.update_pic)
         self.bristo_search.availabilityPushButton.clicked.connect(
             self.update_usercontact_availablity)
         self.bristo_search.notesTableWidget.cellChanged.connect(
@@ -1022,6 +1024,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.fetch_groups[self._ITEM][self._GRPNAME])
         self.search_groups.descTextEdit.insertPlainText(
             self.fetch_groups[self._ITEM][self._GRPDESC])
+        self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
+        self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
+        
 
 
     def display_notes(self):
@@ -1363,8 +1368,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         head, tail = ntpath.split(_path)
         return tail
 
-    def update_pic(self,  _qobject,  _resultset,  _index,  _offset):
-    
+    def update_pic(self):
         '''
         update_pic opens a picture provided by the PostgreSQL database user
         and displays it then returns self._image_bin to the caller dialog.
@@ -1376,14 +1380,37 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                    "Image files (*.jpg *.gif *.png)")       # Get Filename
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
-        _qobject.setPixmap(self._image)  # Display
+        self.bristo_search.contactTab.picLabel.setPixmap(self._image)  # Display
         if self.connected:
-            _id = _resultset[_index][_offset]
+            _id = self.fetch_results[self._ITEM][self._ID]
             self.cursor = self.conn.cursor()
-            self.cursor.execute("""UPDATE bristo_contacts_ct SET
-               (bristo_contacts_ct_picture)
-               = (%s) WHERE bristo_contacts_ct_id =%s;""", 
-               (psycopg2.Binary(self._image_bin), _id,))
+            self.cursor.execute("""UPDATE bristo_contacts_ct SET 
+            (bristo_contacts_ct_picture) = (%s) 
+            WHERE bristo_contacts_ct_id = %s;""", 
+            (psycopg2.Binary(self._image_bin),_id,))
+            self.conn.commit()
+            self.contactsStatusBar.showMessage('Image updated.', 3000)
+    
+    def update_group_pic(self):
+        '''
+        update_group pic opens a group logo provided by the PostgreSQL database
+        user and displays it then returns self._image_bin to the caller dialog.
+        '''
+        
+        self.reset_timer()
+        fdlg = QFileDialog()                               
+        fname = fdlg.getOpenFileName(self, 'Open file', 
+                   "Image files (*.jpg *.gif *.png)")       # Get Filename
+        self._image = QPixmap(fname)                        # Get Pixmap
+        self._image_bin = open(fname, 'rb').read()          # Read > pointer
+        self.search_groups.newGroupLabel.setPixmap(self._image)
+        if self.connected:
+            _id = self.fetch_groups[self._ITEM][self._ID]
+            self.cursor = self.conn.cursor()
+            self.cursor.execute("""UPDATE bristo_contacts_groups SET 
+            (bristo_contacts_groups_pic) = (%s) 
+            WHERE bristo_contacts_groups_id = %s;""", 
+            (psycopg2.Binary(self._image_bin),_id,))
             self.conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
             
@@ -1444,7 +1471,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     (bristo_contacts_calls_ct_id, bristo_contacts_calls_phone,
                     bristo_contacts_calls_type, bristo_contacts_calls_results,
                     bristo_contacts_calls_owner)
-                    VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _ph,_in, _results, _owner))
+                    VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _ph,
+                    _in, _results, _owner))
             self.conn.commit()
             self.live_set = False
             self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
