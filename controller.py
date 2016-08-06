@@ -31,7 +31,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
     
     Controller is the Main Application window with
-    all the menus, toolbars, statusbar and more.
+    all the menus, toolbars, statusbar and more. It is
+    the controller in the model, view controller software
+    architecture.
     
     '''
 
@@ -49,7 +51,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.conn = None
         self.disconnected = True
         self.connected = False
-        self.conn_timer = 300000
+        self.conn_timer = 600000
         self._idle = QTimer()
         self._chgpwd = False
         
@@ -103,6 +105,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._GRPPIC = 6
         self._groups = False
         self._search_groups_dlg = False
+        self._groupqry = False
+        self._groupnm = None
+        
         # Table Rows
         self._table_rows_count = 2000
         
@@ -665,10 +670,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _email = self._user_email
         if self.connected:
             self.cursor = self.conn.cursor()
-            self.cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
-                bristo_contacts_ct_owner = %s OR bristo_contacts_ct_email1 = %s
-                ORDER by bristo_contacts_ct_co, bristo_contacts_ct_lname;""",
-                (_user, _email ))
+            if self._groupqry:
+                _group = self._groupnm
+                self.cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
+                bristo_contacts_ct_group = %s ORDER by bristo_contacts_ct_co,
+                bristo_contacts_ct_lname;""",
+                (_group,  ))
+            else:
+                self.cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
+                    bristo_contacts_ct_owner = %s OR bristo_contacts_ct_email1 = %s
+                    ORDER by bristo_contacts_ct_co, bristo_contacts_ct_lname;""",
+                    (_user, _email ))
             self.fetch_results = self.cursor.fetchall() # Gets all contacts from db
             self.cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
                 bristo_contacts_notes_owner = %s  ORDER by 
@@ -688,10 +700,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_calls_stamp""",  (_user, ))
             self.fetch_calls = self.cursor.fetchall() # Get all calls
             self.cursor.execute("""SELECT * FROM bristo_contacts_appt WHERE
-             bristo_contacts_appt_owner = %s ORDER by 
-                bristo_contacts_appt_ct_id,
-                bristo_contacts_appt_stamp""", (_user, ))
+                 bristo_contacts_appt_owner = %s ORDER by 
+                    bristo_contacts_appt_ct_id,
+                    bristo_contacts_appt_stamp""", (_user, ))
             self.fetch_appts = self.cursor.fetchall() # Get all appointments
+            self._groupqry = False
             self.update_fetch_results()
             _msg = 'All data fetched from database.  Click red x to clear memory.'
             self.contactsStatusBar.showMessage(_msg, 7000)
@@ -728,10 +741,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.fileTableWidget.doubleClicked.connect(
             self.get_contact_file)
         self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
-        self.bristo_search.emailRefreshPushButton.clicked.connect(self.refresh_email)
-        self.bristo_search.callsTableWidget.clicked.connect(self.live_call_widgets)
+        self.bristo_search.accessGroupPushButton.clicked.connect(
+            self.display_group_contacts)
+        self.bristo_search.emailRefreshPushButton.clicked.connect(
+            self.refresh_email)
+        self.bristo_search.callsTableWidget.clicked.connect(
+            self.live_call_widgets)
         self.bristo_search.apptTableWidget.clicked.connect(self.live_appt_widgets)
-        self.bristo_search.calendarWidget.activated.connect(self.display_appts_bydate)
+        self.bristo_search.calendarWidget.activated.connect(
+            self.display_appts_bydate)
         
         self._ITEM = self._FIRSTITEM
         self.display_data()
@@ -1030,7 +1048,49 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
         self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
         
-
+    def display_group_contacts(self):
+        '''
+        display_group_contacts authenticates a group login and then returns
+        all contacts within a group base on group name without spaces.
+        '''
+        
+        # Authenticate group
+        _grp_nm = self.bristo_search.groupNameLineEdit.text()
+        _pwd = self.bristo_search.groupPwdLineEdit.text()
+        if _grp_nm and _pwd:
+            _grp_nm_match = False
+            _grp_pwd_match = False
+            
+            # Verify group name
+            # If user enters incorrect group name this is not yet resolved.
+            self.cursor = self.conn.cursor()
+            self.cursor.execute("SELECT * FROM bristo_contacts_groups WHERE \
+            bristo_contacts_groups_group = %s", (
+                _grp_nm, ))
+            if not self.cursor.rowcount:
+                 self.contactsStatusBar.showMessage('Group not found.', 3000)
+            else:
+                _temp = self.cursor.fetchone()
+                _db_grpnm = _temp[self._GRPNAME]
+                self.cursor.close()
+                if _grp_nm == _db_grpnm:
+                    _grp_nm_match = True
+                    self._groupnm = _grp_nm
+                else:
+                    _grp_nm_match = False
+                    
+                    
+            # Verify user password
+            self.cursor = self.conn.cursor()
+            self.cursor.execute("SELECT bristo_contacts_groups_pwd FROM \
+            bristo_contacts_groups WHERE bristo_contacts_groups_group = %s", (
+                _grp_nm, ))
+            _db_grppwdhash = self.cursor.fetchone()[0]
+            _grp_pwd_match = self.authenticatepwd(_db_grppwdhash,  _pwd)
+        
+            if _grp_nm_match and _grp_pwd_match:
+                self._groupqry = True
+                self.db_contacts_fetch()
 
     def display_notes(self):
         

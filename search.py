@@ -246,7 +246,7 @@ class Ui_contactsSearchDialog(object):
         self.availabilityPushButton.setCheckable(True)
         self.availabilityPushButton.setObjectName(_fromUtf8("availabilityPushButton"))
         self.groupCtLogoLabel = QtGui.QLabel(self.contactTab)
-        self.groupCtLogoLabel.setGeometry(QtCore.QRect(130, 20, 181, 41))
+        self.groupCtLogoLabel.setGeometry(QtCore.QRect(110, 20, 201, 41))
         self.groupCtLogoLabel.setText(_fromUtf8(""))
         self.groupCtLogoLabel.setScaledContents(True)
         self.groupCtLogoLabel.setObjectName(_fromUtf8("groupCtLogoLabel"))
