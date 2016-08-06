@@ -324,7 +324,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 
                 # Need user email for availability
                 self._user_email = _temp[self._USEREMAIL] 
-                print self._user_email
+    
                 
                 self.cursor.close()
                 if _usr_nm == _db_usrnm:
@@ -1279,6 +1279,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _grp_nm = self.fetch_results[self._ITEM][self._GROUP]
         self.bristo_search.groupLogoLabel.clear()
         self.bristo_search.groupCtLogoLabel.clear()
+        _idx = 0
         if _grp_nm:
             for _idx in range(len(self.fetch_groups)):
                 if _grp_nm == self.fetch_groups[_idx][self._GRPNAME]:
