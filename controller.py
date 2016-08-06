@@ -102,6 +102,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._GRPDESC = 5
         self._GRPPIC = 6
         self._groups = False
+        self._search_groups = False
         
         # Table Rows
         self._table_rows_count = 2000
@@ -565,6 +566,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.search_groups = bristoSearchGroupDlg()
         self.setCentralWidget(self.search_groups)
+        self._search_groups_dlg = True
         self.db_groups_fetch()
     
     def db_groups_fetch(self):
@@ -582,11 +584,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 (_user, ))
             self.fetch_groups = self.cursor.fetchall() # Gets user owned groups
             self._LASTITEM = len(self.fetch_groups) - 1
-            self._groups = True
-            self._ITEM = self._FIRSTITEM
-            self.display_data()
-            self.search_groups.picPushButton.clicked.connect(
-                self.update_group_pic)
+            if self._search_groups_dlg:
+                self._groups = True
+                self._ITEM = self._FIRSTITEM
+                self.display_data()
+                self.search_groups.picPushButton.clicked.connect(
+                    self.update_group_pic)
+                self._search_groups = False
         
     def db_contacts_fetch(self):
         '''
