@@ -102,8 +102,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._GRPDESC = 5
         self._GRPPIC = 6
         self._groups = False
-        self._search_groups = False
-        
+        self._search_groups_dlg = False
         # Table Rows
         self._table_rows_count = 2000
         
@@ -583,14 +582,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 ORDER by bristo_contacts_groups_group;""",
                 (_user, ))
             self.fetch_groups = self.cursor.fetchall() # Gets user owned groups
-            self._LASTITEM = len(self.fetch_groups) - 1
             if self._search_groups_dlg:
+                self._LASTITEM = len(self.fetch_groups) - 1
                 self._groups = True
                 self._ITEM = self._FIRSTITEM
                 self.display_data()
                 self.search_groups.picPushButton.clicked.connect(
                     self.update_group_pic)
-                self._search_groups = False
+                self._search_groups_dlg = False
         
     def db_contacts_fetch(self):
         '''
@@ -911,11 +910,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.block_signals()
         if not self._groups:
             self.resize_mode_zero()
+            self.db_groups_fetch()
             self.display_contact()
             self.display_notes()
             self.display_files()
             self.display_calls()
             self.display_appts()
+            self.display_group_in_contact()
         if self._groups:
             self.display_group()
         self.display_msg()
@@ -1006,11 +1007,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.fetch_results[self._ITEM][self._OWEB])
         self.bristo_search.personalWebLineEdit.setText(
             self.fetch_results[self._ITEM][self._PWEB])
-        self.bristo_search.groupNameLineEdit.setText(
-            self.fetch_results[self._ITEM][self._GROUP])
         self._image_bytea = self.fetch_results[self._ITEM][self._PIC]
         self.display_pic(self.bristo_search.picLabel, self._image_bytea)
-        
         if self.fetch_results[self._ITEM][self._AVAIL]:
             self.bristo_search.availabilityPushButton.setFlat(False)
             self.bristo_search.availabilityPushButton.setStyleSheet(
@@ -1210,6 +1208,31 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _tblwgt_purpose_col, _qwitem)
                 _tblwgt_appt_row += 1
         self._display_appts_set = True
+        
+    def display_group_in_contact(self):
+        '''
+        display_group_in_contact displays group info in contact group tab.
+        '''
+        self.bristo_search.plainTextEdit.clear()
+        self.bristo_search.groupNameLineEdit.setText(
+            self.fetch_results[self._ITEM][self._GROUP])
+        _grp_nm = self.fetch_results[self._ITEM][self._GROUP]
+        self.bristo_search.groupLogoLabel.clear()
+        self.bristo_search.groupCtLogoLabel.clear()
+        if _grp_nm:
+            for _idx in range(len(self.fetch_groups)):
+                if _grp_nm == self.fetch_groups[_idx][self._GRPNAME]:
+                    break
+            self.bristo_search.plainTextEdit.insertPlainText(
+                self.fetch_groups[_idx][self._GRPDESC])
+            # Get logo
+            self._image_bytea1 = self.fetch_groups[_idx][self._GRPPIC]
+            self.display_pic(self.bristo_search.groupLogoLabel,
+                self._image_bytea1)
+            self._image_bytea2 = self.fetch_groups[_idx][self._GRPPIC]
+            self.display_pic(self.bristo_search.groupCtLogoLabel, self._image_bytea2)
+            _idx = 0
+
 
     def display_msg(self):
         
