@@ -1006,6 +1006,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.fetch_results[self._ITEM][self._GROUP])
         self._image_bytea = self.fetch_results[self._ITEM][self._PIC]
         self.display_pic(self.bristo_search.picLabel, self._image_bytea)
+        
         if self.fetch_results[self._ITEM][self._AVAIL]:
             self.bristo_search.availabilityPushButton.setFlat(False)
             self.bristo_search.availabilityPushButton.setStyleSheet(
