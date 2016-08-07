@@ -571,6 +571,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.search_groups = bristoSearchGroupDlg()
         self.setCentralWidget(self.search_groups)
         self._search_groups_dlg = True
+        self._groupqry = False
         self.db_groups_fetch()
     
     def db_groups_fetch(self):
