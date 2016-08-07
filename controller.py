@@ -182,7 +182,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.action_Add_Group.triggered.connect(self.db_new_group_dlg)
         self.actionSearchGroupsDialog.triggered.connect(self.search_groups_dlg)
         self.actionDisconnect.triggered.connect(self.db_close)
-        self.actionQuery.triggered.connect(self.db_contacts_fetch)
+        self.actionQuery.triggered.connect(self.db_contacts_fetch_flag)
         self.actionQuit.triggered.connect(self.close_contacts)
         self.actionFirst_Item.triggered.connect(self.db_item_fetch_first)
         self.actionPrevious_Item.triggered.connect(self.db_item_prev)
@@ -603,6 +603,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.search_groups.picPushButton.clicked.connect(
                     self.update_group_pic)
                 self._search_groups_dlg = False
+    
+    def db_contacts_fetch_flag(self):
+        '''
+        db_contacts_fetch_flag sets self._groupqry to False when the query 
+        button on toolbar is clicked.  It is needed to distinguish between a
+        click and a program method call namely display_goup_contacts.
+        '''
+        self._groupqry = False
+        self.db_contacts_fetch()
         
     def db_contacts_fetch(self):
         '''
