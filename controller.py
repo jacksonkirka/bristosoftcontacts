@@ -1493,12 +1493,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.contactTab.picLabel.setPixmap(self._image)  # Display
         if self.connected:
-            _id = self.fetch_results[self._ITEM][self._ID]
+            #_id = self.fetch_results[self._ITEM][self._ID]
+            _company = self.bristo_search.companyLineEdit.text()
+            _fname = self.bristo_search.firstNameLineEdit.text()
+            _lname = self.bristo_search.lastNameLineEdit.text()
             self.cursor = self.conn.cursor()
             self.cursor.execute("""UPDATE bristo_contacts_ct SET 
             (bristo_contacts_ct_picture) = (%s) 
-            WHERE bristo_contacts_ct_id = %s;""", 
-            (psycopg2.Binary(self._image_bin),_id,))
+            WHERE bristo_contacts_ct_co = %s AND
+            bristo_contacts_ct_fname = %s AND
+            bristo_contacts_ct_lname = %s;""", 
+            (psycopg2.Binary(self._image_bin),_company,
+             _fname,_lname ))
             self.conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
     
