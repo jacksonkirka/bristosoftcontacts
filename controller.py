@@ -716,7 +716,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.update_fetch_results()
             _msg = 'All data fetched from database.  Click red x to clear memory.'
             self.contactsStatusBar.showMessage(_msg, 7000)
-            #self._groupqry = False
+    
             
     def update_fetch_results(self):
         '''
