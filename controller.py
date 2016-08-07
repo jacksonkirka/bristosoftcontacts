@@ -1,5 +1,10 @@
 #!/usr/bin/python
-
+'''
+This controller module is the main controller for bristoSOFT Contacts v. 0.1.
+It is part of the model view controller software architecture and controls the
+communication between the view (primarily QDialogs) and the model (primarily a
+PostgreSQL database).
+'''
 # Imports
 import sip # Needed for conversion to Python types
 sip.setapi('QString', 2)
@@ -19,8 +24,7 @@ import psycopg2
 from view import *
 import contactsmain
 
-# Version assignment
-__version__ = '0.1'
+__version__ = '0.1' # Version assignment
 
 # contactsdialog = loadUiType('contacts_combo.ui')[0]
 #bristocontacts = loadUiType('contacts_main.ui')[0]
@@ -107,6 +111,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._search_groups_dlg = False
         self._groupqry = False
         self._groupnm = None
+        self.search_groups = None
         
         # Table Rows
         self._table_rows_count = 2000
@@ -879,6 +884,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the database.
         
         '''
+
+        if self.search_groups:
+            self.db_update_group()
+            return
         if self.connected:
             self.reset_timer()
             _current_id = str(self.fetch_results[self._ITEM][self._ID])
@@ -922,6 +931,34 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 
             self.conn.commit()
             self.contactsStatusBar.showMessage('Contact Updated.', 3000)
+            
+    def db_update_group(self):
+        '''
+        update_group updates group information including the password.
+        '''
+        #_usr = self._user
+
+        _group = self.search_groups.searchGroupLineEdit.text()
+        _pwd = self.search_groups.passwordLineEdit.text()
+        _confirm = self.search_groups.confirmPasswordLineEdit.text()
+        _desc = self.search_groups.descTextEdit.toPlainText()
+        _id = self.fetch_groups[self._ITEM][self._GROUPID]
+ 
+        if _pwd == _confirm:
+            _pwd_match = True
+        _complex = self.mincomplex(_pwd)
+        if self.connected and _pwd_match and _complex:
+            self.reset_timer()
+            _hashedpwd = self.hashpwd(_pwd)
+            self.cursor = self.conn.cursor()
+            self.cursor.execute("""UPDATE bristo_contacts_groups SET
+                    (bristo_contacts_groups_group,bristo_contacts_groups_pwd,
+                    bristo_contacts_groups_desc) = (%s,%s,%s) WHERE 
+                    bristo_contacts_groups_id = %s;""", 
+                    (_group,_hashedpwd,_desc, _id ))
+            self.conn.commit()
+            self.cursor.close()
+            self.contactsStatusBar.showMessage('Group Updated.', 3000)
         
     def update_usercontact_availablity(self):
         
