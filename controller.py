@@ -1059,13 +1059,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         display_group displays group information.
         '''
-        self.search_groups.descTextEdit.clear()
-        self.search_groups.searchGroupLineEdit.setText(
-            self.fetch_groups[self._ITEM][self._GRPNAME])
-        self.search_groups.descTextEdit.insertPlainText(
-            self.fetch_groups[self._ITEM][self._GRPDESC])
-        self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
-        self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
+        if self.fetch_groups:
+            self.search_groups.descTextEdit.clear()
+            self.search_groups.searchGroupLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPNAME])
+            self.search_groups.descTextEdit.insertPlainText(
+                self.fetch_groups[self._ITEM][self._GRPDESC])
+            self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
+            self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
         
     def display_group_contacts(self):
         '''
