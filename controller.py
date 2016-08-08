@@ -732,7 +732,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_appt_stamp""", (_user, ))
             self.fetch_appts = self._cursor.fetchall() # Get all appointments
             self.update_fetch_results()
-            _msg = 'All data fetched from database.  Click red x to clear memory.'
+            _msg = 'All data fetched from database.'
             self.contactsStatusBar.showMessage(_msg, 7000)
     
             
@@ -1702,9 +1702,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             
             self._cursor.execute("""INSERT INTO bristo_contacts_appt
                     (bristo_contacts_appt_ct_id, bristo_contacts_appt_time,
-                    bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
-                    VALUES (%s,%s, %s, %s, %s);""", (_id_ct, _time,_closed, _purpose,
-                    _owner))
+                    bristo_contacts_appt_complete, bristo_contacts_appt_purpose,
+                    bristo_contacts_appt_owner) VALUES (%s,%s, %s, %s, %s);""",
+                    (_id_ct, _time,_closed, _purpose,
+            _owner))
             self._conn.commit()
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
