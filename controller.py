@@ -936,7 +936,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         update_group updates group information including the password.
         '''
-        #_usr = self._user
+        _usr = self._user
 
         _group = self.search_groups.searchGroupLineEdit.text()
         _pwd = self.search_groups.passwordLineEdit.text()
@@ -954,8 +954,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.cursor.execute("""UPDATE bristo_contacts_groups SET
                     (bristo_contacts_groups_group,bristo_contacts_groups_pwd,
                     bristo_contacts_groups_desc) = (%s,%s,%s) WHERE 
-                    bristo_contacts_groups_id = %s;""", 
-                    (_group,_hashedpwd,_desc, _id ))
+                    bristo_contacts_groups_id = %s AND 
+                    bristo_contacts_groups_owner = %s;""", 
+                    (_group,_hashedpwd,_desc, _id, _usr ))
             self.conn.commit()
             self.cursor.close()
             self.contactsStatusBar.showMessage('Group Updated.', 3000)
