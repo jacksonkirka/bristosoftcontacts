@@ -366,6 +366,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                          rgb(179, 255, 188);")
                     if not self._chgpwd:
                         self.contactsStatusBar.addWidget(self._conn_msg)
+                    self.reset_timer()
+                    
                     
                 else:
                     self.incorrectlogin()
