@@ -55,7 +55,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn = None
         self._disconnected = True
         self._connected = False
-        self._conn_timer = 600000
+        self._conn_timer = 100000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
@@ -355,7 +355,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self._user, ))
                     self._user_webmail_tuple = self._cursor.fetchone()
                     self._user_webmail = self._user_webmail_tuple[0]
-                    self._cursor.close()
+                
                     
                     if self._disconnected:
                         self.contactsStatusBar.removeWidget(self._conn_msg)
@@ -366,8 +366,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                          rgb(179, 255, 188);")
                     if not self._chgpwd:
                         self.contactsStatusBar.addWidget(self._conn_msg)
-                    self.reset_timer()
                     
+                    # Log authentication
+                    _in = True
+                    _grplogin = False
+                    self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                            (bristo_contacts_authlog_uname,
+                            bristo_contacts_authlog_in,
+                            bristo_contacts_authlog_group)
+                            VALUES (%s,%s,%s);""", 
+                            (_usr_nm,_in, _grplogin, ))
+                    self._conn.commit()
+                    self._cursor.close()
+                    self.reset_timer() # Initial set after user login
                     
                 else:
                     self.incorrectlogin()
@@ -1211,6 +1222,22 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _grp_pwd_match = self.authenticatepwd(_db_grppwdhash,  _pwd)
         
             if _grp_nm_match and _grp_pwd_match:
+                
+                if self._cursor.close:
+                    self._cursor = self._conn.cursor()
+                # Log authentication
+                _usr_nm = self._user
+                _in = True
+                _grplogin = True
+                self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                        (bristo_contacts_authlog_uname,
+                        bristo_contacts_authlog_in,
+                        bristo_contacts_authlog_group,
+                        bristo_contacts_authlog_grpname)
+                        VALUES (%s,%s,%s,%s);""", 
+                        (_usr_nm,_in, _grplogin,_grp_nm, ))
+                self._conn.commit()
+                self._cursor.close()
                 self._groupqry = True  # Key variable.
                 self.db_contacts_fetch()
 
@@ -1868,6 +1895,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         if self._connected:
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
+            # Log authentication
+            _usr_nm = self._user
+            _in = False
+            _grplogin = False
+            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                    (bristo_contacts_authlog_uname,
+                    bristo_contacts_authlog_in,
+                    bristo_contacts_authlog_group)
+                    VALUES (%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, ))
+            self._conn.commit()
+            self._cursor.close()
             self._conn.close()
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
@@ -1886,6 +1927,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         if self._connected:
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
+            # Log authentication
+            _usr_nm = self._user
+            _in = False
+            _grplogin = False
+            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                    (bristo_contacts_authlog_uname,
+                    bristo_contacts_authlog_in,
+                    bristo_contacts_authlog_group)
+                    VALUES (%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, ))
+            self._conn.commit()
+            self._cursor.close()
+            
             self._conn.close()
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
@@ -1904,6 +1960,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         if self._connected:
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
+            # Log authentication
+            _usr_nm = self._user
+            _in = False
+            _grplogin = False
+            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                    (bristo_contacts_authlog_uname,
+                    bristo_contacts_authlog_in,
+                    bristo_contacts_authlog_group)
+                    VALUES (%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, ))
+            self._conn.commit()
+            self._cursor.close()
             self._conn.close()
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
