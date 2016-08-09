@@ -607,13 +607,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_groups.bristo_contacts_groups_pic FROM 
                 public.bristo_contacts_groups, 
                 public.bristo_contacts_appt, 
-                public.bristo_contacts_ct WHERE 
+                public.bristo_contacts_ct WHERE
+                bristo_contacts_groups.bristo_contacts_groups_owner = %s OR
                 bristo_contacts_appt.bristo_contacts_appt_owner = %s AND
                 bristo_contacts_appt.bristo_contacts_appt_ct_id = 
                 bristo_contacts_ct.bristo_contacts_ct_id AND
                 bristo_contacts_ct.bristo_contacts_ct_group = 
                 bristo_contacts_groups.bristo_contacts_groups_group;""",
-                (_user,))
+                (_user,_user))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s
