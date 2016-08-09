@@ -595,14 +595,23 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._connected:
             self._cursor = self._conn.cursor()
             if not self._groupqry:
-                self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
-                    WHERE bristo_contacts_groups_owner = %s OR
-                    bristo_contacts_groups_group = (SELECT bristo_contacts_ct_group FROM
-                    bristo_contacts_ct WHERE bristo_contacts_ct_id = 
-                    (SELECT bristo_contacts_appt_ct_id FROM bristo_contacts_appt
-                    WHERE bristo_contacts_appt_owner = %s))
-                    ORDER by bristo_contacts_groups_group;""",
-                (_user, _user ))
+                self._cursor.execute("""SELECT 
+                bristo_contacts_groups.bristo_contacts_groups_id, 
+                bristo_contacts_groups.bristo_contacts_groups_stamp, 
+                bristo_contacts_groups.bristo_contacts_groups_group, 
+                bristo_contacts_groups.bristo_contacts_groups_owner, 
+                bristo_contacts_groups.bristo_contacts_groups_pwd, 
+                bristo_contacts_groups.bristo_contacts_groups_desc, 
+                bristo_contacts_groups.bristo_contacts_groups_pic FROM 
+                public.bristo_contacts_groups, 
+                public.bristo_contacts_appt, 
+                public.bristo_contacts_ct WHERE 
+                bristo_contacts_appt.bristo_contacts_appt_owner = %s AND
+                bristo_contacts_appt.bristo_contacts_appt_ct_id = 
+                bristo_contacts_ct.bristo_contacts_ct_id AND
+                bristo_contacts_ct.bristo_contacts_ct_group = 
+                bristo_contacts_groups.bristo_contacts_groups_group;""",
+                (_user,))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s
@@ -709,12 +718,40 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct_lname;""",
                 (_group,  ))
             if not self._groupqry:
-                self._cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
-                    bristo_contacts_ct_owner = %s OR bristo_contacts_ct_email1 = %s
-                    OR bristo_contacts_ct_id = (SELECT bristo_contacts_appt_ct_id 
-                    FROM bristo_contacts_appt WHERE bristo_contacts_appt_owner = 
-                    %s) ORDER by bristo_contacts_ct_co,
-                    bristo_contacts_ct_lname;""",
+                self._cursor.execute("""SELECT 
+                bristo_contacts_ct.bristo_contacts_ct_id, 
+                bristo_contacts_ct.bristo_contacts_ct_co, 
+                bristo_contacts_ct.bristo_contacts_ct_title, 
+                bristo_contacts_ct.bristo_contacts_ct_fname, 
+                bristo_contacts_ct.bristo_contacts_ct_middle, 
+                bristo_contacts_ct.bristo_contacts_ct_lname, 
+                bristo_contacts_ct.bristo_contacts_ct_cred, 
+                bristo_contacts_ct.bristo_contacts_ct_addr1, 
+                bristo_contacts_ct.bristo_contacts_ct_addr2, 
+                bristo_contacts_ct.bristo_contacts_ct_city, 
+                bristo_contacts_ct.bristo_contacts_ct_state, 
+                bristo_contacts_ct.bristo_contacts_ct_postal, 
+                bristo_contacts_ct.bristo_contacts_ct_ph_office, 
+                bristo_contacts_ct.bristo_contacts_ct_ph_cell, 
+                bristo_contacts_ct.bristo_contacts_ct_home, 
+                bristo_contacts_ct.bristo_contacts_ct_email1, 
+                bristo_contacts_ct.bristo_contacts_ct_email2, 
+                bristo_contacts_ct.bristo_contacts_ct_web, 
+                bristo_contacts_ct.bristo_contacts_ct_web2, 
+                bristo_contacts_ct.bristo_contacts_ct_picture, 
+                bristo_contacts_ct.bristo_contacts_ct_fax, 
+                bristo_contacts_ct.bristo_contacts_ct_owner, 
+                bristo_contacts_ct.bristo_contacts_ct_available, 
+                bristo_contacts_ct.bristo_contacts_ct_group FROM 
+                public.bristo_contacts_ct, 
+                public.bristo_contacts_appt WHERE
+                bristo_contacts_ct.bristo_contacts_ct_owner = %s
+                OR bristo_contacts_ct.bristo_contacts_ct_email1 = %s OR
+                bristo_contacts_appt.bristo_contacts_appt_ct_id = 
+                bristo_contacts_ct.bristo_contacts_ct_id 
+                AND bristo_contacts_appt.bristo_contacts_appt_owner = %s
+                    ORDER by bristo_contacts_ct.bristo_contacts_ct_co,
+                    bristo_contacts_ct.bristo_contacts_ct_lname;""",
                     (_user, _email, _user,  ))
             self.fetch_results = self._cursor.fetchall() # Gets all contacts from db
             self._cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
