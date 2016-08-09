@@ -605,9 +605,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_groups.bristo_contacts_groups_pwd, 
                 bristo_contacts_groups.bristo_contacts_groups_desc, 
                 bristo_contacts_groups.bristo_contacts_groups_pic FROM 
-                public.bristo_contacts_groups, 
-                public.bristo_contacts_appt, 
-                public.bristo_contacts_ct WHERE
+                bristo_contacts_groups, bristo_contacts_appt, bristo_contacts_ct 
+                WHERE
                 bristo_contacts_groups.bristo_contacts_groups_owner = %s OR
                 bristo_contacts_appt.bristo_contacts_appt_owner = %s AND
                 bristo_contacts_appt.bristo_contacts_appt_ct_id = 
