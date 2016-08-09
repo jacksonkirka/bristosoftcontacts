@@ -963,6 +963,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.db_update_group()
             return
         if self._connected:
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
             self.reset_timer()
             _current_id = str(self.fetch_results[self._ITEM][self._ID])
             _company = self.bristo_search.companyLineEdit.text()
