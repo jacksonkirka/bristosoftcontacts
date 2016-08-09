@@ -582,7 +582,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.setCentralWidget(self.search_groups)
         self._search_groups_dlg = True
         self._groupqry = False
-        self.db_groups_fetch()
+        self.get_groups_owned()
     
     def db_groups_fetch(self):
         '''
@@ -620,15 +620,29 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     ORDER by bristo_contacts_groups_group;""",
                 (_grp, ))                
             self.fetch_groups = self._cursor.fetchall() # Gets user owned groups
-            if self._search_groups_dlg:
-                self._LASTITEM = len(self.fetch_groups) - 1
-                self._groups = True
-                self._ITEM = self._FIRSTITEM
-                self.display_data()
-                self.search_groups.picPushButton.clicked.connect(
-                    self.update_group_pic)
-                self._search_groups_dlg = False
-    
+                
+    def get_groups_owned(self):
+        '''
+        get_groups_owned returns only the groups user created and currently
+        owns.
+        '''
+        if self._connected:
+            self.reset_timer()
+            _user = self._user
+            self._cursor = self._conn.cursor()
+            self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
+                        WHERE bristo_contacts_groups_owner = %s
+                        ORDER by bristo_contacts_groups_group;""",
+                    (_user, ))
+            self.fetch_groups = self._cursor.fetchall() # Gets user owned groups  
+            self._LASTITEM = len(self.fetch_groups) - 1
+            self._groups = True
+            self._ITEM = self._FIRSTITEM
+            self.display_data()
+            self.search_groups.picPushButton.clicked.connect(
+                self.update_group_pic)
+            self._search_groups_dlg = False        
+
     def db_contacts_fetch_flag(self):
         '''
         db_contacts_fetch_flag sets self._groupqry to False when the query 
