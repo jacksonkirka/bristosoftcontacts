@@ -597,7 +597,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._connected:
             self._cursor = self._conn.cursor()
             if not self._groupqry:
-                self._cursor.execute("""SELECT 
+                self._cursor.execute("""SELECT DISTINCT
                 bristo_contacts_groups.bristo_contacts_groups_id, 
                 bristo_contacts_groups.bristo_contacts_groups_stamp, 
                 bristo_contacts_groups.bristo_contacts_groups_group, 
@@ -720,7 +720,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct_lname;""",
                 (_group,  ))
             if not self._groupqry:
-                self._cursor.execute("""SELECT 
+                self._cursor.execute("""SELECT DISTINCT
                 bristo_contacts_ct.bristo_contacts_ct_id, 
                 bristo_contacts_ct.bristo_contacts_ct_co, 
                 bristo_contacts_ct.bristo_contacts_ct_title, 
@@ -745,8 +745,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct.bristo_contacts_ct_owner, 
                 bristo_contacts_ct.bristo_contacts_ct_available, 
                 bristo_contacts_ct.bristo_contacts_ct_group FROM 
-                public.bristo_contacts_ct, 
-                public.bristo_contacts_appt WHERE
+                bristo_contacts_ct, bristo_contacts_appt WHERE
                 bristo_contacts_ct.bristo_contacts_ct_owner = %s
                 OR bristo_contacts_ct.bristo_contacts_ct_email1 = %s OR
                 bristo_contacts_appt.bristo_contacts_appt_ct_id = 
