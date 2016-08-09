@@ -585,7 +585,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_groups_fetch(self):
         '''
         db_groups_fetch fetches the groups owned by the the user or
-        queried by via group name and password.
+        queried by via group name and password or where the user has
+        appointment for a contact in a group.
         '''
        
         self.reset_timer()
@@ -595,9 +596,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn.cursor()
             if not self._groupqry:
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
-                    WHERE bristo_contacts_groups_owner = %s
+                    WHERE bristo_contacts_groups_owner = %s OR
+                    bristo_contacts_groups_group = (SELECT bristo_contacts_ct_group FROM
+                    bristo_contacts_ct WHERE bristo_contacts_ct_id = 
+                    (SELECT bristo_contacts_appt_ct_id FROM bristo_contacts_appt
+                    WHERE bristo_contacts_appt_owner = %s))
                     ORDER by bristo_contacts_groups_group;""",
-                (_user, ))
+                (_user, _user ))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s
@@ -706,8 +711,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if not self._groupqry:
                 self._cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
                     bristo_contacts_ct_owner = %s OR bristo_contacts_ct_email1 = %s
-                    ORDER by bristo_contacts_ct_co, bristo_contacts_ct_lname;""",
-                    (_user, _email ))
+                    OR bristo_contacts_ct_id = (SELECT bristo_contacts_appt_ct_id 
+                    FROM bristo_contacts_appt WHERE bristo_contacts_appt_owner = 
+                    %s) ORDER by bristo_contacts_ct_co,
+                    bristo_contacts_ct_lname;""",
+                    (_user, _email, _user,  ))
             self.fetch_results = self._cursor.fetchall() # Gets all contacts from db
             self._cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
                 bristo_contacts_notes_owner = %s  ORDER by 
@@ -1246,7 +1254,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def display_appts_by_date(self):
 
         '''
-        display_appts displays appointments in the appointments tab.
+        display_appts displays appointments in the appointments tab by date.
         '''
         _tblwgt_appt_row = 0  # dynamic
         _tblwgt_id_col = 0 # static
