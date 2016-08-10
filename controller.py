@@ -391,6 +391,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         chngpwddlg displays the change password dialog and accepts user input
         based on accepted signal.
         '''
+        if self._connected:
+            self.contactsStatusBar.showMessage(
+            "Please log out then change password.", 10000)
         if not self._connected:
             self.chgpwd = bristoContactsChgPwdDlg()
             self.chgpwd.show()
