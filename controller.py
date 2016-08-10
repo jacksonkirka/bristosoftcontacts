@@ -296,7 +296,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         #password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
         
         con = "host='aws-us-east-1-portal.9.dblayer.com' \
-        dbname='bristocontacts' user='admin' password='QOYUVWTHNYOGRXFF' \
+        dbname='bristocontacts' user='admin'\
+        password='89w29d92paejida90d9i2ioa$sla' \
         sslmode='require' port='11270'"
         
         
