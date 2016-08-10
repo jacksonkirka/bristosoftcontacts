@@ -1077,7 +1077,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         display_data_not_appts displays all info on contact without updating the
-        contact appointments.  This is needed to allow appoints selected by the
+        contact appointments.  This is needed to allow appointments selected by the
         calendar date to display a contact without overwriting the calendar list
         of appointments for that day.
         '''
@@ -1087,6 +1087,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.display_notes()
         self.display_files()
         self.display_calls()
+        self.display_group_in_contact()
         self.display_msg()
         self.unblock_signals()
         
