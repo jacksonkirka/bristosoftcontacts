@@ -119,7 +119,7 @@ class Ui_searchGroupDialog(object):
     def retranslateUi(self, searchGroupDialog):
         searchGroupDialog.setWindowTitle(_translate("searchGroupDialog", "Search Group Dialog", None))
         self.groupLabel.setText(_translate("searchGroupDialog", "Group:", None))
-        self.searchGroupLineEdit.setPlaceholderText(_translate("searchGroupDialog", "Group Name should not include spaces.", None))
+        self.searchGroupLineEdit.setPlaceholderText(_translate("searchGroupDialog", "Search: Groups  and Group Name should not include spaces.", None))
         self.passwordLabel.setText(_translate("searchGroupDialog", "Password:", None))
         self.passwordLineEdit.setPlaceholderText(_translate("searchGroupDialog", "Password m/b 9 char, upper, lower, number and one special character.", None))
         self.confirmPasswordLabel.setText(_translate("searchGroupDialog", "Confirm:", None))

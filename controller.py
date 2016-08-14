@@ -335,7 +335,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn.cursor()
             self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
             bristo_contacts_users_name = %s LIMIT %s", (
-                self._user, self_limit ))
+                self._user, self._limit ))
             if not self._cursor.rowcount:
                 self.incorrectlogin()
             else:
@@ -616,6 +616,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         search_groups_dlg opens the search groups dialog to get users
         groups to view and edit.
         '''
+        self.bristo_search = None
         self.db_login()
         self.search_groups = bristoSearchGroupDlg()
         self.setCentralWidget(self.search_groups)
@@ -654,7 +655,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct.bristo_contacts_ct_id AND
                 bristo_contacts_ct.bristo_contacts_ct_group = 
                 bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
-                (_user,_user, self_limit))
+                (_user,_user, self._limit))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s 
@@ -690,6 +691,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         button on toolbar is clicked.  It is needed to distinguish between a
         click and a program method call namely display_goup_contacts.
         '''
+        self.search_groups = None
         self.db_login()
         self._groupqry = False
         self.db_contacts_fetch()
@@ -935,7 +937,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._clear == False:
             self.clear_search_fields()
             self._clear = True
-        else:
+        elif self.bristo_search:
             _company_qry = self.bristo_search.companyLineEdit.text()
             _lname_qry = self.bristo_search.lastNameLineEdit.text()
             _fname_qry = self.bristo_search.firstNameLineEdit.text()
@@ -967,6 +969,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.display_data()
                         self._clear = False
                         return
+                        
+        elif self.search_groups:
+            _grp_qry = self.search_groups.searchGroupLineEdit.text()
+            
+            if _grp_qry:
+                for _grp_idx in range(self._LASTITEM):
+                    _grps = self.fetch_groups[_grp_idx][self._GRPNAME]
+                    if _grp_qry in _grps:
+                        self._ITEM = _grp_idx
+                        self.display_data()
+                        self._clear = False
+                        return
     
             _msg = 'Pattern not found.'
             self.contactsStatusBar.showMessage(_msg, 3000)
@@ -982,6 +996,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.companyLineEdit.clear()
             self.bristo_search.firstNameLineEdit.clear()
             self.bristo_search.lastNameLineEdit.clear()
+            
+        if self.search_groups:
+            self.search_groups.searchGroupLineEdit.clear()
         
     
     def db_update_contact(self):
