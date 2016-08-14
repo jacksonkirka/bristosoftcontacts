@@ -62,8 +62,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._cursor = None
         
         # Authentication
-        self.usr_info_json = None
-        self._usr_ip = None
+        self._usr_ip = str(get('https://ipapi.co/ip/').text)
         
         # Dialogs
         self.bristo_search = None
@@ -385,7 +384,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.contactsStatusBar.addWidget(self._conn_msg)
                         
                     # Log authentication
-                    self._usr_ip = str(get('https://ipapi.co/ip/').text)
                     _usr_ip = self._usr_ip
                     _in = True
                     _grplogin = False
