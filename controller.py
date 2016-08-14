@@ -15,7 +15,7 @@ import uuid
 import re
 import os
 from bristo_exceptions import *
-from requests import get
+from requests import get # Error on ordered_dict changed in compat.py
 import platform
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
@@ -56,7 +56,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn = None
         self._disconnected = True
         self._connected = False
-        self._conn_timer = 600000
+        self._conn_timer = 15000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
@@ -183,7 +183,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._LASTITEM = 0
         
         # Main Signals
-        self.actionConnect.triggered.connect(self.db_connect)
         self.actionAbout_Qt.triggered.connect(self.aboutqt)
         self.actionAbout_bristoSOFT_Contacts.triggered.connect(
             self.aboutbristocontacts)
@@ -297,7 +296,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         
-        
+
         
          # Step 1 owner authentication security string
         #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
@@ -379,7 +378,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                          rgb(179, 255, 188);")
                     if not self._chgpwd:
                         self.contactsStatusBar.addWidget(self._conn_msg)
-                    
+                        
                     # Log authentication
                     self._usr_ip = str(get('https://ipapi.co/ip/').text)
                     _usr_ip = self._usr_ip
@@ -522,6 +521,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_insert inserts one new contact into the PostgreSQL database table.
         
         '''
+        self.db_login()
         if self._connected:
             self.reset_timer()
             _company = self.bristo.companyLineEdit.text()
@@ -563,6 +563,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
             self._conn.commit()
             self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
+            self.db_closed()
 
     def db_new_group_dlg(self):
         '''
@@ -608,12 +609,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         search_groups_dlg opens the search groups dialog to get users
         groups to view and edit.
         '''
+        self.db_login()
         self.search_groups = bristoSearchGroupDlg()
         self.setCentralWidget(self.search_groups)
         self._search_groups_dlg = True
         self._groupqry = False
         self._update_groups = True
         self.get_groups_owned()
+        self.db_close()
     
     def db_groups_fetch(self):
         '''
@@ -680,8 +683,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         button on toolbar is clicked.  It is needed to distinguish between a
         click and a program method call namely display_goup_contacts.
         '''
+        self.db_login()
         self._groupqry = False
         self.db_contacts_fetch()
+        self.db_close()
         
     def db_contacts_fetch(self):
         '''
@@ -979,6 +984,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the database.
         
         '''
+        self.db_login()
 
         if self._update_groups:
             self.db_update_group()
@@ -1028,11 +1034,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 
             self._conn.commit()
             self.contactsStatusBar.showMessage('Contact Updated.', 3000)
+            self.db_close()
             
     def db_update_group(self):
         '''
         update_group updates group information including the password.
         '''
+        self.db_login()
         _usr = self._user
 
         _group = self.search_groups.searchGroupLineEdit.text()
@@ -1057,9 +1065,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self._cursor.close()
             self.contactsStatusBar.showMessage('Group Updated.', 3000)
+            self.db_close()
         
     def update_usercontact_availablity(self):
-        
+        '''
+        udate_usercontact_availability updates the users contact
+        availability status.
+        '''
+        self.db_login()
         _current_id = str(self.fetch_results[self._ITEM][self._ID])
         if self._connected and self._user_email == \
         self.fetch_results[self._ITEM][self._OEMAIL]:
@@ -1071,6 +1084,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._conn.commit()
                 self._cursor.close()
                 self.contactsStatusBar.showMessage('User Contact Availability Updated.', 3000)
+                self.db_close()
             
     def display_data(self):
         '''
@@ -1209,7 +1223,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         display_group_contacts authenticates a group login and then returns
         all contacts within a group base on group name without spaces.
         '''
-        
+        self.db_login()
         # Authenticate group
         _grp_nm = self.bristo_search.groupNameLineEdit.text()
         _pwd = self.bristo_search.groupPwdLineEdit.text()
@@ -1266,6 +1280,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._groupqry = True  # Key variable.
                 self.db_contacts_fetch()
+                self.db_close()
 
     def display_notes(self):
         
@@ -1535,6 +1550,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value and notice itself need be entered.
         
         '''
+        self.db_login()
         if self._connected:
             self.reset_timer()
             _owner = self._user
@@ -1550,6 +1566,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     VALUES (%s,%s,%s);""", (_oph,_note,_owner))
             self._conn.commit()
             self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
+            self.db_close()
     
     def resize_notes(self):
         
@@ -1584,6 +1601,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value, file name and file need be entered.
         
         '''
+        self.db_login()
         if self._connected:
             self.reset_timer()
             _owner = self._user
@@ -1600,6 +1618,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                (_oph, _fnm, psycopg2.Binary(self._file_bin), _owner))
             self._conn.commit()
             self.contactsStatusBar.showMessage('New contact file inserted.', 3000)
+            self.db_close()
     
     def get_contact_file(self):
         
@@ -1607,6 +1626,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         get_contact_file retrieves binary files from the database and saves them to
         the users desktop.
         '''
+        self.db_login()
         if self._connected:
             _crow = self.bristo_search.fileTableWidget.currentRow() # Critical tested
             _ccol = self._file_id
@@ -1622,6 +1642,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 f.close()      # close file
             self.contactsStatusBar.showMessage(_file_row_name+' '\
                                                +'saved on Desktop.', 2000)
+            self.db_close()
     
     def get_path_filename(self,  _path):
         
@@ -1638,7 +1659,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_pic opens a picture provided by the PostgreSQL database user
         and displays it then returns self._image_bin to the caller dialog.
         '''
-        
+        self.db_login()
         self.reset_timer()
         fdlg = QFileDialog()                               
         fname = fdlg.getOpenFileName(self, 'Open file', 
@@ -1656,13 +1677,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
              _id ))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
+            self.db_close()
     
     def update_group_pic(self):
         '''
         update_group pic opens a group logo provided by the PostgreSQL database
         user and displays it then returns self._image_bin to the caller dialog.
         '''
-        
+        self.db_login()
         self.reset_timer()
         fdlg = QFileDialog()                               
         fname = fdlg.getOpenFileName(self, 'Open file', 
@@ -1679,6 +1701,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             (psycopg2.Binary(self._image_bin),_id,))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
+            self.db_close()
             
     
     def display_pic(self,  _qobject, _buffer):
@@ -1722,6 +1745,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         or outbound and results need be entered.
         
         '''
+        self.db_login()
         if self._connected:
             self.reset_timer()
             _owner = self._user
@@ -1742,6 +1766,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
+            self.db_close()
         
     def appt_display_contact(self):
         
@@ -1803,6 +1828,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the appointment, open or closed and purpose need be entered.
         
         '''
+        self.db_login()
         if self._connected:
             _owner = self._user
             _crow = self.bristo_search.apptTableWidget.currentRow()
@@ -1822,6 +1848,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
+            self.db_close()
         
     def db_update_contact_appt(self):
         
@@ -1831,6 +1858,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         complete/open checkbox and purpose can be updated.
         
         '''
+        self.db_login()
         self.reset_timer()
         _crow = self.bristo_search.apptTableWidget.currentRow()
         _appt_id = self.bristo_search.apptTableWidget.item(
@@ -1846,6 +1874,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn.commit()
         self._live_set = False
         self.contactsStatusBar.showMessage('Contact Appointment Updated.', 5000)
+        self.db_close()
     
     def display_appts_bydate(self):
         
@@ -1869,6 +1898,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_full_vacuum does a complete vacuum of the database.
         
         '''
+        self.db_login()
         if self._connected:
             self._cursor = self._conn.cursor()
             old_isolation_level = self._conn.isolation_level
@@ -1879,6 +1909,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _msg ='Vacumming Database '+self._db+' complete.'
             self.contactsStatusBar.showMessage(_msg, 5000)
             self._cursor.close()
+            self.db_close()
         else:
             _msg = 'Please connect to the database to vacuum.'
             self.contactsStatusBar.showMessage(_msg, 5000)
@@ -1889,6 +1920,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_reindex reindexes the database bristo_contacts_ct.
         
         '''
+        self.db_login()
         if self._connected:
             self._cursor = self._conn.cursor()
             old_isolation_level = self._conn.isolation_level
@@ -1899,6 +1931,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _msg = 'Reindexing '+self._db+' is complete.'
             self.contactsStatusBar.showMessage(_msg,  5000)
             self._cursor.close()
+            self.db_close()
         else:
             _msg = 'Please connect to the database to reindex.'
             self.contactsStatusBar.showMessage(_msg, 5000)
