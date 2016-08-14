@@ -582,6 +582,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_insert_group inserts a new group entered by the user with authentication
         credentials.
         '''
+        self.db_login()
         _usr = self._user
         _group = self.nwgrp.newGroupLineEdit.text()
         _pwd = self.nwgrp.passwordLineEdit.text()
@@ -603,6 +604,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self._cursor.close()
             self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
+            self.db_close()
     
     def search_groups_dlg(self):
         '''
