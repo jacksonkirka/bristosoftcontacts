@@ -78,6 +78,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._USERNM = 1
         self._USEREMAIL = 2
         
+        # SQL class globals
+        self._limit = 250
+        
         # Database constants cursor list return
         self._ITEM = 0
         self._FIRSTITEM = 0
@@ -331,8 +334,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # If user enters incorrect user name this is not yet resolved.
             self._cursor = self._conn.cursor()
             self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
-            bristo_contacts_users_name = %s", (
-                self._user, ))
+            bristo_contacts_users_name = %s LIMIT %s", (
+                self._user, self_limit ))
             if not self._cursor.rowcount:
                 self.incorrectlogin()
             else:
@@ -353,8 +356,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 # Verify user password
                 self._cursor = self._conn.cursor()
                 self._cursor.execute("SELECT bristo_contacts_users_pwd FROM \
-                bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
-                    self._user, ))
+                bristo_contacts_users WHERE bristo_contacts_users_name = %s \
+                LIMIT %s", (
+                    self._user, self._limit))
                 _db_usrpwdhash = self._cursor.fetchone()[0]
                 _usr_pwd_match = self.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
             
@@ -363,8 +367,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     # get user webmail link for contact filter
                     self._cursor = self._conn.cursor()
                     self._cursor.execute("SELECT bristo_contacts_users_webmail FROM \
-                    bristo_contacts_users WHERE bristo_contacts_users_name = %s", (
-                        self._user, ))
+                    bristo_contacts_users WHERE bristo_contacts_users_name = %s \
+                     LIMIT %s", (
+                        self._user, self._limit))
                     self._user_webmail_tuple = self._cursor.fetchone()
                     self._user_webmail = self._user_webmail_tuple[0]
                 
@@ -648,13 +653,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_appt.bristo_contacts_appt_ct_id = 
                 bristo_contacts_ct.bristo_contacts_ct_id AND
                 bristo_contacts_ct.bristo_contacts_ct_group = 
-                bristo_contacts_groups.bristo_contacts_groups_group;""",
-                (_user,_user))
+                bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
+                (_user,_user, self_limit))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
-                    WHERE bristo_contacts_groups_group = %s
-                    ORDER by bristo_contacts_groups_group;""",
-                (_grp, ))                
+                    WHERE bristo_contacts_groups_group = %s 
+                    ORDER by bristo_contacts_groups_group LIMIT %s;""",
+                (_grp, self._limit))                
             self.fetch_groups = self._cursor.fetchall() # Gets user owned groups
                 
     def get_groups_owned(self):
@@ -668,8 +673,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn.cursor()
             self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                         WHERE bristo_contacts_groups_owner = %s
-                        ORDER by bristo_contacts_groups_group;""",
-                    (_user, ))
+                        ORDER by bristo_contacts_groups_group LIMIT %s;""",
+                    (_user, self._limit ))
             self.fetch_groups = self._cursor.fetchall() # Gets user owned groups  
             self._LASTITEM = len(self.fetch_groups) - 1
             self._groups = True
@@ -769,8 +774,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _group = self._groupnm
                 self._cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
                 bristo_contacts_ct_group = %s ORDER by bristo_contacts_ct_co,
-                bristo_contacts_ct_lname;""",
-                (_group,  ))
+                bristo_contacts_ct_lname LIMIT %s;""",
+                (_group, self._limit ))
             if not self._groupqry:
                 self._cursor.execute("""SELECT DISTINCT
                 bristo_contacts_ct.bristo_contacts_ct_id, 
@@ -804,30 +809,30 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct.bristo_contacts_ct_id 
                 AND bristo_contacts_appt.bristo_contacts_appt_owner = %s
                     ORDER by bristo_contacts_ct.bristo_contacts_ct_co,
-                    bristo_contacts_ct.bristo_contacts_ct_lname;""",
-                    (_user, _email, _user,  ))
+                    bristo_contacts_ct.bristo_contacts_ct_lname LIMIT %s;""",
+                    (_user, _email, _user, self._limit ))
             self.fetch_results = self._cursor.fetchall() # Gets all contacts from db
             self._cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
                 bristo_contacts_notes_owner = %s  ORDER by 
                 bristo_contacts_notes_ct,
-                bristo_contacts_notes_stamp""", (_user, ))
+                bristo_contacts_notes_stamp LIMIT %s""", (_user, self._limit))
             self.fetch_notes = self._cursor.fetchall() # Get all notes
             self._cursor.execute("""SELECT bristo_contacts_files_id,
                 bristo_contacts_files_stamp, bristo_contacts_files_ct,
                 bristo_contacts_files_name FROM
                 bristo_contacts_files WHERE bristo_contacts_files_owner = %s
                 ORDER by bristo_contacts_files_ct,
-                bristo_contacts_files_stamp""", (_user, ))
+                bristo_contacts_files_stamp LIMIT %s""", (_user, self._limit))
             self.fetch_files = self._cursor.fetchall() # Get all files
             self._cursor.execute("""SELECT * FROM bristo_contacts_calls WHERE
                 bristo_contacts_calls_owner = %s ORDER by 
                 bristo_contacts_calls_ct_id,
-                bristo_contacts_calls_stamp""",  (_user, ))
+                bristo_contacts_calls_stamp LIMIT %s""",  (_user, self._limit))
             self.fetch_calls = self._cursor.fetchall() # Get all calls
             self._cursor.execute("""SELECT * FROM bristo_contacts_appt WHERE
                  bristo_contacts_appt_owner = %s ORDER by 
                     bristo_contacts_appt_ct_id,
-                    bristo_contacts_appt_stamp""", (_user, ))
+                    bristo_contacts_appt_stamp LIMIT %s """, (_user,self._limit ))
             self.fetch_appts = self._cursor.fetchall() # Get all appointments
             self.update_fetch_results()
             _msg = 'All data fetched from database.'
@@ -1237,8 +1242,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # If user enters incorrect group name this is not yet resolved.
             self._cursor = self._conn.cursor()
             self._cursor.execute("SELECT * FROM bristo_contacts_groups WHERE \
-            bristo_contacts_groups_group = %s", (
-                _grp_nm, ))
+            bristo_contacts_groups_group = %s LIMIT %s", (
+                _grp_nm, self._limit))
             if not self._cursor.rowcount:
                  self.contactsStatusBar.showMessage('Group not found.', 3000)
                  return
