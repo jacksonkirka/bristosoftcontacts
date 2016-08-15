@@ -12,6 +12,7 @@ import datetime
 import ntpath
 import hashlib
 import uuid
+import ast
 import re
 import os
 from bristo_exceptions import *
@@ -62,7 +63,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._cursor = None
         
         # Authentication
-        self._usr_ip = str(get('https://ipapi.co/ip/').text)
+        self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
+        self._usr_city = self._usr_loc['city']
+        self._usr_ip = self._usr_loc['ip']
+        self._usr_region = self._usr_loc['region']
+        self._usr_lon = self._usr_loc['longitude']
+        self._usr_ctry = self._usr_loc['country']
+        self._usr_lat = self._usr_loc['latitude']
+        self._usr_tz = self._usr_loc['timezone']
+        self._usr_zip = self._usr_loc['postal']
         
         # Dialogs
         self.bristo_search = None
@@ -382,15 +391,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         
                     # Log authentication
                     _usr_ip = self._usr_ip
+                    _usr_city = self._usr_city
+                    _usr_reg = self._usr_region
+                    _usr_ctry = self._usr_ctry
+                    _usr_zip = self._usr_zip
                     _in = True
                     _grplogin = False
                     self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                             (bristo_contacts_authlog_uname,
                             bristo_contacts_authlog_in,
                             bristo_contacts_authlog_group,
-                            bristo_contacts_authlog_inet)
-                            VALUES (%s,%s,%s,%s);""", 
-                            (_usr_nm,_in, _grplogin, _usr_ip))
+                            bristo_contacts_authlog_inet,
+                            bristo_contacts_authlog_city,
+                            bristo_contacts_authlog_region,
+                            bristo_contacts_authlog_ctry,
+                            bristo_contacts_authlog_postal)
+                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                            (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                            _usr_reg, _usr_ctry, _usr_zip))
                     self._conn.commit()
                     self._cursor.close()
                     self.reset_timer() # Initial set after user login
@@ -1977,16 +1995,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor = self._conn.cursor()
             # Log authentication
             _usr_nm = self._user
+            _grplogin = False
             _usr_ip = self._usr_ip
+            _usr_city = self._usr_city
+            _usr_reg = self._usr_region
+            _usr_ctry = self._usr_ctry
+            _usr_zip = self._usr_zip
             _in = False
             _grplogin = False
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                     (bristo_contacts_authlog_uname,
                     bristo_contacts_authlog_in,
                     bristo_contacts_authlog_group,
-                    bristo_contacts_authlog_inet)
-                    VALUES (%s,%s,%s,%s);""", 
-                    (_usr_nm,_in, _grplogin, _usr_ip))
+                    bristo_contacts_authlog_inet,
+                    bristo_contacts_authlog_city,
+                    bristo_contacts_authlog_region,
+                    bristo_contacts_authlog_ctry,
+                    bristo_contacts_authlog_postal)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                    _usr_reg, _usr_ctry, _usr_zip))
             self._conn.commit()
             self._cursor.close()
             self._conn.close()
@@ -2012,18 +2040,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # Log authentication
             _usr_nm = self._user
             _usr_ip = self._usr_ip
+            _usr_city = self._usr_city
+            _usr_reg = self._usr_region
+            _usr_ctry = self._usr_ctry
+            _usr_zip = self._usr_zip
             _in = False
             _grplogin = False
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                     (bristo_contacts_authlog_uname,
                     bristo_contacts_authlog_in,
                     bristo_contacts_authlog_group,
-                    bristo_contacts_authlog_inet)
-                    VALUES (%s,%s,%s,%s);""", 
-                    (_usr_nm,_in, _grplogin,_usr_ip ))
+                    bristo_contacts_authlog_inet,
+                    bristo_contacts_authlog_city,
+                    bristo_contacts_authlog_region,
+                    bristo_contacts_authlog_ctry,
+                    bristo_contacts_authlog_postal)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                    _usr_reg, _usr_ctry, _usr_zip))
             self._conn.commit()
             self._cursor.close()
-            
             self._conn.close()
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
@@ -2047,15 +2083,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # Log authentication
             _usr_nm = self._user
             _usr_ip = self._usr_ip
+            _usr_city = self._usr_city
+            _usr_reg = self._usr_region
+            _usr_ctry = self._usr_ctry
+            _usr_zip = self._usr_zip
             _in = False
             _grplogin = False
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                     (bristo_contacts_authlog_uname,
                     bristo_contacts_authlog_in,
                     bristo_contacts_authlog_group,
-                    bristo_contacts_authlog_inet)
-                    VALUES (%s,%s,%s,%s);""", 
-                    (_usr_nm,_in, _grplogin, _usr_ip))
+                    bristo_contacts_authlog_inet,
+                    bristo_contacts_authlog_city,
+                    bristo_contacts_authlog_region,
+                    bristo_contacts_authlog_ctry,
+                    bristo_contacts_authlog_postal)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                    _usr_reg, _usr_ctry, _usr_zip))
             self._conn.commit()
             self._cursor.close()
             self._conn.close()
