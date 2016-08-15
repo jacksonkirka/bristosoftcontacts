@@ -56,7 +56,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn = None
         self._disconnected = True
         self._connected = False
-        self._conn_timer = 15000
+        self._conn_timer = 30000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
@@ -126,14 +126,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Table Rows
         self._table_rows_count = 2000
         
-        
         # Notes
         self._stamp = 1
         self._note = 3
         self._notes_ct = 2
         self._note_column = 1
-        
-        
 
         # Image
         self._image = QPixmap()
