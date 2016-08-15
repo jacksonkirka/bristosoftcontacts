@@ -527,8 +527,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # set contactsDialog in cetralWidget
         self.bristo = bristoContactsDialog()
         self.setCentralWidget(self.bristo)
-        if self._cursor.close:
-            self._cursor = self._conn.cursor()
         self.bristo.accepted.connect(self.db_insert)
     
     
@@ -540,6 +538,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.db_login()
         if self._connected:
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
             self.reset_timer()
             _company = self.bristo.companyLineEdit.text()
             _mrmrs = self.bristo.mrmrsLineEdit.text()
@@ -580,7 +580,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
             self._conn.commit()
             self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
-            self.db_closed()
+            self.db_close()
 
     def db_new_group_dlg(self):
         '''
