@@ -527,10 +527,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # set contactsDialog in cetralWidget
         self.bristo = bristoContactsDialog()
         self.setCentralWidget(self.bristo)
-        if self._connected:
-            if self._cursor.close:
-                self._cursor = self._conn.cursor()
-                self.bristo.accepted.connect(self.db_insert)
+        if self._cursor.close:
+            self._cursor = self._conn.cursor()
+        self.bristo.accepted.connect(self.db_insert)
     
     
     def db_insert(self):
