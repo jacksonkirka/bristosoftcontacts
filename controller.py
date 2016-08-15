@@ -1302,16 +1302,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 # Log authentication
                 _usr_nm = self._user
                 _usr_ip = self._usr_ip
+                _usr_city = self._usr_city
+                _usr_reg = self._usr_region
+                _usr_ctry = self._usr_ctry
+                _usr_zip = self._usr_zip
                 _in = True
                 _grplogin = True
                 self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                         (bristo_contacts_authlog_uname,
                         bristo_contacts_authlog_in,
                         bristo_contacts_authlog_group,
-                        bristo_contacts_authlog_grpname,
-                        bristo_contacts_authlog_inet)
-                        VALUES (%s,%s,%s,%s, %s);""", 
-                        (_usr_nm,_in, _grplogin,_grp_nm,_usr_ip ))
+                        bristo_contacts_authlog_inet,
+                        bristo_contacts_authlog_city,
+                        bristo_contacts_authlog_region,
+                        bristo_contacts_authlog_ctry,
+                        bristo_contacts_authlog_postal)
+                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                        (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                        _usr_reg, _usr_ctry, _usr_zip))
                 self._conn.commit()
                 self._cursor.close()
                 self._groupqry = True  # Key variable.
