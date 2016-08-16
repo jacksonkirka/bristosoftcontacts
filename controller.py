@@ -424,7 +424,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._connected:
             self.contactsStatusBar.showMessage(
             "Please log out then change password.", 10000)
-        if not self._connected:
+        if not self._connected and not self._user == 'guest':
             self.chgpwd = bristoContactsChgPwdDlg()
             self.chgpwd.show()
             self.chgpwd.accepted.connect(self.changepasswd)
