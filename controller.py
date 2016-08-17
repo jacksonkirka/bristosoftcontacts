@@ -57,7 +57,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn = None
         self._disconnected = True
         self._connected = False
-        self._conn_timer = 30000
+        self._conn_timer = 60000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
@@ -955,7 +955,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _fname_qry = self.bristo_search.firstNameLineEdit.text()
             
             if _company_qry:
-                for _company_idx in range(self._LASTITEM):
+                for _company_idx in range(len(self.fetch_results)):
                     _company = self.fetch_results[_company_idx][self._COMPANY]
                     if _company_qry in _company:
                         self._ITEM = _company_idx
@@ -965,7 +965,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         
             elif _lname_qry:
                 
-                for _company_idx in range(self._LASTITEM):
+                for _company_idx in range(len(self.fetch_results)):
                     _lname = self.fetch_results[_company_idx][self._LNAME]
                     if _lname_qry in _lname:
                         self._ITEM = _company_idx
@@ -974,7 +974,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         return
             elif _fname_qry:
                 
-                for _company_idx in range(self._LASTITEM):
+                for _company_idx in range(len(self.fetch_reults)):
                     _fname = self.fetch_results[_company_idx][self._FNAME]
                     if _fname_qry in _fname:
                         self._ITEM = _company_idx
@@ -986,7 +986,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _grp_qry = self.search_groups.searchGroupLineEdit.text()
             
             if _grp_qry:
-                for _grp_idx in range(self._LASTITEM):
+                for _grp_idx in range(len(self.fetch_groups)):
                     _grps = self.fetch_groups[_grp_idx][self._GRPNAME]
                     if _grp_qry in _grps:
                         self._ITEM = _grp_idx
