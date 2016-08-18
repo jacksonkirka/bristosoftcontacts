@@ -410,7 +410,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
                             _usr_reg, _usr_ctry, _usr_zip))
                     self._conn.commit()
-                    self._cursor.close()
+                    self._cursor.execute("""SET TIME ZONE %s;""", self._usr_tz)
                     self.reset_timer() # Initial set after user login
                     
                 else:
@@ -1793,6 +1793,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.db_login()
         if self._connected:
             self.reset_timer()
+            if self._cursor.closed:
+                self._cursor = self.conn.cursor()
             _owner = self._user
             _id = 0
             _crow = self.bristo_search.callsTableWidget.currentRow()
