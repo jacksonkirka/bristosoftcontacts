@@ -975,7 +975,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         return
             elif _fname_qry:
                 
-                for _company_idx in range(len(self.fetch_reults)):
+                for _company_idx in range(len(self.fetch_results)):
                     _fname = self.fetch_results[_company_idx][self._FNAME]
                     if _fname_qry in _fname:
                         self._ITEM = _company_idx
