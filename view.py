@@ -1,4 +1,25 @@
 #!/usr/bin/python
+#
+#
+# Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
+# techniques, algorithms are confidential trade secrets under Ohio and U.S. 
+# Federal law owned by bristoSOFT.
+#
+# Kirk A Jackson dba bristoSOFT
+# 4100 Executive Park Drive
+# Suite 11
+# Cincinnati, OH  45241
+# Phone (513) 401-9114
+# email jacksonkirka@bristosoft.com
+# 
+# The trade name bristoSOFT is a registered trade name with the State of Ohio
+# document No. 201607803210. 
+#
+'''
+view.py module creates the interface objects by multiple inheritance while
+leveraging Qt Designer tools to deliver a world class GUI experience.  This
+view.py module is imported by the controller.py.
+'''
 
 # Imports
 from PyQt4.QtGui import *

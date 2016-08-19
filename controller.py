@@ -1,10 +1,28 @@
 #!/usr/bin/python
+#
+#
+# Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
+# techniques, algorithms are confidential trade secrets under Ohio and U.S. 
+# Federal law owned by bristoSOFT.
+#
+# Kirk A Jackson dba bristoSOFT
+# 4100 Executive Park Drive
+# Suite 11
+# Cincinnati, OH  45241
+# Phone (513) 401-9114
+# email jacksonkirka@bristosoft.com
+# 
+# The trade name bristoSOFT is a registered trade name with the State of Ohio
+# document No. 201607803210. 
+#
+
 '''
 This controller module is the main controller for bristoSOFT Contacts v. 0.1.
 It is part of the model view controller software architecture and controls the
 communication between the view (primarily QDialogs) and the model (primarily a
-PostgreSQL database).
+PostgreSQL 9.4+ database).
 '''
+
 # Imports
 import sip # Needed for conversion to Python types
 sip.setapi('QString', 2)
@@ -38,7 +56,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     
     Controller is the Main Application window with
     all the menus, toolbars, statusbar and more. It is
-    the controller in the model, view controller software
+    the controller in the model, view, controller software
     architecture.
     
     '''
@@ -77,8 +95,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search = None
         self.bristo = None
       
-        
-        # users
+        # Users
         self._user = None
         self._passwd = None
         self._user_email = None
@@ -212,7 +229,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionUpdate.triggered.connect(self.db_update_contact)
         
         
-        # set contactsStatusBar to red
+        # Set contactsStatusBar to red
         self._conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
         self.contactsStatusBar.addWidget(self._conn_msg)
         self.contactsStatusBar.setStyleSheet("background-color: \
@@ -297,15 +314,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_login(self):
         ''' 
         
-        db_login establishes a connection to a PostgreSQL database on port 
-        5423 with the standard connection string.
-        
-        
+        db_login establishes a connection to a PostgreSQL database on 
+        with the standard connection string.
         
         '''
-        
-
-        
          # Step 1 owner authentication security string
         #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
         #dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
@@ -395,6 +407,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _usr_reg = self._usr_region
                     _usr_ctry = self._usr_ctry
                     _usr_zip = self._usr_zip
+                    _suc = True
                     _in = True
                     _grplogin = False
                     self._cursor.execute("""INSERT INTO bristo_contacts_authlog
@@ -405,10 +418,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             bristo_contacts_authlog_city,
                             bristo_contacts_authlog_region,
                             bristo_contacts_authlog_ctry,
-                            bristo_contacts_authlog_postal)
-                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                            bristo_contacts_authlog_postal,
+                            bristo_contacts_authlog_success)
+                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
                             (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                            _usr_reg, _usr_ctry, _usr_zip))
+                            _usr_reg, _usr_ctry, _usr_zip, _suc ))
                     self._conn.commit()
                     _tz = self._usr_tz
                     self._cursor.execute("""SET TIME ZONE %s;""", (_tz, ))
@@ -483,6 +497,28 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         incorrectlogin displays a message in the status bar to the user informing
         them they have not successfully logged on.
         '''
+        # Log incorrect authentication
+        _usr_nm = self._user
+        _usr_ip = self._usr_ip
+        _usr_city = self._usr_city
+        _usr_reg = self._usr_region
+        _usr_ctry = self._usr_ctry
+        _usr_zip = self._usr_zip
+        _in = True
+        _grplogin = False
+        self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                (bristo_contacts_authlog_uname,
+                bristo_contacts_authlog_in,
+                bristo_contacts_authlog_group,
+                bristo_contacts_authlog_inet,
+                bristo_contacts_authlog_city,
+                bristo_contacts_authlog_region,
+                bristo_contacts_authlog_ctry,
+                bristo_contacts_authlog_postal)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                _usr_reg, _usr_ctry, _usr_zip))
+        self._conn.commit()
         self._conn.close()
         self._connected = False
         self._disconnected = True
@@ -491,6 +527,50 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._disconnected:
             self.contactsStatusBar.removeWidget(self._conn_msg)
         self._conn_msg = QLabel('Login incorrect, please try again.')
+        self.contactsStatusBar.addWidget(self._conn_msg)
+        
+    def incorrectgrouplogin(self):
+    
+        '''
+        incorrectgrouplogin displays a message in the status bar to the user
+        informing them they have not successfully logged into the group.
+        '''
+        # Log incorrect group authentication
+        self.db_login()
+        _usr_nm = self._user
+        _usr_ip = self._usr_ip
+        _usr_city = self._usr_city
+        _usr_reg = self._usr_region
+        _usr_ctry = self._usr_ctry
+        _usr_zip = self._usr_zip
+        _in = True
+        _grplogin = True
+        _grp_nm = self._groupnm
+        if self._cursor.close:
+            self._cursor = self._conn.cursor()
+        self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                (bristo_contacts_authlog_uname,
+                bristo_contacts_authlog_in,
+                bristo_contacts_authlog_group,
+                bristo_contacts_authlog_grpname,
+                bristo_contacts_authlog_inet,
+                bristo_contacts_authlog_city,
+                bristo_contacts_authlog_region,
+                bristo_contacts_authlog_ctry,
+                bristo_contacts_authlog_postal)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                (_usr_nm,_in, _grplogin, _grp_nm, _usr_ip, _usr_city, 
+                _usr_reg, _usr_ctry, _usr_zip))
+        self._conn.commit()
+        self._cursor.close()
+        self._conn.close()
+        self._connected = False
+        self._disconnected = True
+        self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+        if self._disconnected:
+            self.contactsStatusBar.removeWidget(self._conn_msg)
+        self._conn_msg = QLabel('Group login incorrect, please try again.')
         self.contactsStatusBar.addWidget(self._conn_msg)
 
 
@@ -1317,6 +1397,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _usr_reg = self._usr_region
                 _usr_ctry = self._usr_ctry
                 _usr_zip = self._usr_zip
+                _suc = True
                 _in = True
                 _grplogin = True
                 self._cursor.execute("""INSERT INTO bristo_contacts_authlog
@@ -1328,16 +1409,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         bristo_contacts_authlog_grpname,
                         bristo_contacts_authlog_region,
                         bristo_contacts_authlog_ctry,
-                        bristo_contacts_authlog_postal)
-                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                        bristo_contacts_authlog_postal,
+                        bristo_contacts_authlog_success)
+                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
                         (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                        _grp_nm, _usr_reg, _usr_ctry, _usr_zip))
+                        _grp_nm, _usr_reg, _usr_ctry, _usr_zip, _suc))
                 self._conn.commit()
                 self._cursor.close()
                 self._groupqry = True  # Key variable.
                 self.db_contacts_fetch()
                 self.db_close()
-            self.incorrectlogin()
+            self.incorrectgrouplogin()
 
     def display_notes(self):
         
@@ -2066,6 +2148,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _usr_reg = self._usr_region
             _usr_ctry = self._usr_ctry
             _usr_zip = self._usr_zip
+            _suc = True
             _in = False
             _grplogin = False
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
@@ -2076,10 +2159,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_authlog_city,
                     bristo_contacts_authlog_region,
                     bristo_contacts_authlog_ctry,
-                    bristo_contacts_authlog_postal)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    bristo_contacts_authlog_postal,
+                    bristo_contacts_authlog_success)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
                     (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                    _usr_reg, _usr_ctry, _usr_zip))
+                    _usr_reg, _usr_ctry, _usr_zip, _suc))
             self._conn.commit()
             self._cursor.close()
             self._conn.close()
@@ -2109,6 +2193,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _usr_reg = self._usr_region
             _usr_ctry = self._usr_ctry
             _usr_zip = self._usr_zip
+            _suc = True
             _in = False
             _grplogin = False
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
@@ -2119,10 +2204,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_authlog_city,
                     bristo_contacts_authlog_region,
                     bristo_contacts_authlog_ctry,
-                    bristo_contacts_authlog_postal)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    bristo_contacts_authlog_postal,
+                    bristo_contacts_authlog_success)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
                     (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                    _usr_reg, _usr_ctry, _usr_zip))
+                    _usr_reg, _usr_ctry, _usr_zip, _suc))
             self._conn.commit()
             self._cursor.close()
             self._conn.close()
