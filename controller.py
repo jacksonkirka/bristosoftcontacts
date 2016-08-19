@@ -639,9 +639,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.get_groups_owned()
         self.db_close()
     
-    def db_groups_fetch(self):
+    def db_fetch_groups(self):
         '''
-        db_groups_fetch fetches the groups owned by the the user or
+        db_fetch_groups fetches the groups owned by the the user or
         queried by via group name and password or where the user has
         appointment for a contact in a group.
         '''
@@ -963,6 +963,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.display_data()
                         self._clear = False
                         return
+                _msg = 'Pattern not found.'
+                self.contactsStatusBar.showMessage(_msg, 3000)
+                self._clear = False
                         
             elif _lname_qry:
                 
@@ -973,6 +976,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.display_data()
                         self._clear = False
                         return
+                _msg = 'Pattern not found.'
+                self.contactsStatusBar.showMessage(_msg, 3000)
+                self._clear = False
+            
             elif _fname_qry:
                 
                 for _company_idx in range(len(self.fetch_results)):
@@ -982,6 +989,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.display_data()
                         self._clear = False
                         return
+                _msg = 'Pattern not found.'
+                self.contactsStatusBar.showMessage(_msg, 3000)
+                self._clear = False
                         
         elif self.search_groups:
             _grp_qry = self.search_groups.searchGroupLineEdit.text()
@@ -995,9 +1005,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self._clear = False
                         return
     
-            _msg = 'Pattern not found.'
-            self.contactsStatusBar.showMessage(_msg, 3000)
-            self._clear = False
+                _msg = 'Pattern not found.'
+                self.contactsStatusBar.showMessage(_msg, 3000)
+                self._clear = False
            
         
     def clear_search_fields(self):
@@ -1133,7 +1143,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.block_signals()
         if not self._groups:
             self.resize_mode_zero()
-            self.db_groups_fetch()
+            self.db_fetch_groups()
             self.display_contact()
             self.display_notes()
             self.display_files()
@@ -1327,6 +1337,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._groupqry = True  # Key variable.
                 self.db_contacts_fetch()
                 self.db_close()
+            self.incorrectlogin()
 
     def display_notes(self):
         
