@@ -2105,6 +2105,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _usr_reg = self._usr_region
             _usr_ctry = self._usr_ctry
             _usr_zip = self._usr_zip
+            _suc = True
             _in = False
             _grplogin = False
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
@@ -2115,10 +2116,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_authlog_city,
                     bristo_contacts_authlog_region,
                     bristo_contacts_authlog_ctry,
-                    bristo_contacts_authlog_postal)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    bristo_contacts_authlog_postal,
+                    bristo_contacts_authlog_success)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
                     (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                    _usr_reg, _usr_ctry, _usr_zip))
+                    _usr_reg, _usr_ctry, _usr_zip, _suc))
             self._conn.commit()
             self._cursor.close()
             self._conn.close()
