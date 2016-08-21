@@ -1124,11 +1124,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the database.
         
         '''
-        self.db_login()
+        
 
         if self._update_groups:
             self.db_update_group()
             return
+        self.db_login()
         if self._connected:
             if self._cursor.close:
                 self._cursor = self._conn.cursor()
@@ -1180,32 +1181,36 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         update_group updates group information including the password.
         '''
-        self.db_login()
+        
         _usr = self._user
 
         _group = self.search_groups.searchGroupLineEdit.text()
         _pwd = self.search_groups.passwordLineEdit.text()
         _confirm = self.search_groups.confirmPasswordLineEdit.text()
         _desc = self.search_groups.descTextEdit.toPlainText()
-        _id = self.fetch_groups[self._ITEM][self._GROUPID]
- 
-        if _pwd == _confirm:
-            _pwd_match = True
-        _complex = self.mincomplex(_pwd)
-        if self._connected and _pwd_match and _complex:
-            self.reset_timer()
-            _hashedpwd = self.hashpwd(_pwd)
-            self._cursor = self._conn.cursor()
-            self._cursor.execute("""UPDATE bristo_contacts_groups SET
-                    (bristo_contacts_groups_group,bristo_contacts_groups_pwd,
-                    bristo_contacts_groups_desc) = (%s,%s,%s) WHERE 
-                    bristo_contacts_groups_id = %s AND 
-                    bristo_contacts_groups_owner = %s;""", 
-                    (_group,_hashedpwd,_desc, _id, _usr ))
-            self._conn.commit()
-            self._cursor.close()
-            self.contactsStatusBar.showMessage('Group Updated.', 3000)
-            self.db_close()
+        if _pwd and _confirm:
+            _id = self.fetch_groups[self._ITEM][self._GROUPID]
+            if _pwd == _confirm:
+                _pwd_match = True
+            _complex = self.mincomplex(_pwd)
+            if self._connected and _pwd_match and _complex:
+                self.reset_timer()
+                _hashedpwd = self.hashpwd(_pwd)
+                self.db_login()
+                self._cursor = self._conn.cursor()
+                self._cursor.execute("""UPDATE bristo_contacts_groups SET
+                        (bristo_contacts_groups_group,bristo_contacts_groups_pwd,
+                        bristo_contacts_groups_desc) = (%s,%s,%s) WHERE 
+                        bristo_contacts_groups_id = %s AND 
+                        bristo_contacts_groups_owner = %s;""", 
+                        (_group,_hashedpwd,_desc, _id, _usr ))
+                self._conn.commit()
+                self._cursor.close()
+                self.contactsStatusBar.showMessage('Group Updated.', 3000)
+                self.db_close()
+        else:
+            self.contactsStatusBar.showMessage('Please enter group password.',
+                3000)
         
     def update_usercontact_availablity(self):
         '''
