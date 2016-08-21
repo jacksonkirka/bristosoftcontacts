@@ -686,23 +686,36 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _pwd = self.nwgrp.passwordLineEdit.text()
         _confirm = self.nwgrp.confirmPasswordLineEdit.text()
         _desc = self.nwgrp.descTextEdit.toPlainText()
- 
-        if _pwd == _confirm:
-            _pwd_match = True
-        _complex = self.mincomplex(_pwd)
-        if self._connected and _pwd_match and _complex:
-            self.reset_timer()
-            _hashedpwd = self.hashpwd(_pwd)
-            self._cursor = self._conn.cursor()
-            self._cursor.execute("""INSERT INTO bristo_contacts_groups
-                    (bristo_contacts_groups_owner, bristo_contacts_groups_group,
-                    bristo_contacts_groups_pwd, bristo_contacts_groups_desc)
-                    VALUES (%s,%s,%s,%s);""", 
-                    (_usr,_group,_hashedpwd,_desc))
-            self._conn.commit()
-            self._cursor.close()
-            self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
-            self.db_close()
+        if self._user == 'guest' or not _pwd:
+            _pwd = 'Guest$123'
+            _confirm = 'Guest$123'
+        if _group:
+            # Verify group name is available
+            if self._connected:
+                self._cursor.execute("""SELECT bristo_contacts_groups_group
+                FROM bristo_contacts_groups WHERE bristo_contacts_groups_group
+                 = %s;""",(_group, ))
+            if not self._cursor.rowcount:
+                if _pwd == _confirm:
+                    _pwd_match = True
+                _complex = self.mincomplex(_pwd)
+                if self._connected and _pwd_match and _complex:
+                    self.reset_timer()
+                    _hashedpwd = self.hashpwd(_pwd)
+                    self._cursor = self._conn.cursor()
+                    self._cursor.execute("""INSERT INTO bristo_contacts_groups
+                            (bristo_contacts_groups_owner, 
+                            bristo_contacts_groups_group,
+                            bristo_contacts_groups_pwd, bristo_contacts_groups_desc)
+                            VALUES (%s,%s,%s,%s);""", 
+                            (_usr,_group,_hashedpwd,_desc))
+                    self._conn.commit()
+                    self._cursor.close()
+                    self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
+                    self.db_close()
+            else:
+                self.contactsStatusBar.showMessage('Group name unavailable.', 5000)
+                self.db_close()
     
     def search_groups_dlg(self):
         '''
