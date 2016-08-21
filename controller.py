@@ -1125,7 +1125,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         '''
         
-
         if self._update_groups:
             self.db_update_group()
             return
@@ -1183,7 +1182,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
         _usr = self._user
-
         _group = self.search_groups.searchGroupLineEdit.text()
         _pwd = self.search_groups.passwordLineEdit.text()
         _confirm = self.search_groups.confirmPasswordLineEdit.text()
@@ -1193,11 +1191,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if _pwd == _confirm:
                 _pwd_match = True
             _complex = self.mincomplex(_pwd)
+            self.db_login()
             if self._connected and _pwd_match and _complex:
                 self.reset_timer()
                 _hashedpwd = self.hashpwd(_pwd)
-                self.db_login()
-                self._cursor = self._conn.cursor()
+                if self._cursor.closed:
+                    self._cursor = self._conn.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_groups SET
                         (bristo_contacts_groups_group,bristo_contacts_groups_pwd,
                         bristo_contacts_groups_desc) = (%s,%s,%s) WHERE 
