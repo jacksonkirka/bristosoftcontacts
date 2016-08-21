@@ -237,6 +237,7 @@ class Ui_bristosoftContacts(object):
         self.actionLast_Item.setToolTip(_translate("bristosoftContacts", "Last Item", None))
         self.actionLast_Item.setShortcut(_translate("bristosoftContacts", "Ctrl+Down", None))
         self.actionSearch.setText(_translate("bristosoftContacts", "&Search", None))
+        self.actionSearch.setToolTip(_translate("bristosoftContacts", "Search: click then enter fields then click this icon again.", None))
         self.actionSearch.setShortcut(_translate("bristosoftContacts", "Ctrl+S", None))
         self.actionUpdate.setText(_translate("bristosoftContacts", "&Update", None))
         self.actionUpdate.setShortcut(_translate("bristosoftContacts", "Ctrl+U", None))
