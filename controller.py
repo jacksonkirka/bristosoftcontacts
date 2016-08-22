@@ -413,8 +413,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._conn_msg = QLabel("ssl:"+self._user +"@"+
                                             self._host+
                                           '/'+ self._db +'.')
-                    self.contactsStatusBar.setStyleSheet("background-color: \
+                    if not self._account_expired:
+                        self.contactsStatusBar.setStyleSheet("background-color: \
                                                          rgb(179, 255, 188);")
+                    else:
+                        self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(255, 165, );")
                     if not self._chgpwd:
                         self.contactsStatusBar.addWidget(self._conn_msg)
                         
