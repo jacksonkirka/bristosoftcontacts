@@ -102,6 +102,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._user_webmail = None
         self._USERNM = 1
         self._USEREMAIL = 2
+        self._account_expired = False
+        self._xmsg = "Expired. Call 513-401-9114 or jacksonkirka@bristosoft.com."
         
         # SQL class globals
         self._limit = 250
@@ -381,6 +383,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             
                 if _usr_nm_match and _usr_pwd_match:
                 
+                    # Verify user account is not expired
+                    self._cursor = self._conn.cursor()
+                    self._cursor.execute(
+                    "SELECT bristo_contacts_users_expires FROM \
+                    bristo_contacts_users WHERE bristo_contacts_users_name = %s \
+                    LIMIT %s", (
+                    self._user, self._limit))
+                    _db_expire_date = self._cursor.fetchone()[0]
+                    if _db_expire_date:
+                        if self._DATE.date() > _db_expire_date:
+                            self.contactsStatusBar.showMessage(
+                            self._xmsg, 
+                            20000)
+                            self._account_expired = True
+            
                     # get user webmail link for contact filter
                     self._cursor = self._conn.cursor()
                     self._cursor.execute("SELECT bristo_contacts_users_webmail FROM \
@@ -1234,23 +1251,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
         display_data simply displays a data based on the date
-        index integer value in self_IITEM.
+        index integer value in self_ITEM.
         
         '''
-        self.block_signals()
-        if not self._groups:
-            self.resize_mode_zero()
-            self.db_fetch_groups()
-            self.display_contact()
-            self.display_notes()
-            self.display_files()
-            self.display_calls()
-            self.display_appts()
-            self.display_group_in_contact()
-        if self._groups:
-            self.display_group()
-        self.display_msg()
-        self.unblock_signals()
+        if not self._account_expired:
+            self.block_signals()
+            if not self._groups:
+                self.resize_mode_zero()
+                self.db_fetch_groups()
+                self.display_contact()
+                self.display_notes()
+                self.display_files()
+                self.display_calls()
+                self.display_appts()
+                self.display_group_in_contact()
+            if self._groups:
+                self.display_group()
+            self.display_msg()
+            self.unblock_signals()
         
     def display_data_not_appts(self):
         
@@ -1260,15 +1278,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         calendar date to display a contact without overwriting the calendar list
         of appointments for that day.
         '''
-        self.resize_mode_zero()
-        self.block_signals()
-        self.display_contact()
-        self.display_notes()
-        self.display_files()
-        self.display_calls()
-        self.display_group_in_contact()
-        self.display_msg()
-        self.unblock_signals()
+        if not self._account_expired:
+            self.resize_mode_zero()
+            self.block_signals()
+            self.display_contact()
+            self.display_notes()
+            self.display_files()
+            self.display_calls()
+            self.display_group_in_contact()
+            self.display_msg()
+            self.unblock_signals()
         
         
     def resize_mode_zero(self):
