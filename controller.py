@@ -774,15 +774,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_groups.bristo_contacts_groups_pwd, 
                 bristo_contacts_groups.bristo_contacts_groups_desc, 
                 bristo_contacts_groups.bristo_contacts_groups_pic FROM 
-                bristo_contacts_groups, bristo_contacts_appt, bristo_contacts_ct 
+                bristo_contacts_groups, bristo_contacts_appt, bristo_contacts_ct
+                bristo_contacts_users 
                 WHERE
                 bristo_contacts_groups.bristo_contacts_groups_owner = %s OR
                 bristo_contacts_appt.bristo_contacts_appt_owner = %s AND
                 bristo_contacts_appt.bristo_contacts_appt_ct_id = 
                 bristo_contacts_ct.bristo_contacts_ct_id AND
                 bristo_contacts_ct.bristo_contacts_ct_group = 
+                bristo_contacts_groups.bristo_contacts_groups_group or
+                bristo_contacts_users.bristo_contacts_users_name = %s AND
+                bristo_contacts_users.bristo_contacts_users_email = 
+                bristo_contacts_ct.bristo_contacts_ct_email1 AND
+                bristo_contacts_ct.bristo_contacts_ct_group = 
                 bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
-                (_user,_user, self._limit))
+                (_user,_user,_user, self._limit))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s 
@@ -1654,15 +1660,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 if _grp_nm == self.fetch_groups[_idx][self._GRPNAME]:
                     break
             
-            self.bristo_search.plainTextEdit.insertPlainText(
+            if self.fetch_groups:
+                self.bristo_search.plainTextEdit.insertPlainText(
                 self.fetch_groups[_idx][self._GRPDESC])
-            # Get logo
-            self._image_bytea1 = self.fetch_groups[_idx][self._GRPPIC]
-            self.display_pic(self.bristo_search.groupLogoLabel,
-                self._image_bytea1)
-            self._image_bytea2 = self.fetch_groups[_idx][self._GRPPIC]
-            self.display_pic(self.bristo_search.groupCtLogoLabel, self._image_bytea2)
-            _idx = 0
+                # Get logo
+                self._image_bytea1 = self.fetch_groups[_idx][self._GRPPIC]
+                self.display_pic(self.bristo_search.groupLogoLabel,
+                    self._image_bytea1)
+                self._image_bytea2 = self.fetch_groups[_idx][self._GRPPIC]
+                self.display_pic(self.bristo_search.groupCtLogoLabel, self._image_bytea2)
+                _idx = 0
 
 
     def display_msg(self):
