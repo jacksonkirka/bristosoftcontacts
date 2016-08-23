@@ -774,7 +774,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_groups.bristo_contacts_groups_pwd, 
                 bristo_contacts_groups.bristo_contacts_groups_desc, 
                 bristo_contacts_groups.bristo_contacts_groups_pic FROM 
-                bristo_contacts_groups, bristo_contacts_appt, bristo_contacts_ct
+                bristo_contacts_groups, bristo_contacts_appt, bristo_contacts_ct,
                 bristo_contacts_users 
                 WHERE
                 bristo_contacts_groups.bristo_contacts_groups_owner = %s OR
@@ -782,13 +782,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_appt.bristo_contacts_appt_ct_id = 
                 bristo_contacts_ct.bristo_contacts_ct_id AND
                 bristo_contacts_ct.bristo_contacts_ct_group = 
-                bristo_contacts_groups.bristo_contacts_groups_group or
+                bristo_contacts_groups.bristo_contacts_groups_group OR
                 bristo_contacts_users.bristo_contacts_users_name = %s AND
                 bristo_contacts_users.bristo_contacts_users_email = 
                 bristo_contacts_ct.bristo_contacts_ct_email1 AND
                 bristo_contacts_ct.bristo_contacts_ct_group = 
                 bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
-                (_user,_user,_user, self._limit))
+                (_user, _user, _user, self._limit))
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s 
