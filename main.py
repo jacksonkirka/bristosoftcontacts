@@ -31,6 +31,8 @@ from controller import *
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
+__version__ = '0.1' # Version assignment
+
 def main():
     app = QApplication(sys.argv)
     contacts = Controller()
