@@ -669,9 +669,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_ct_email1 FROM bristo_contacts_ct WHERE
                     bristo_contacts_ct_ph_office = %s OR
                     bristo_contacts_ct_email1 = %s;""", (_oph, _oemail))
-            _dup = self._cursor.fetchone()
-            
-            if not _dup:
+            if not self._cursor.rowcount:
                 self._cursor.execute("""INSERT INTO bristo_contacts_ct
                     (bristo_contacts_ct_co, bristo_contacts_ct_title,
                     bristo_contacts_ct_fname, bristo_contacts_ct_middle,
