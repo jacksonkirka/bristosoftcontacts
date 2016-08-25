@@ -664,7 +664,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _pweb = self.bristo.personalWebLineEdit.text()
             _owner = self._user
             
-            self._cursor.execute("""INSERT INTO bristo_contacts_ct
+            # Check for duplicate phone numbers or emails
+            self._cursor.execute("""SELECT bristo_contacts_ct_ph_office,
+                    bristo_contacts_ct_email1 FROM bristo_contacts_ct WHERE
+                    bristo_contacts_ct_ph_office = %s OR
+                    bristo_contacts_ct_email1 = %s;""", (_oph, _oemail))
+            _dup = self._cursor.fetchone()
+            
+            if not _dup:
+                self._cursor.execute("""INSERT INTO bristo_contacts_ct
                     (bristo_contacts_ct_co, bristo_contacts_ct_title,
                     bristo_contacts_ct_fname, bristo_contacts_ct_middle,
                     bristo_contacts_ct_lname, bristo_contacts_ct_cred,
@@ -680,9 +688,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     (_company,_mrmrs,_fname,_middle,_lname,
                     _cred, _addr, _suite,_city,_st, _postal,_oph,_cell, _fax
                     ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
-            self._conn.commit()
-            self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
-            self.db_close()
+                self._conn.commit()
+                self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
+                self.db_close()
+            else:
+                self.contactsStatusBar.showMessage(
+                'Duplicate email or office phone. Please Retry.', 5000)
+                self.db_close()
 
     def db_new_group_dlg(self):
         '''
