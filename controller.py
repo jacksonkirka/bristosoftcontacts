@@ -144,6 +144,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._GRPPWD = 4
         self._GRPDESC = 5
         self._GRPPIC = 6
+        self._GRPADDR1 = 7
+        self._GRPADDR2 = 8
+        self._GRPCITY = 9
+        self._GRPSTATE = 10
+        self._GRPPOSTAL = 11
+        self._GRPWEB1 = 12
+        self._GRPWEB2 = 13
+        self._GRPPHONE = 14
+        self._GRPFAX = 15
         self._groups = False
         self._search_groups_dlg = False
         self._groupqry = False
@@ -717,6 +726,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _pwd = self.nwgrp.passwordLineEdit.text()
         _confirm = self.nwgrp.confirmPasswordLineEdit.text()
         _desc = self.nwgrp.descTextEdit.toPlainText()
+        _address = self.nwgrp.groupAddressLineEdit.text()
+        _suite = self.nwgrp.groupSuiteLineEdit.text()
+        _city = self.nwgrp.groupCityLineEdit.text()
+        _st = self.nwgrp.groupStateLineEdit.text()
+        _zip = self.nwgrp.groupPostalLineEdit.text()
+        _web1 = self.nwgrp.groupOfficeWebLineEdit.text()
+        _web2 = self.nwgrp.groupOtherWebLineEdit.text()
+        _oph = self.nwgrp.groupOfficePhoneLineEdit.text()
+        _fax = self.nwgrp.groupOfficeFaxLineEdit.text()
+       
         if self._user == 'guest' or not _pwd:
             _pwd = 'Guest$123'
             _confirm = 'Guest$123'
@@ -737,9 +756,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._cursor.execute("""INSERT INTO bristo_contacts_groups
                             (bristo_contacts_groups_owner, 
                             bristo_contacts_groups_group,
-                            bristo_contacts_groups_pwd, bristo_contacts_groups_desc)
-                            VALUES (%s,%s,%s,%s);""", 
-                            (_usr,_group,_hashedpwd,_desc))
+                            bristo_contacts_groups_pwd,
+                            bristo_contacts_groups_desc,
+                            bristo_contacts_groups_addr1,
+                            bristo_contacts_groups_addr2,
+                            bristo_contacts_groups_city,
+                            bristo_contacts_groups_state,
+                            bristo_contacts_groups_postal,
+                            bristo_contacts_groups_web1,
+                            bristo_contacts_groups_web2,
+                            bristo_contacts_groups_phone,
+                            bristo_contacts_groups_fax)
+                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                            (_usr,_group,_hashedpwd,_desc, 
+                            _address,_suite,_city,_st,_zip,_web1,
+                            _web2, _oph,_fax ))
                     self._conn.commit()
                     self._cursor.close()
                     self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
@@ -1398,6 +1429,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.fetch_groups[self._ITEM][self._GRPNAME])
             self.search_groups.descTextEdit.insertPlainText(
                 self.fetch_groups[self._ITEM][self._GRPDESC])
+            self.search_groups.groupAddressLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPADDR1])
+            self.search_groups.groupSuiteLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPADDR2])
+            self.search_groups.groupCityLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPCITY])
+            self.search_groups.groupStateLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPSTATE])
+            self.search_groups.groupPostalLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPPOSTAL])
+            self.search_groups.groupOfficeWebLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPWEB1])
+            self.search_groups.groupOtherWebLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPWEB2])
+            self.search_groups.groupOfficePhoneLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPPHONE])
+            self.search_groups.groupOfficeFaxLineEdit.setText(
+                self.fetch_groups[self._ITEM][self._GRPFAX])
             self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
             self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
         
