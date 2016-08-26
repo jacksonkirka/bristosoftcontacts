@@ -1254,6 +1254,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _pwd = self.search_groups.passwordLineEdit.text()
         _confirm = self.search_groups.confirmPasswordLineEdit.text()
         _desc = self.search_groups.descTextEdit.toPlainText()
+        _address = self.search_groups.groupAddressLineEdit.text()
+        _suite = self.search_groups.groupSuiteLineEdit.text()
+        _city = self.search_groups.groupCityLineEdit.text()
+        _st = self.search_groups.groupStateLineEdit.text()
+        _zip = self.search_groups.groupPostalLineEdit.text()
+        _web1 = self.search_groups.groupOfficeWebLineEdit.text()
+        _web2 = self.search_groups.groupOtherWebLineEdit.text()
+        _oph = self.search_groups.groupOfficePhoneLineEdit.text()
+        _fax = self.search_groups.groupOfficeFaxLineEdit.text()
         if _pwd and _confirm:
             _id = self.fetch_groups[self._ITEM][self._GROUPID]
             if _pwd == _confirm:
@@ -1266,11 +1275,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 if self._cursor.closed:
                     self._cursor = self._conn.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_groups SET
-                        (bristo_contacts_groups_group,bristo_contacts_groups_pwd,
-                        bristo_contacts_groups_desc) = (%s,%s,%s) WHERE 
+                        (bristo_contacts_groups_group,
+                            bristo_contacts_groups_pwd,
+                            bristo_contacts_groups_desc,
+                            bristo_contacts_groups_addr1,
+                            bristo_contacts_groups_addr2,
+                            bristo_contacts_groups_city,
+                            bristo_contacts_groups_state,
+                            bristo_contacts_groups_postal,
+                            bristo_contacts_groups_web1,
+                            bristo_contacts_groups_web2,
+                            bristo_contacts_groups_phone,
+                            bristo_contacts_groups_fax) = 
+                        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) WHERE 
                         bristo_contacts_groups_id = %s AND 
                         bristo_contacts_groups_owner = %s;""", 
-                        (_group,_hashedpwd,_desc, _id, _usr ))
+                        (_group,_hashedpwd,_desc,_address,  
+                         _suite,_city,_st,_zip,_web1,
+                            _web2,_oph,_fax,_id,_usr))
                 self._conn.commit()
                 self._cursor.close()
                 self.contactsStatusBar.showMessage('Group Updated.', 3000)
