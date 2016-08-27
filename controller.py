@@ -48,29 +48,29 @@ __version__ = '0.1' # Version assignment
 
 # contactsdialog = loadUiType('contacts_combo.ui')[0]
 #bristocontacts = loadUiType('contacts_main.ui')[0]
-        
+
 # class Controller(QMainWindow,  bristocontacts):
 
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
-    
+
     Controller is the Main Application window with
     all the menus, toolbars, statusbar and more. It is
     the controller in the model, view, controller software
     architecture.
-    
+
     '''
 
     def __init__(self, parent=None):
         '''
-        
+
         This initialization class method initializes
         QMainWindow and the bristocontacts.
-        
+
         '''
         super(Controller, self).__init__(parent)
         self.setupUi(self)
-        
+
         # Connection
         self._conn = None
         self._disconnected = True
@@ -79,7 +79,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
-        
+
         # Authentication
         self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
         self._usr_city = self._usr_loc['city']
@@ -90,11 +90,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._usr_lat = self._usr_loc['latitude']
         self._usr_tz = self._usr_loc['timezone']
         self._usr_zip = self._usr_loc['postal']
-        
+
         # Dialogs
         self.bristo_search = None
         self.bristo = None
-      
+
         # Users
         self._user = None
         self._passwd = None
@@ -104,10 +104,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._USEREMAIL = 2
         self._account_expired = False
         self._xmsg = "Expired. Call 513-401-9114 or jacksonkirka@bristosoft.com."
-        
+
         # SQL class globals
         self._limit = 250
-        
+
         # Database constants cursor list return
         self._ITEM = 0
         self._FIRSTITEM = 0
@@ -135,7 +135,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._OWNER = 21
         self._AVAIL = 22
         self._GROUP = 23
-    
+
         # Groups
         self._GROUPID = 0
         self._GRPSTAMP = 1
@@ -159,10 +159,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._groupnm = None
         self.search_groups = None
         self._update_groups = False
-        
+        self._grpnm_addr = None
+
         # Table Rows
         self._table_rows_count = 2000
-        
+
         # Notes
         self._stamp = 1
         self._note = 3
@@ -174,7 +175,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image_bin = None
         self._image_bytea = None
         self._image_buffer = None
-        
+
         # File
         self._file_bin = None
         self._file_id = 0
@@ -182,7 +183,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._file_ct = 2
         self._file_name = 3
         self._file_file = 4
-        
+
         #Calls
         self._calls_id = 0
         self._calls_ct_id = 1
@@ -191,10 +192,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._calls_in = 4
         self._calls_results = 5
         self._live_set = False
-        
+
         # Search
         self._clear = False
-        
+
         # Appointment
         self._appt_id = 0
         self._appt_ct_id = 1
@@ -204,20 +205,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._appt_purpose = 5
         self._display_appts_set = False
         self._displayed_apptsbydate = False
-        
+
         # Calendar
         self._calendar_activated = False
         self._qcal_date = None
-        
+
         #Date and Time
         self._DATE = datetime.datetime.now()
         self._TODAY = self._DATE.strftime("%m/%d/%y %I:%M%p")
-        
+
         # Next/Prev
         self._NEXT = 0
         self._PREV = 0
         self._LASTITEM = 0
-        
+
         # Main Signals
         self.actionAbout_Qt.triggered.connect(self.aboutqt)
         self.actionAbout_bristoSOFT_Contacts.triggered.connect(
@@ -238,14 +239,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionLast_Item.triggered.connect(self.db_item_fetch_last)
         self.actionSearch.triggered.connect(self.db_fetch_contact)
         self.actionUpdate.triggered.connect(self.db_update_contact)
-        
-        
+
+
         # Set contactsStatusBar to red
         self._conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
         self.contactsStatusBar.addWidget(self._conn_msg)
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-    
+
         # Settings
         settings = QSettings()
         size = settings.value("MainWindow/Size",
@@ -258,23 +259,23 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         # Set Main Window Icon
         self.setWindowIcon(QIcon(":icons/family.ico"))
-    
+
     # About class methods
     def aboutqt(self):
         '''
-        
+
         aboutqt is the standard About Qt dialog built in to QT.
-        
+
         '''
         mesg = QMessageBox()
         mesg.aboutQt(self,  'About Qt')
-    
+
     def aboutbristocontacts(self):
         '''
-        
+
         aboutbristocontacts QMessageBox displays information about
         bristoSOFT Contacts v. 0.1.
-        
+
         '''
         QMessageBox.about(self, "About bristoSOFT Contacts v. 0.1",
         """ <b>About bristoSOFT Contacts</b> v %s
@@ -285,35 +286,35 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         <p>Python %s - Qt %s - PyQt %s on %s""" % (
         __version__, platform.python_version(),
         QT_VERSION_STR, PYQT_VERSION_STR, platform.system()))
-    
+
     def reset_timer(self):
         '''
         reset_timer resets QTimer singleShot for self._conn_timer amount of time.
         It stops existing timer and starts a new one.  When the time has elapsed
         it calls self.db_idle and informs the user.
         '''
-        
+
         # idle
         self._idle.stop()
         self._idle = QTimer()
         self._idle.singleShot(self._conn_timer,  self.db_idle)
         self._idle.start() # start idle timer
-    
-        
+
+
     # class Database Methods
     def db_connect(self):
         '''
-        
+
         db_connect displays the login dialog and catches the signal accept()
         from the OK button then calls self.db_login.
-        
+
         '''
         self.login = bristoContactsLogin()
         self.login.show()
         self.login.accepted.connect(self.db_login_get_cred)
-        
+
     def db_login_get_cred(self):
-        
+
         '''
         db_login_get_cred gets credentials from login dialog then
         calls db_login.
@@ -324,40 +325,40 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
     def db_login(self):
         ''' 
-        
+
         db_login establishes a connection to a PostgreSQL database on 
         with the standard connection string.
-        
+
         '''
          # Step 1 owner authentication security string
         #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
         #dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
         #password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
-        
+
         con = "host='aws-us-east-1-portal.9.dblayer.com' \
         dbname='bristocontacts' user='admin'\
         password=\
         'FKupYc7T@XY6Hk7fh+%y4ybmsZ8u*SKcg8*8@8Ek#+@r&P99wgNdkAd+528#42&Ppby_pgwp'\
          sslmode='require' port='11270'"
-        
-        
+
+
         self._host = 'bristosoftcontacts'
         self._db = 'bristocontacts'
-         
+
         if self._user and self._passwd:
-                
+
             self._conn = psycopg2.connect(con) # Authenticate and login owner
             self._connected = True # Set connection to True
-            
-            
+
+
             # Step 2 User database authentication
             _usr_nm_match = False
             _usr_pwd_match = False
-            
+
             # Save login credentials
             _usr_nm = self._user # Set Text for User Name
             _usr_pwd = self._passwd # Set Text for password
-            
+
             # Verify user name
             # If user enters incorrect user name this is not yet resolved.
             self._cursor = self._conn.cursor()
@@ -369,18 +370,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             else:
                 _temp = self._cursor.fetchone()
                 _db_usrnm = _temp[self._USERNM]
-            
-                
+
+
                 # Need user email for availability
                 self._user_email = _temp[self._USEREMAIL] 
-    
-                
+
+
                 self._cursor.close()
                 if _usr_nm == _db_usrnm:
                     _usr_nm_match = True
                 else:
                     _usr_nm_match = False
-                    
+
                 # Verify user password
                 self._cursor = self._conn.cursor()
                 self._cursor.execute("SELECT bristo_contacts_users_pwd FROM \
@@ -389,9 +390,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._user, self._limit))
                 _db_usrpwdhash = self._cursor.fetchone()[0]
                 _usr_pwd_match = self.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
-            
+
                 if _usr_nm_match and _usr_pwd_match:
-                
+
                     # Verify user account is not expired
                     self._cursor = self._conn.cursor()
                     self._cursor.execute(
@@ -406,7 +407,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             self._xmsg, 
                             20000)
                             self._account_expired = True
-            
+
                     # get user webmail link for contact filter
                     self._cursor = self._conn.cursor()
                     self._cursor.execute("SELECT bristo_contacts_users_webmail FROM \
@@ -415,8 +416,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self._user, self._limit))
                     self._user_webmail_tuple = self._cursor.fetchone()
                     self._user_webmail = self._user_webmail_tuple[0]
-                
-                    
+
+
                     if self._disconnected:
                         self.contactsStatusBar.removeWidget(self._conn_msg)
                     self._conn_msg = QLabel("ssl:"+self._user +"@"+
@@ -430,7 +431,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(255, 165, );")
                     if not self._chgpwd:
                         self.contactsStatusBar.addWidget(self._conn_msg)
-                        
+
                     # Log authentication
                     _usr_ip = self._usr_ip
                     _usr_city = self._usr_city
@@ -457,10 +458,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _tz = self._usr_tz
                     self._cursor.execute("""SET TIME ZONE %s;""", (_tz, ))
                     self.reset_timer() # Initial set after user login
-                    
+
                 else:
                     self.incorrectlogin()
-                    
+
     def chgpwddlg(self):
         '''
         chngpwddlg displays the change password dialog and accepts user input
@@ -473,7 +474,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.chgpwd = bristoContactsChgPwdDlg()
             self.chgpwd.show()
             self.chgpwd.accepted.connect(self.changepasswd)
-        
+
     def changepasswd(self):
         '''
         changepwd establishes a connection to a PostgreSQL database on port 
@@ -504,7 +505,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(230, 128, 128);")
             self.contactsStatusBar.showMessage(
             "Disconnected, New Password didn't match or password uncomplex.", 10000)
-  
+
     def mincomplex(self, _pwd):
         '''
         mincomplex evaluates a plain text password and returns true if the
@@ -515,14 +516,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _lower = re.search('[a-z]', _pwd)
         _upper = re.search('[A-Z]',_pwd)
         _special = re.search('.[!@#$%^&*()_~-]',_pwd)
-        
+
         if len(_pwd) > 7 and _digit and _lower and _upper and _special:
             return True
         else:
             return False
-                
+
     def incorrectlogin(self):
-        
+
         '''
         incorrectlogin displays a message in the status bar to the user informing
         them they have not successfully logged on.
@@ -558,9 +559,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.removeWidget(self._conn_msg)
         self._conn_msg = QLabel('Login incorrect, please try again.')
         self.contactsStatusBar.addWidget(self._conn_msg)
-        
+
     def incorrectgrouplogin(self):
-    
+
         '''
         incorrectgrouplogin displays a message in the status bar to the user
         informing them they have not successfully logged into the group.
@@ -605,7 +606,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
 
     def hashpwd(self, _pwd):
-        
+
         '''
         hashpwd hashes a password by NSA Secure Hash Algorithm 2 
         sha256 algorithm and adds a uuid prefix salt.
@@ -613,10 +614,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         salt = uuid.uuid4().hex
         return hashlib.sha256(salt.encode() +\
             _pwd.encode()).hexdigest() + ':' + salt
-            
-        
+
+
     def authenticatepwd(self, _dbhashpwd, _usrpwd):
-        
+
         '''
         authenticatepwd authenticates the password entered by the user by
         comparing the database hash with a hash of the user entered
@@ -625,28 +626,29 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         dbpwd, salt = _dbhashpwd.split(':')
         return dbpwd == hashlib.sha256(salt.encode() +\
             _usrpwd.encode()).hexdigest()
-    
+
     def db_contact_new(self):
-        
+
         '''
-        
+
         db_record_new displays the new contact dialog and catches the signal accept()
         from the OK button then runs self.db_insert.
-        
+
         '''
         self.reset_timer()
         # set contactsDialog in cetralWidget
         self.bristo = bristoContactsDialog()
         self.setCentralWidget(self.bristo)
         self.bristo.accepted.connect(self.db_insert)
-    
-    
+
+
     def db_insert(self):
         '''
-        
+
         db_insert inserts one new contact into the PostgreSQL database table.
-        
+
         '''
+
         self.db_login()
         if self._connected:
             if self._cursor.close:
@@ -663,6 +665,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _city = self.bristo.cityLineEdit.text()
             _st = self.bristo.stateLineEdit.text()
             _postal = self.bristo.postalLineEdit.text()
+            _grp = self.bristo.copyGroupAddressLineEdit.text()
             _oph = self.bristo.officePhoneLineEdit.text()
             _cell = self.bristo.cellPhoneLineEdit.text()
             _fax = self.bristo.officeFaxLineEdit.text()
@@ -672,7 +675,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _oweb = self.bristo.officeWebLineEdit.text()
             _pweb = self.bristo.personalWebLineEdit.text()
             _owner = self._user
-            
+            if _grp and not _addr:
+                _grpinfo = self.db_copy_group_address(_grp)
+                _addr = _grpinfo[self._GRPADDR1]
+                _suite = _grpinfo[self._GRPADDR2]
+                _city = _grpinfo[self._GRPCITY]
+                _st = _grpinfo[self._GRPSTATE]
+                _postal = _grpinfo[self._GRPPOSTAL]
+
             # Check for duplicate phone numbers or emails
             self._cursor.execute("""SELECT bristo_contacts_ct_ph_office,
                     bristo_contacts_ct_email1 FROM bristo_contacts_ct WHERE
@@ -685,16 +695,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_ct_lname, bristo_contacts_ct_cred,
                     bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
                     bristo_contacts_ct_city, bristo_contacts_ct_state,
-                    bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
-                    bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
-                    bristo_contacts_ct_home,bristo_contacts_ct_email1,
-                    bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                    bristo_contacts_ct_web2, bristo_contacts_ct_owner)
+                    bristo_contacts_ct_postal, bristo_contacts_ct_group,
+                    bristo_contacts_ct_ph_office,bristo_contacts_ct_ph_cell,
+                    bristo_contacts_ct_fax,bristo_contacts_ct_home,
+                    bristo_contacts_ct_email1,bristo_contacts_ct_email2,
+                    bristo_contacts_ct_web,bristo_contacts_ct_web2,
+                    bristo_contacts_ct_owner)
                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s,%s, %s);""", 
+                    %s,%s,%s,%s,%s, %s,%s);""", 
                     (_company,_mrmrs,_fname,_middle,_lname,
-                    _cred, _addr, _suite,_city,_st, _postal,_oph,_cell, _fax
-                    ,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
+                    _cred, _addr, _suite,_city,_st, _postal,_grp, 
+                    _oph,_cell, _fax,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
                 self._conn.commit()
                 self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
                 self.db_close()
@@ -702,6 +713,50 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.showMessage(
                 'Duplicate email or office phone. Please Retry.', 5000)
                 self.db_close()
+
+    def db_copy_group_address(self, _group):
+        '''
+        db_copy_group_address accepts group name and returns the group address of
+        a group into memory for access by any other caller.
+        '''
+        self.db_login()
+        if self._connected:
+            _user = self._user
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
+            self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
+                        WHERE bristo_contacts_groups_owner = %s AND
+                        bristo_contacts_groups_group = %s;""",
+                    (_user, _group))
+            if not self._cursor.rowcount:
+                self.contactsStatusBar.showMessage(
+                'Group not found or user not authorized.', 5000)
+            else:
+                _grpinfo = self._cursor.fetchone()
+                return _grpinfo
+        self.db_close()
+
+    def db_user_owns_group(self, _group):
+        '''
+        db_copy_group_address accepts group name and returns the group address of
+        a group into memory for access by any other caller.
+        '''
+        self.db_login()
+        if self._connected:
+            _user = self._user
+            if self._cursor.close:
+                self._cursor = self._conn.cursor()
+            self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
+                        WHERE bristo_contacts_groups_owner = %s AND
+                        bristo_contacts_groups_group = %s;""",
+                    (_user, _group))
+            if not self._cursor.rowcount:
+                return False
+            else:
+                return True
+        self.db_close()
+
+
 
     def db_new_group_dlg(self):
         '''
@@ -714,7 +769,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.nwgrp = bristoNewGroupDlg()
         self.setCentralWidget(self.nwgrp)
         self.nwgrp.accepted.connect(self.db_insert_group)
-    
+
     def db_insert_group(self):
         '''
         db_insert_group inserts a new group entered by the user with authentication
@@ -735,7 +790,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _web2 = self.nwgrp.groupOtherWebLineEdit.text()
         _oph = self.nwgrp.groupOfficePhoneLineEdit.text()
         _fax = self.nwgrp.groupOfficeFaxLineEdit.text()
-       
+
         if self._user == 'guest' or not _pwd:
             _pwd = 'Guest$123'
             _confirm = 'Guest$123'
@@ -778,7 +833,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             else:
                 self.contactsStatusBar.showMessage('Group name unavailable.', 5000)
                 self.db_close()
-    
+
     def search_groups_dlg(self):
         '''
         search_groups_dlg opens the search groups dialog to get users
@@ -793,14 +848,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._update_groups = True
         self.get_groups_owned()
         self.db_close()
-    
+
     def db_fetch_groups(self):
         '''
         db_fetch_groups fetches the groups owned by the the user or
         queried by via group name and password or where the user has
         appointment for a contact in a group.
         '''
-       
+
         self.reset_timer()
         _user = self._user
         _grp = self._groupnm
@@ -836,7 +891,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     ORDER by bristo_contacts_groups_group LIMIT %s;""",
                 (_grp, self._limit))                
             self.fetch_groups = self._cursor.fetchall() # Gets user owned groups
-                
+
     def get_groups_owned(self):
         '''
         get_groups_owned returns only the groups user created and currently
@@ -870,21 +925,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._groupqry = False
         self.db_contacts_fetch()
         self.db_close()
-        
+
     def db_contacts_fetch(self):
         '''
-        
+
         db_record_fetch fetches all contacts at one time.
         self.fetch_result[0][1] is First contact, company name
         self.fetch_result is a python list returned by psycopg2 driver
         The list is then traversed in memory on the list python object.
-        
+
         '''
         self.reset_timer()
         self._groups = False
         self.bristo_search = bristoContactsSearchDialog()
-        
-        
+
+
         # Hide columns on calls and appointments
         self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
         self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
@@ -896,30 +951,30 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._live_set = False # Prevents Duplicate Live Widgets
         self._calendar_activated = False # User double clicked date on calendar
         self._displayed_apptsbydate = False # Appointments by date display once
-        
+
         # set bristoMapper class
         self.google_com = bristoMapper()
         layout = QHBoxLayout()
         layout.addWidget(self.google_com)
         self.bristo_search.mapTabFrame.setLayout(layout)
-        
+
         # set bristoMailFrame
         self.google_mail_com = bristoMailView()
         mail_layout = QHBoxLayout()
         mail_layout.addWidget(self.google_mail_com)
         self.bristo_search.emailFrame.setLayout(mail_layout)
-        
+
         # Notes
         self.bristo_search.notesTableWidget.setHorizontalHeaderLabels(
             ['Time Stamp', 'Notes'])
-            
+
         # Documents
         self.bristo_search.fileTableWidget.setHorizontalHeaderLabels(
             ['Id','Time Stamp', 'File Name'])
-            
+
         self.active_dlg = 'search'
         self.setCentralWidget(self.bristo_search)
-        
+
         # Phone Calls
         self.bristo_search.callsTableWidget.setHorizontalHeaderLabels(
             ['ID', 'CTID', 'Time Stamp', 'Phone/CID', 'IO', 'Results'])
@@ -930,7 +985,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._calls_phone, 140)
         self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
             self._calls_in, 22)
-        
+
         # Appointments
         self.bristo_search.apptTableWidget.setHorizontalHeaderLabels(
             ['ID', 'CTID', 'Time Stamp', 'Date/Time', 'CO', 'Purpose'])
@@ -939,13 +994,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._appt_time, 150)
         self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
             self._appt_complete, 28)
-        
+
         # Fetch Data from tables --> Python lists
         _user = self._user
         _email = self._user_email
         if self._connected:
             self._cursor = self._conn.cursor()
-            
+
             if self._groupqry:
                 _group = self._groupnm
                 self._cursor.execute("""SELECT * FROM bristo_contacts_ct WHERE 
@@ -1013,20 +1068,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.update_fetch_results()
             _msg = 'All data fetched from database.'
             self.contactsStatusBar.showMessage(_msg, 7000)
-    
-            
+
+
     def update_fetch_results(self):
         '''
-        
+
         update_fetch_results reassigns the entire contact list during an
         update.
-        
+
         '''
-        
+
         self._LASTITEM = len(self.fetch_results) - 1
         self.bristo_search_dlg = False
         self._update_groups = False
-        
+
         # Seach and update Signals
         self.bristo_search.picPushButton.clicked.connect(self.update_pic)
         self.bristo_search.availabilityPushButton.clicked.connect(
@@ -1057,25 +1112,25 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.clicked.connect(self.live_appt_widgets)
         self.bristo_search.calendarWidget.activated.connect(
             self.display_appts_bydate)
-        
+
         self._ITEM = self._FIRSTITEM
         self.display_data()
-        
-        
+
+
     def db_item_fetch_first(self):
         '''
-        
+
         db_item_fetch_first fetches the first item in the results set.
-        
+
         '''
         self._ITEM = self._FIRSTITEM
         self.display_data()
-    
+
     def db_item_fetch_last(self):
         '''
-        
+
         db_item_fetch_last fetches the last item in the result set.
-        
+
         '''
         self._ITEM = self._LASTITEM
         self.display_data()
@@ -1098,15 +1153,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if not self._ITEM >= self._LASTITEM:
             self._ITEM += 1
             self.display_data()
-            
+
     def db_fetch_contact(self):
         '''
-        
+
         db_fetch_contact fetches the first occurence of the company name,
         first name, or last name entered in the relevant search field.
         The database is already sorted by Company and then by Last name
         of contact.
-        
+
         '''
         if self._clear == False:
             self.clear_search_fields()
@@ -1115,7 +1170,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _company_qry = self.bristo_search.companyLineEdit.text()
             _lname_qry = self.bristo_search.lastNameLineEdit.text()
             _fname_qry = self.bristo_search.firstNameLineEdit.text()
-            
+
             if _company_qry:
                 for _company_idx in range(len(self.fetch_results)):
                     _company = self.fetch_results[_company_idx][self._COMPANY]
@@ -1127,9 +1182,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _msg = 'Pattern not found.'
                 self.contactsStatusBar.showMessage(_msg, 3000)
                 self._clear = False
-                        
+
             elif _lname_qry:
-                
+
                 for _company_idx in range(len(self.fetch_results)):
                     _lname = self.fetch_results[_company_idx][self._LNAME]
                     if _lname_qry in _lname:
@@ -1140,9 +1195,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _msg = 'Pattern not found.'
                 self.contactsStatusBar.showMessage(_msg, 3000)
                 self._clear = False
-            
+
             elif _fname_qry:
-                
+
                 for _company_idx in range(len(self.fetch_results)):
                     _fname = self.fetch_results[_company_idx][self._FNAME]
                     if _fname_qry in _fname:
@@ -1153,10 +1208,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _msg = 'Pattern not found.'
                 self.contactsStatusBar.showMessage(_msg, 3000)
                 self._clear = False
-                        
+
         elif self.search_groups:
             _grp_qry = self.search_groups.searchGroupLineEdit.text()
-            
+
             if _grp_qry:
                 for _grp_idx in range(len(self.fetch_groups)):
                     _grps = self.fetch_groups[_grp_idx][self._GRPNAME]
@@ -1165,14 +1220,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.display_data()
                         self._clear = False
                         return
-    
+
                 _msg = 'Pattern not found.'
                 self.contactsStatusBar.showMessage(_msg, 3000)
                 self._clear = False
-           
-        
+
+
     def clear_search_fields(self):
-        
+
         '''
         clear_search_fields clears the search fields in the search dialog.
         '''
@@ -1180,19 +1235,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.companyLineEdit.clear()
             self.bristo_search.firstNameLineEdit.clear()
             self.bristo_search.lastNameLineEdit.clear()
-            
+
         if self.search_groups:
             self.search_groups.searchGroupLineEdit.clear()
-        
-    
+
+
     def db_update_contact(self):
         '''
 
         db_update_contact updates the currently displayed contact in the
         the database.
-        
+
         '''
-        
+
         if self._update_groups:
             self.db_update_group()
             return
@@ -1201,6 +1256,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if self._cursor.close:
                 self._cursor = self._conn.cursor()
             self.reset_timer()
+            _usr = self._user
+            _usr_email = self._user_email
             _current_id = str(self.fetch_results[self._ITEM][self._ID])
             _company = self.bristo_search.companyLineEdit.text()
             _mrmrs = self.bristo_search.mrmrsLineEdit.text()
@@ -1222,33 +1279,69 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _oweb = self.bristo_search.officeWebLineEdit.text()
             _pweb = self.bristo_search.personalWebLineEdit.text()
             _gname = self.bristo_search.groupNameLineEdit.text()
-            
-            self._cursor.execute("""UPDATE bristo_contacts_ct SET
-                (bristo_contacts_ct_co, bristo_contacts_ct_title,
-                bristo_contacts_ct_fname, bristo_contacts_ct_middle,
-                bristo_contacts_ct_lname, bristo_contacts_ct_cred,
-                bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
-                bristo_contacts_ct_city, bristo_contacts_ct_state,
-                bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
-                bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
-                bristo_contacts_ct_home, bristo_contacts_ct_email1,
-                bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                bristo_contacts_ct_web2, bristo_contacts_ct_group)
-                = (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                %s, %s,%s,%s) WHERE bristo_contacts_ct_id = %s;""",
-                (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
-                _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
-                _pemail,_oweb,_pweb,_gname, _current_id))
-                
-            self._conn.commit()
-            self.contactsStatusBar.showMessage('Contact Updated.', 3000)
-            self.db_close()
-            
+
+            # Check if group name enter and user authorized
+            if _gname:
+                _owner = self.db_user_owns_group(_gname)
+                if _owner:
+                    self._cursor.execute("""UPDATE bristo_contacts_ct SET
+                        (bristo_contacts_ct_co, bristo_contacts_ct_title,
+                        bristo_contacts_ct_fname, bristo_contacts_ct_middle,
+                        bristo_contacts_ct_lname, bristo_contacts_ct_cred,
+                        bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
+                        bristo_contacts_ct_city, bristo_contacts_ct_state,
+                        bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
+                        bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
+                        bristo_contacts_ct_home, bristo_contacts_ct_email1,
+                        bristo_contacts_ct_email2, bristo_contacts_ct_web,
+                        bristo_contacts_ct_web2, bristo_contacts_ct_group)
+                        = (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                        %s, %s,%s,%s) WHERE bristo_contacts_ct_id = %s AND 
+                        bristo_contacts_ct_owner = %s OR
+                        bristo_contacts_ct_id = %s AND
+                        bristo_contacts_ct_email1 = %s;""",
+                        (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
+                        _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
+                        _pemail,_oweb,_pweb,_gname, _current_id, _usr, _current_id, 
+                        _usr_email))
+                    self._conn.commit()
+                    self.contactsStatusBar.showMessage('Contact Updated.', 3000)
+                    self.db_close()
+                elif not _owner:
+                    self.contactsStatusBar.showMessage(
+                    'Group nonexistent or user unauthorized. Please Retry.', 5000)
+                    self.db_close()
+            else:
+                self._cursor.execute("""UPDATE bristo_contacts_ct SET
+                    (bristo_contacts_ct_co, bristo_contacts_ct_title,
+                    bristo_contacts_ct_fname, bristo_contacts_ct_middle,
+                    bristo_contacts_ct_lname, bristo_contacts_ct_cred,
+                    bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
+                    bristo_contacts_ct_city, bristo_contacts_ct_state,
+                    bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
+                    bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
+                    bristo_contacts_ct_home, bristo_contacts_ct_email1,
+                    bristo_contacts_ct_email2, bristo_contacts_ct_web,
+                    bristo_contacts_ct_web2) = (%s,%s,%s,%s,%s,%s,%s,%s,
+                    %s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s) WHERE
+                    bristo_contacts_ct_id = %s AND 
+                    bristo_contacts_ct_owner = %s OR
+                    bristo_contacts_ct_id = %s AND
+                    bristo_contacts_ct_email1 = %s;""",
+                    (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
+                    _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
+                    _pemail,_oweb,_pweb, _current_id,  _usr, _current_id, 
+                    _usr_email))
+
+                self._conn.commit()
+                self.contactsStatusBar.showMessage('Contact Updated.', 3000)
+                self.db_close()
+
     def db_update_group(self):
         '''
         update_group updates group information including the password.
         '''
-        
+
         _usr = self._user
         _group = self.search_groups.searchGroupLineEdit.text()
         _pwd = self.search_groups.passwordLineEdit.text()
@@ -1300,7 +1393,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             self.contactsStatusBar.showMessage('Please enter group password.',
                 3000)
-        
+
     def update_usercontact_availablity(self):
         '''
         udate_usercontact_availability updates the users contact
@@ -1319,13 +1412,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self.contactsStatusBar.showMessage('User Contact Availability Updated.', 3000)
                 self.db_close()
-            
+
     def display_data(self):
         '''
-        
+
         display_data simply displays a data based on the date
         index integer value in self_ITEM.
-        
+
         '''
         if not self._account_expired:
             self.block_signals()
@@ -1342,9 +1435,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.display_group()
             self.display_msg()
             self.unblock_signals()
-        
+
     def display_data_not_appts(self):
-        
+
         '''
         display_data_not_appts displays all info on contact without updating the
         contact appointments.  This is needed to allow appointments selected by the
@@ -1361,32 +1454,32 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.display_group_in_contact()
             self.display_msg()
             self.unblock_signals()
-        
-        
+
+
     def resize_mode_zero(self):
         '''
         resize_mode_zero sets the resize mode to zero for the Table Widgets to
         zero.  There after they may be reset by clicking the resize buttons.
         '''
-        
+
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(0)
         self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0)
         self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0) 
-    
+
     def block_signals(self):
         '''
         block_signals blocks all signals during the loading of data to widgets.
         This is needed to prevent cellChanged signals from being activated during
         programatic loading of data to the widgets.
         '''
-        
+
         if not self._groups:
             self.bristo_search.notesTableWidget.blockSignals(True) # block during load
             self.bristo_search.callsTableWidget.blockSignals(True)
             self.bristo_search.apptTableWidget.blockSignals(True)
         if self._groups:    
             self.search_groups.blockSignals(True)
-        
+
     def display_contact(self):
         '''
         display_contact displays contact information to the contact and address tabs.
@@ -1440,7 +1533,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.availabilityPushButton.setFlat(True)
             self.bristo_search.availabilityPushButton.setStyleSheet(
             "border: solid; background-color: rgb(255, 0, 0)")
-        
+
     def display_group(self):
         '''
         display_group displays group information.
@@ -1471,7 +1564,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.fetch_groups[self._ITEM][self._GRPFAX])
             self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
             self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
-        
+
     def display_group_contacts(self):
         '''
         display_group_contacts authenticates a group login and then returns
@@ -1484,7 +1577,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if _grp_nm and _pwd:
             _grp_nm_match = False
             _grp_pwd_match = False
-            
+
             # Verify group name
             # If user enters incorrect group name this is not yet resolved.
             self._cursor = self._conn.cursor()
@@ -1503,8 +1596,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._groupnm = _grp_nm
                 else:
                     _grp_nm_match = False
-                    
-                    
+
+
             # Verify user password
             self._cursor = self._conn.cursor()
             self._cursor.execute("SELECT bristo_contacts_groups_pwd FROM \
@@ -1512,9 +1605,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _grp_nm, ))
             _db_grppwdhash = self._cursor.fetchone()[0]
             _grp_pwd_match = self.authenticatepwd(_db_grppwdhash,  _pwd)
-        
+
             if _grp_nm_match and _grp_pwd_match:
-                
+
                 if self._cursor.close:
                     self._cursor = self._conn.cursor()
                 # Log authentication
@@ -1549,7 +1642,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.incorrectgrouplogin()
 
     def display_notes(self):
-        
+
         '''
         display_notes display notes in the notes tab.
         '''
@@ -1570,9 +1663,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.bristo_search.notesTableWidget.setItem(_tblwgt_row,
                     _tblwgt_note_col, _qwitem)
                 _tblwgt_row += 1
-                
+
     def display_files(self):
-        
+
         '''
         disply_files displays files in the files tab.
         '''
@@ -1598,9 +1691,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.bristo_search.fileTableWidget.setItem(_tblwgt_file_row,
                     _tblwgt_filename_col, _qwitem)
                 _tblwgt_file_row += 1
-                
+
     def display_calls(self):
-        
+
         '''
         display calls displays telephone calls in the calls tab.
         '''
@@ -1610,7 +1703,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_phone_col = 3 #static
         _tblwgt_in_col = 4 # static
         _tblwgt_results_col = 5 # static
-        
+
         for _contact_call in range(len(self.fetch_calls)):
             if self.fetch_calls[_contact_call][self._calls_ct_id] ==\
                 self.fetch_results[self._ITEM][self._ID]:
@@ -1636,7 +1729,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
                     _tblwgt_results_col, _qwitem)
                 _tblwgt_calls_row += 1
-                
+
     def display_appts_by_date(self):
 
         '''
@@ -1681,7 +1774,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _tblwgt_appt_row += 1
         self._calendar_activated = False
         self._display_appts_set = False
-        
+
     def display_appts(self):
 
         '''
@@ -1724,7 +1817,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _tblwgt_purpose_col, _qwitem)
                 _tblwgt_appt_row += 1
         self._display_appts_set = True
-        
+
     def display_group_in_contact(self):
         '''
         display_group_in_contact displays group info in contact group tab.
@@ -1740,7 +1833,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             for _idx in range(len(self.fetch_groups)):
                 if _grp_nm == self.fetch_groups[_idx][self._GRPNAME]:
                     break
-            
+
             if self.fetch_groups:
                 self.bristo_search.plainTextEdit.insertPlainText(
                 self.fetch_groups[_idx][self._GRPDESC])
@@ -1754,7 +1847,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
 
     def display_msg(self):
-        
+
         '''
         display_msg displays a message in the status bar after update of information.
         '''
@@ -1766,9 +1859,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _msg = 'Group '+str(self._ITEM+1)+" of "\
             +str(self._LASTITEM+1)+" fetched and loaded."
             self.contactsStatusBar.showMessage(_msg, 3000)
-    
+
     def unblock_signals(self):
-        
+
         '''
         unblock_signals unblocks all signals after information has been loaded.
         '''
@@ -1778,10 +1871,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.apptTableWidget.blockSignals(False)
         if self._groups:
              self.search_groups.blockSignals(False)
-        
-    
+
+
     def refresh_map(self):
-        
+
         '''
         refresh_map refreshes the google map page when the user clicks the refresh
         button.
@@ -1793,12 +1886,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.google_com.load(QUrl(_loc))
 
     def refresh_email(self):
-    
+
         '''
         refresh_map refreshes the google map page when the user clicks the refresh
         button.
         '''
-       
+
         _email_addr_filter = self.fetch_results[self._ITEM][self._OEMAIL]
         _mail_search = self._user_webmail
         if self._calendar_activated:
@@ -1807,15 +1900,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             _loc = _mail_search + _email_addr_filter
         self.google_mail_com.load(QUrl(_loc))
-        
+
     def db_insert_contact_note(self):
-        
+
         '''
         db_insert inserts one new contact note into the PostgreSQL database table
         bristo_contacts_notes.  The serial ID, Time Date Stamp are automatically
         generated.  Only the foreign key office phone primary key for 
         bristo_contacts_ct lookup value and notice itself need be entered.
-        
+
         '''
         self.db_login()
         if self._connected:
@@ -1826,7 +1919,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _oph = self.bristo_search.officePhoneLineEdit.text()
             _note = self.bristo_search.notesTableWidget.cellWidget(
                                                 _crow,_ccol ).text()
-            
+
             self._cursor.execute("""INSERT INTO bristo_contacts_notes
                     (bristo_contacts_notes_ct, bristo_contacts_notes_note,
                     bristo_contacts_notes_owner)
@@ -1834,39 +1927,39 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
             self.db_close()
-    
+
     def resize_notes(self):
-        
+
         '''
         resize_notes resets the table widget resize mode to resize to contents.
         '''
-        
+
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(3)
-    
+
     def resize_calls(self):
-        
+
         '''
         resize_calls resets the table widget resize mode to resize to contents.
         '''
-        
+
         self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(3) 
-        
+
     def resize_appts(self):
-        
+
         '''
         resize_appts resets the table widget resize mode to resize to contents.
         '''
-        
+
         self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(3) 
-        
+
     def db_insert_contact_file(self):
-        
+
         '''
         db_insert_contact_file inserts one file into the PostgreSQL database table
         bristo_contacts_files.  The serial ID, Time Date Stamp are automatically
         generated.  Only the foreign key office phone primary key for 
         bristo_contacts_ct lookup value, file name and file need be entered.
-        
+
         '''
         self.db_login()
         if self._connected:
@@ -1886,9 +1979,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('New contact file inserted.', 3000)
             self.db_close()
-    
+
     def get_contact_file(self):
-        
+
         '''
         get_contact_file retrieves binary files from the database and saves them to
         the users desktop.
@@ -1910,14 +2003,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage(_file_row_name+' '\
                                                +'saved on Desktop.', 2000)
             self.db_close()
-    
+
     def get_path_filename(self,  _path):
-        
+
         '''
         get_path_filename extracts linux/windows/mac 
         filenames from a path and returns them.
         '''
-        
+
         head, tail = ntpath.split(_path)
         return tail
 
@@ -1945,7 +2038,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
             self.db_close()
-    
+
     def update_group_pic(self):
         '''
         update_group pic opens a group logo provided by the PostgreSQL database
@@ -1969,8 +2062,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
             self.db_close()
-            
-    
+
+
     def display_pic(self,  _qobject, _buffer):
         '''
         display_pic accepts a qobject and a buffer returned by psycopg2 database
@@ -1980,7 +2073,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         p = QPixmap()               # Create QPixmap
         p.loadFromData(picture)     # Load picture from data
         _qobject.setPixmap(p)       # Display picture on object
-        
+
     def live_call_widgets(self):
         '''
         live_widgets is a bristosoft native abstract idea.  It postulates that
@@ -2002,15 +2095,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.callsTableWidget.setCellWidget(
                    _crow, self._calls_in, self.live_chkbox)
             self._live_set = True # Prevents Dupes on selection
-    
+
     def db_insert_contact_call(self):
-        
+
         '''
         db_insert_contact_call inserts one new contact call into the PostgreSQL 
         database table bristo_contacts_calls.  The serial ID, Time Date Stamp 
         are automatically generated.  Only the phone number called, inbound or 
         or outbound and results need be entered.
-        
+
         '''
         self.db_login()
         if self._connected:
@@ -2025,7 +2118,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _in = self.live_chkbox.isChecked()
             _results = self.bristo_search.callsTableWidget.cellWidget(
                 _crow, self._calls_results).text()
-            
+
             self._cursor.execute("""INSERT INTO bristo_contacts_calls
                     (bristo_contacts_calls_ct_id, bristo_contacts_calls_phone,
                     bristo_contacts_calls_type, bristo_contacts_calls_results,
@@ -2036,9 +2129,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
             self.db_close()
-        
+
     def appt_display_contact(self):
-        
+
         _ccol = self._appt_ct_id
         _crow = self.bristo_search.apptTableWidget.currentRow()
         if self.bristo_search.apptTableWidget.item(
@@ -2051,7 +2144,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 break
         self._ITEM = _index
         self.display_data_not_appts()
-    
+
 
     def live_appt_widgets(self):
         '''
@@ -2071,9 +2164,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.bristo_search.apptTableWidget.setCellWidget(
                        _crow, self._appt_time, self.live_dtimeedit)
             self._live_set = True # Prevents Dupes on selection
-              
 
-            
+
+
     def db_insert_update_appt(self):
         '''
         db_insert_update_appt calls either insert or update appointment methods
@@ -2087,15 +2180,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             self.db_update_contact_appt()
 
-    
+
     def db_insert_contact_appt(self):
-        
+
         '''
         db_insert_contact_appt inserts one new contact appointment into the 
         PostgreSQL database table bristo_contacts_appt.  The serial ID, 
         Time Date Stamp are automatically generated.  Only the date/time of
         the appointment, open or closed and purpose need be entered.
-        
+
         '''
         self.db_login()
         if self._connected:
@@ -2107,7 +2200,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _closed = self.live_chkbox.isChecked()
             _purpose = self.bristo_search.apptTableWidget.cellWidget(
                 _crow, self._appt_purpose).text()
-            
+
             self._cursor.execute("""INSERT INTO bristo_contacts_appt
                     (bristo_contacts_appt_ct_id, bristo_contacts_appt_time,
                     bristo_contacts_appt_complete, bristo_contacts_appt_purpose,
@@ -2118,14 +2211,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
             self.db_close()
-        
+
     def db_update_contact_appt(self):
-        
+
         '''
         db_update_contact_appt updates a contact appointment in the 
         PostgreSQL database table bristo_contacts_appt.  Only the
         complete/open checkbox and purpose can be updated.
-        
+
         '''
         self.db_login()
         self.reset_timer()
@@ -2135,7 +2228,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _closed = self.live_chkbox.isChecked()
         _purpose = self.bristo_search.apptTableWidget.cellWidget(
             _crow, self._appt_purpose).text()
-        
+
         self._cursor.execute("""UPDATE bristo_contacts_appt SET
                 (bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
                 = (%s,%s) WHERE bristo_contacts_appt_id = %s;""", (_closed,
@@ -2144,14 +2237,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._live_set = False
         self.contactsStatusBar.showMessage('Contact Appointment Updated.', 5000)
         self.db_close()
-    
+
     def display_appts_bydate(self):
-        
+
         '''
         display_appts_bydate accepts the date double clicked by the calendar.
         It then displays all scheduled items for that date.
         '''
-        
+
         self._calendar_activated = True
         self._displayed_apptsbydate = False
         self._qcal_date = self.bristo_search.calendarWidget.selectedDate()
@@ -2159,13 +2252,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.block_signals()
         self.display_appts_by_date()
         self.unblock_signals()
-       
-    
+
+
     def db_full_vacuum(self):
         '''
-        
+
         db_full_vacuum does a complete vacuum of the database.
-        
+
         '''
         self.db_login()
         if self._connected:
@@ -2182,12 +2275,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             _msg = 'Please connect to the database to vacuum.'
             self.contactsStatusBar.showMessage(_msg, 5000)
-            
+
     def db_reindex(self):
         '''
-        
+
         db_reindex reindexes the database bristo_contacts_ct.
-        
+
         '''
         self.db_login()
         if self._connected:
@@ -2207,20 +2300,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
     def _doQuery(self, query):
         '''
-        
+
         _doQuery performs a query with a cursor and then commits the
         transaction.
-        
+
         '''
         self._cursor.execute(query)
         self._conn.commit()
-    
+
     def db_close(self):
         '''
-        
+
         db_close closing the current cursor if any and database connection.  It
         then turns the status bar red.
-        
+
         '''
         if self._connected:
             if self._cursor.close:
@@ -2260,13 +2353,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                       '/'+ self._db+'.')
             self.contactsStatusBar.addWidget(self._conn_msg)
             self._disconnected = True
-    
+
     def db_idle(self):
         '''
-        
+
         db_close closing the current cursor if any and database connection.  It
         then turns the status bar red.
-        
+
         '''
         if self._connected:
             if self._cursor.close:
@@ -2305,13 +2398,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                       '/'+ self._db+' logged out due to inactivity.')
             self.contactsStatusBar.addWidget(self._conn_msg)
             self._disconnected = True
-            
+
     def close_contacts(self):
         '''
-        
+
         close_contacts close closes the current database connection
         and closes bristoSOFT Contacts.
-        
+
         '''
         if self._connected:
             if self._cursor.close:
@@ -2348,5 +2441,5 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_msg = QLabel(self._host+
                                   '/'+ self._db+'.')
             self.contactsStatusBar.addWidget(self._conn_msg)
-                                              
+
         self.close()
