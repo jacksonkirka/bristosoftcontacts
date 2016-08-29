@@ -5,7 +5,7 @@
 -- Dumped from database version 9.4.9
 -- Dumped by pg_dump version 9.5.4
 
--- Started on 2016-08-28 22:24:23 EDT
+-- Started on 2016-08-29 11:24:21 EDT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -180,7 +180,7 @@ CREATE TABLE bristo_contacts_appt (
 ALTER TABLE bristo_contacts_appt OWNER TO admin;
 
 --
--- TOC entry 3009 (class 0 OID 0)
+-- TOC entry 3010 (class 0 OID 0)
 -- Dependencies: 177
 -- Name: TABLE bristo_contacts_appt; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -204,7 +204,7 @@ CREATE SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq
 ALTER TABLE bristo_contacts_appt_bristo_contacts_appt_id_seq OWNER TO admin;
 
 --
--- TOC entry 3011 (class 0 OID 0)
+-- TOC entry 3012 (class 0 OID 0)
 -- Dependencies: 178
 -- Name: bristo_contacts_appt_bristo_contacts_appt_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -237,7 +237,7 @@ CREATE TABLE bristo_contacts_authlog (
 ALTER TABLE bristo_contacts_authlog OWNER TO admin;
 
 --
--- TOC entry 3012 (class 0 OID 0)
+-- TOC entry 3014 (class 0 OID 0)
 -- Dependencies: 190
 -- Name: TABLE bristo_contacts_authlog; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -246,7 +246,7 @@ COMMENT ON TABLE bristo_contacts_authlog IS 'Authentication Log';
 
 
 --
--- TOC entry 3013 (class 0 OID 0)
+-- TOC entry 3015 (class 0 OID 0)
 -- Dependencies: 190
 -- Name: COLUMN bristo_contacts_authlog.bristo_contacts_authlog_success; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -270,7 +270,7 @@ CREATE SEQUENCE bristo_contacts_authlog_bristo_contacts_authlog_id_seq
 ALTER TABLE bristo_contacts_authlog_bristo_contacts_authlog_id_seq OWNER TO admin;
 
 --
--- TOC entry 3015 (class 0 OID 0)
+-- TOC entry 3017 (class 0 OID 0)
 -- Dependencies: 189
 -- Name: bristo_contacts_authlog_bristo_contacts_authlog_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -298,7 +298,7 @@ CREATE TABLE bristo_contacts_calls (
 ALTER TABLE bristo_contacts_calls OWNER TO admin;
 
 --
--- TOC entry 3017 (class 0 OID 0)
+-- TOC entry 3019 (class 0 OID 0)
 -- Dependencies: 179
 -- Name: TABLE bristo_contacts_calls; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -322,7 +322,7 @@ CREATE SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq
 ALTER TABLE bristo_contacts_calls_bristo_contacts_calls_id_seq OWNER TO admin;
 
 --
--- TOC entry 3019 (class 0 OID 0)
+-- TOC entry 3021 (class 0 OID 0)
 -- Dependencies: 180
 -- Name: bristo_contacts_calls_bristo_contacts_calls_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -349,7 +349,7 @@ CREATE TABLE bristo_contacts_files (
 ALTER TABLE bristo_contacts_files OWNER TO admin;
 
 --
--- TOC entry 3020 (class 0 OID 0)
+-- TOC entry 3023 (class 0 OID 0)
 -- Dependencies: 181
 -- Name: TABLE bristo_contacts_files; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -373,7 +373,7 @@ CREATE SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq
 ALTER TABLE bristo_contacts_file_bristo_contacts_file_id_seq OWNER TO admin;
 
 --
--- TOC entry 3022 (class 0 OID 0)
+-- TOC entry 3025 (class 0 OID 0)
 -- Dependencies: 182
 -- Name: bristo_contacts_file_bristo_contacts_file_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -409,7 +409,7 @@ CREATE TABLE bristo_contacts_groups (
 ALTER TABLE bristo_contacts_groups OWNER TO admin;
 
 --
--- TOC entry 3023 (class 0 OID 0)
+-- TOC entry 3027 (class 0 OID 0)
 -- Dependencies: 188
 -- Name: TABLE bristo_contacts_groups; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -433,7 +433,7 @@ CREATE SEQUENCE bristo_contacts_groups_bristo_contacts_groups_id_seq
 ALTER TABLE bristo_contacts_groups_bristo_contacts_groups_id_seq OWNER TO admin;
 
 --
--- TOC entry 3025 (class 0 OID 0)
+-- TOC entry 3029 (class 0 OID 0)
 -- Dependencies: 187
 -- Name: bristo_contacts_groups_bristo_contacts_groups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -460,7 +460,7 @@ ALTER TABLE ONLY bristo_contacts_notes ALTER COLUMN bristo_contacts_notes_ct SET
 ALTER TABLE bristo_contacts_notes OWNER TO admin;
 
 --
--- TOC entry 3026 (class 0 OID 0)
+-- TOC entry 3031 (class 0 OID 0)
 -- Dependencies: 183
 -- Name: TABLE bristo_contacts_notes; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -484,7 +484,7 @@ CREATE SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq
 ALTER TABLE bristo_contacts_notes_bristo_contacts_notes_id_seq OWNER TO admin;
 
 --
--- TOC entry 3028 (class 0 OID 0)
+-- TOC entry 3033 (class 0 OID 0)
 -- Dependencies: 184
 -- Name: bristo_contacts_notes_bristo_contacts_notes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -511,7 +511,7 @@ CREATE TABLE bristo_contacts_users (
 ALTER TABLE bristo_contacts_users OWNER TO admin;
 
 --
--- TOC entry 3029 (class 0 OID 0)
+-- TOC entry 3035 (class 0 OID 0)
 -- Dependencies: 185
 -- Name: TABLE bristo_contacts_users; Type: COMMENT; Schema: public; Owner: admin
 --
@@ -535,7 +535,7 @@ CREATE SEQUENCE bristo_contacts_users_bristo_contacts_users_id_seq
 ALTER TABLE bristo_contacts_users_bristo_contacts_users_id_seq OWNER TO admin;
 
 --
--- TOC entry 3031 (class 0 OID 0)
+-- TOC entry 3037 (class 0 OID 0)
 -- Dependencies: 186
 -- Name: bristo_contacts_users_bristo_contacts_users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
 --
@@ -872,7 +872,19 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_ct TO bristousers;
 
 
 --
--- TOC entry 3010 (class 0 OID 0)
+-- TOC entry 3009 (class 0 OID 0)
+-- Dependencies: 176
+-- Name: bristo_constacts_ct_bristo_contacts_ct_id_seq; Type: ACL; Schema: public; Owner: admin
+--
+
+REVOKE ALL ON SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq FROM admin;
+GRANT ALL ON SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq TO admin;
+GRANT SELECT,UPDATE ON SEQUENCE bristo_constacts_ct_bristo_contacts_ct_id_seq TO bristousers;
+
+
+--
+-- TOC entry 3011 (class 0 OID 0)
 -- Dependencies: 177
 -- Name: bristo_contacts_appt; Type: ACL; Schema: public; Owner: admin
 --
@@ -884,7 +896,19 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_appt TO bristousers;
 
 
 --
--- TOC entry 3014 (class 0 OID 0)
+-- TOC entry 3013 (class 0 OID 0)
+-- Dependencies: 178
+-- Name: bristo_contacts_appt_bristo_contacts_appt_id_seq; Type: ACL; Schema: public; Owner: admin
+--
+
+REVOKE ALL ON SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq FROM admin;
+GRANT ALL ON SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq TO admin;
+GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_appt_bristo_contacts_appt_id_seq TO bristousers;
+
+
+--
+-- TOC entry 3016 (class 0 OID 0)
 -- Dependencies: 190
 -- Name: bristo_contacts_authlog; Type: ACL; Schema: public; Owner: admin
 --
@@ -896,7 +920,7 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_authlog TO bristousers;
 
 
 --
--- TOC entry 3016 (class 0 OID 0)
+-- TOC entry 3018 (class 0 OID 0)
 -- Dependencies: 189
 -- Name: bristo_contacts_authlog_bristo_contacts_authlog_id_seq; Type: ACL; Schema: public; Owner: admin
 --
@@ -908,7 +932,7 @@ GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_authlog_bristo_contacts_authlog_
 
 
 --
--- TOC entry 3018 (class 0 OID 0)
+-- TOC entry 3020 (class 0 OID 0)
 -- Dependencies: 179
 -- Name: bristo_contacts_calls; Type: ACL; Schema: public; Owner: admin
 --
@@ -920,7 +944,19 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_calls TO bristousers;
 
 
 --
--- TOC entry 3021 (class 0 OID 0)
+-- TOC entry 3022 (class 0 OID 0)
+-- Dependencies: 180
+-- Name: bristo_contacts_calls_bristo_contacts_calls_id_seq; Type: ACL; Schema: public; Owner: admin
+--
+
+REVOKE ALL ON SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq FROM admin;
+GRANT ALL ON SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq TO admin;
+GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_calls_bristo_contacts_calls_id_seq TO bristousers;
+
+
+--
+-- TOC entry 3024 (class 0 OID 0)
 -- Dependencies: 181
 -- Name: bristo_contacts_files; Type: ACL; Schema: public; Owner: admin
 --
@@ -932,7 +968,19 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_files TO bristousers;
 
 
 --
--- TOC entry 3024 (class 0 OID 0)
+-- TOC entry 3026 (class 0 OID 0)
+-- Dependencies: 182
+-- Name: bristo_contacts_file_bristo_contacts_file_id_seq; Type: ACL; Schema: public; Owner: admin
+--
+
+REVOKE ALL ON SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq FROM admin;
+GRANT ALL ON SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq TO admin;
+GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_file_bristo_contacts_file_id_seq TO bristousers;
+
+
+--
+-- TOC entry 3028 (class 0 OID 0)
 -- Dependencies: 188
 -- Name: bristo_contacts_groups; Type: ACL; Schema: public; Owner: admin
 --
@@ -944,7 +992,19 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_groups TO bristousers;
 
 
 --
--- TOC entry 3027 (class 0 OID 0)
+-- TOC entry 3030 (class 0 OID 0)
+-- Dependencies: 187
+-- Name: bristo_contacts_groups_bristo_contacts_groups_id_seq; Type: ACL; Schema: public; Owner: admin
+--
+
+REVOKE ALL ON SEQUENCE bristo_contacts_groups_bristo_contacts_groups_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bristo_contacts_groups_bristo_contacts_groups_id_seq FROM admin;
+GRANT ALL ON SEQUENCE bristo_contacts_groups_bristo_contacts_groups_id_seq TO admin;
+GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_groups_bristo_contacts_groups_id_seq TO bristousers;
+
+
+--
+-- TOC entry 3032 (class 0 OID 0)
 -- Dependencies: 183
 -- Name: bristo_contacts_notes; Type: ACL; Schema: public; Owner: admin
 --
@@ -956,7 +1016,19 @@ GRANT SELECT,INSERT,UPDATE ON TABLE bristo_contacts_notes TO bristousers;
 
 
 --
--- TOC entry 3030 (class 0 OID 0)
+-- TOC entry 3034 (class 0 OID 0)
+-- Dependencies: 184
+-- Name: bristo_contacts_notes_bristo_contacts_notes_id_seq; Type: ACL; Schema: public; Owner: admin
+--
+
+REVOKE ALL ON SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq FROM admin;
+GRANT ALL ON SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq TO admin;
+GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_seq TO bristousers;
+
+
+--
+-- TOC entry 3036 (class 0 OID 0)
 -- Dependencies: 185
 -- Name: bristo_contacts_users; Type: ACL; Schema: public; Owner: admin
 --
@@ -967,7 +1039,7 @@ GRANT ALL ON TABLE bristo_contacts_users TO admin;
 GRANT SELECT ON TABLE bristo_contacts_users TO bristousers;
 
 
--- Completed on 2016-08-28 22:24:28 EDT
+-- Completed on 2016-08-29 11:24:27 EDT
 
 --
 -- PostgreSQL database dump complete
