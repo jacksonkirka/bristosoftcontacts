@@ -158,8 +158,6 @@ class Ui_bristosoftContacts(object):
         self.menuContacts.addAction(self.actionQuery)
         self.menuAbout.addAction(self.actionAbout_Qt)
         self.menuAbout.addAction(self.actionAbout_bristoSOFT_Contacts)
-        self.menuMaintenance.addAction(self.actionVacuum)
-        self.menuMaintenance.addAction(self.actionReIndex)
         self.menuMaintenance.addSeparator()
         self.menuMaintenance.addAction(self.actionChangePassword)
         self.menuFile.addAction(self.actionQuit)
