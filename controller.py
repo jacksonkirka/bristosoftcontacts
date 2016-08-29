@@ -75,7 +75,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn = None
         self._disconnected = True
         self._connected = False
-        self._conn_timer = 60000
+        self._conn_timer = 10000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
@@ -1964,6 +1964,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value, file name and file need be entered.
 
         '''
+        self._conn_timer = 1200000
         self.db_login()
         if self._connected:
             self.reset_timer()
@@ -1982,6 +1983,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('New contact file inserted.', 3000)
             self.db_close()
+        self._conn_timer = 10000
 
     def get_contact_file(self):
 
@@ -2022,7 +2024,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_pic opens a picture provided by the PostgreSQL database user
         and displays it then returns self._image_bin to the caller dialog.
         '''
- 
+        self._conn_timer = 600000
         self.reset_timer()
         fdlg = QFileDialog()                               
         fname = fdlg.getOpenFileName(self, 'Open file', 
@@ -2042,6 +2044,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
         self.db_close()
+        self._conn_timer = 10000
 
     def update_group_pic(self):
         '''
