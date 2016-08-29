@@ -1397,7 +1397,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def update_usercontact_availablity(self):
         '''
         udate_usercontact_availability updates the users contact
-        availability status.
+        availability status if user matches the current contact.
         '''
         self.db_login()
         _current_id = str(self.fetch_results[self._ITEM][self._ID])
@@ -1412,6 +1412,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self.contactsStatusBar.showMessage('User Contact Availability Updated.', 3000)
                 self.db_close()
+        else:
+            self.contactsStatusBar.showMessage('User Email must match contact email.', 5000)
+            self.db_close()
 
     def display_data(self):
         '''
@@ -2019,7 +2022,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_pic opens a picture provided by the PostgreSQL database user
         and displays it then returns self._image_bin to the caller dialog.
         '''
-        self.db_login()
+ 
         self.reset_timer()
         fdlg = QFileDialog()                               
         fname = fdlg.getOpenFileName(self, 'Open file', 
@@ -2027,6 +2030,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.picLabel.setPixmap(self._image)  # Display
+        self.db_login()
         if self._connected:
             _id = self.fetch_results[self._ITEM][self._ID]
             self._cursor = self._conn.cursor()
@@ -2037,7 +2041,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
              _id ))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
-            self.db_close()
+        self.db_close()
 
     def update_group_pic(self):
         '''
