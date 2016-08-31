@@ -152,6 +152,11 @@ class Ui_bristosoftContacts(object):
         icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/system-search-3.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSearchGroupsDialog.setIcon(icon12)
         self.actionSearchGroupsDialog.setObjectName(_fromUtf8("actionSearchGroupsDialog"))
+        self.action_Print = QtGui.QAction(bristosoftContacts)
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/document-print-2.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.action_Print.setIcon(icon13)
+        self.action_Print.setObjectName(_fromUtf8("action_Print"))
         self.menuContacts.addAction(self.actionConnect)
         self.menuContacts.addAction(self.actionDisconnect)
         self.menuContacts.addAction(self.actionNew)
@@ -160,6 +165,7 @@ class Ui_bristosoftContacts(object):
         self.menuAbout.addAction(self.actionAbout_bristoSOFT_Contacts)
         self.menuMaintenance.addSeparator()
         self.menuMaintenance.addAction(self.actionChangePassword)
+        self.menuFile.addAction(self.action_Print)
         self.menuFile.addAction(self.actionQuit)
         self.menuNav.addAction(self.actionFirst_Item)
         self.menuNav.addAction(self.actionPrevious_Item)
@@ -245,5 +251,7 @@ class Ui_bristosoftContacts(object):
         self.action_Add_Group.setShortcut(_translate("bristosoftContacts", "Alt+A", None))
         self.actionSearchGroupsDialog.setText(_translate("bristosoftContacts", "Search Groups Dialog", None))
         self.actionSearchGroupsDialog.setShortcut(_translate("bristosoftContacts", "Alt+G", None))
+        self.action_Print.setText(_translate("bristosoftContacts", "&Print", None))
+        self.action_Print.setShortcut(_translate("bristosoftContacts", "Alt+P", None))
 
 import resources_rc

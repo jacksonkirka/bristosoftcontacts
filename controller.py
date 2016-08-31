@@ -79,6 +79,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
+        
+        # Print
+        self.fetch_results = None
 
         # Authentication
         self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
@@ -232,6 +235,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionSearchGroupsDialog.triggered.connect(self.search_groups_dlg)
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch_flag)
+        self.action_Print.triggered.connect(self.print_users_contacts)
         self.actionQuit.triggered.connect(self.close_contacts)
         self.actionFirst_Item.triggered.connect(self.db_item_fetch_first)
         self.actionPrevious_Item.triggered.connect(self.db_item_prev)
@@ -2080,6 +2084,49 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         p = QPixmap()               # Create QPixmap
         p.loadFromData(picture)     # Load picture from data
         _qobject.setPixmap(p)       # Display picture on object
+    
+    def print_users_contacts(self):
+        
+        '''
+        print_users_contacts prints all the contacts in memory with
+        the query limit.
+        '''
+        
+        if self.fetch_results:
+            if len(self.fetch_results) > 0:
+                
+                # Setup printer
+                doc = ''
+                bristoprint = QPrintDialog()
+                if bristoprint.exec_() == QDialog.Accepted:
+                    # begin printing to printer line by line
+                    qtxtedit = QTextEdit()
+                    qtxtedit.setFontPointSize(10.0)
+                    qtxtedit.setLineWrapMode(3)
+                    qtxtedit.setTabStopWidth(180)
+                    doc = 'bristoSOFT Contacts v. 0.1     ' +self._TODAY+'\n\r'\
+                    '...............COMPANY...............' +\
+                    '...............FIRST NAME............' +\
+                    '..............LAST NAME..............' + \
+                    '....................OFFICE PHONE............' +\
+                    '..........................OFFICE EMAIL................\n' +\
+                    '                                                      ' +\
+                    '...............ADDRESS................' +\
+                    '................CITY..................' +\
+                    '...............................STATE.................' +\
+                    '................................ZIP..................'+'\n\r'
+                    for x in range(len(self.fetch_results)):
+                        doc = doc + self.fetch_results[x][self._COMPANY]\
+                        + '\t '+ self.fetch_results[x][self._FNAME]\
+                        + '\t'+ self.fetch_results[x][self._LNAME]\
+                        + '\t'+ self.fetch_results[x][self._OPHONE]\
+                        + '\t'+ self.fetch_results[x][self._OEMAIL]+'\n'\
+                        + '\t'+ self.fetch_results[x][self._ADDR]\
+                        + '\t'+ self.fetch_results[x][self._CITY]\
+                        + '\t'+ self.fetch_results[x][self._ST]\
+                        + '\t'+ self.fetch_results[x][self._POSTAL]+'\n\r'
+                    qtxtedit.setText(doc)
+                    qtxtedit.print_(bristoprint.printer())
 
     def live_call_widgets(self):
         '''
