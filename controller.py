@@ -80,8 +80,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._chgpwd = False
         self._cursor = None
         
-        # Print
+        # Reports
         self.fetch_results = None
+        self._grprpt = None
 
         # Authentication
         self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
@@ -927,6 +928,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.search_groups = None
         self.db_login()
         self._groupqry = False
+        self._grprpt = None
         self.db_contacts_fetch()
         self.db_close()
 
@@ -1581,6 +1583,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Authenticate group
         _grp_nm = self.bristo_search.groupNameLineEdit.text()
         _pwd = self.bristo_search.groupPwdLineEdit.text()
+        self._grprpt = _grp_nm
         if _grp_nm and _pwd:
             _grp_nm_match = False
             _grp_pwd_match = False
@@ -2101,30 +2104,34 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 if bristoprint.exec_() == QDialog.Accepted:
                     # begin printing to printer line by line
                     qtxtedit = QTextEdit()
-                    qtxtedit.setFontPointSize(10.0)
-                    qtxtedit.setLineWrapMode(3)
-                    qtxtedit.setTabStopWidth(180)
-                    doc = 'bristoSOFT Contacts v. 0.1     ' +self._TODAY+'\n\r'\
-                    '...............COMPANY...............' +\
-                    '...............FIRST NAME............' +\
-                    '..............LAST NAME..............' + \
-                    '....................OFFICE PHONE............' +\
-                    '..........................OFFICE EMAIL................\n' +\
-                    '                                                      ' +\
-                    '...............ADDRESS................' +\
-                    '................CITY..................' +\
-                    '...............................STATE.................' +\
-                    '................................ZIP..................'+'\n\r'
+                    qtxtedit.setFontPointSize(12.0)
+                    doc = 'bristoSOFT Contacts v. 0.1    ' +self._TODAY+'\n\r'
+                    if self._grprpt:
+                        doc = doc + self._grprpt+'\n\r'
                     for x in range(len(self.fetch_results)):
-                        doc = doc + self.fetch_results[x][self._COMPANY]\
-                        + '\t '+ self.fetch_results[x][self._FNAME]\
-                        + '\t'+ self.fetch_results[x][self._LNAME]\
-                        + '\t'+ self.fetch_results[x][self._OPHONE]\
-                        + '\t'+ self.fetch_results[x][self._OEMAIL]+'\n'\
-                        + '\t'+ self.fetch_results[x][self._ADDR]\
-                        + '\t'+ self.fetch_results[x][self._CITY]\
-                        + '\t'+ self.fetch_results[x][self._ST]\
-                        + '\t'+ self.fetch_results[x][self._POSTAL]+'\n\r'
+                        if not self.fetch_results[x][self._SUITE]:
+                            doc = doc + self.fetch_results[x][self._FNAME]\
+                            + ' '+ self.fetch_results[x][self._LNAME]+'\n'\
+                            + self.fetch_results[x][self._CRED]+'\n'\
+                            + self.fetch_results[x][self._COMPANY]+'\n'\
+                            + self.fetch_results[x][self._ADDR]+'\n'\
+                            + self.fetch_results[x][self._CITY]\
+                            + ', '+ self.fetch_results[x][self._ST]\
+                            + '  '+ self.fetch_results[x][self._POSTAL]+'\n'\
+                            + self.fetch_results[x][self._OPHONE]+'\n'\
+                            + self.fetch_results[x][self._OEMAIL]+'\n\r'
+                        else:
+                            doc = doc + self.fetch_results[x][self._FNAME]\
+                            + ' '+ self.fetch_results[x][self._LNAME]+'\n'\
+                            + self.fetch_results[x][self._CRED]+'\n'\
+                            + self.fetch_results[x][self._COMPANY]+'\n'\
+                            + self.fetch_results[x][self._ADDR]+'\n'\
+                            + self.fetch_results[x][self._SUITE]+'\n'\
+                            + self.fetch_results[x][self._CITY]\
+                            + ', '+ self.fetch_results[x][self._ST]\
+                            + '  '+ self.fetch_results[x][self._POSTAL]+'\n'\
+                            + self.fetch_results[x][self._OPHONE]+'\n'\
+                            + self.fetch_results[x][self._OEMAIL]+'\n\r'
                     qtxtedit.setText(doc)
                     qtxtedit.print_(bristoprint.printer())
 
