@@ -5,7 +5,7 @@
 -- Dumped from database version 9.4.9
 -- Dumped by pg_dump version 9.5.4
 
--- Started on 2016-08-29 11:24:21 EDT
+-- Started on 2016-09-01 14:02:41 EDT
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1036,10 +1036,10 @@ GRANT SELECT,UPDATE ON SEQUENCE bristo_contacts_notes_bristo_contacts_notes_id_s
 REVOKE ALL ON TABLE bristo_contacts_users FROM PUBLIC;
 REVOKE ALL ON TABLE bristo_contacts_users FROM admin;
 GRANT ALL ON TABLE bristo_contacts_users TO admin;
-GRANT SELECT ON TABLE bristo_contacts_users TO bristousers;
+GRANT SELECT,UPDATE ON TABLE bristo_contacts_users TO bristousers;
 
 
--- Completed on 2016-08-29 11:24:27 EDT
+-- Completed on 2016-09-01 14:02:47 EDT
 
 --
 -- PostgreSQL database dump complete
