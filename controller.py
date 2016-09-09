@@ -1979,7 +1979,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                    "Image files (*.jpg *.gif *.png)")       # Get Filename Path
         _fnm = self.get_path_filename(filename)             # Get name to write
         self._file_bin = open(filename, 'rb').read()        # Read > pointer
-        self._conn_timer = 1200000                          # Need large files
+        self._conn_timer = 120000                          # Need large files
         self.db_login()
         if self._connected:
             self.reset_timer()
@@ -1999,8 +1999,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         get_contact_file retrieves binary files from the database and saves them to
         the users desktop.
         '''
+        self._conn_timer = 120000                          # Need large files
         self.db_login()
         if self._connected:
+            self.reset_timer()
             _crow = self.bristo_search.fileTableWidget.currentRow() # Critical tested
             _ccol = self._file_id
             _file_id = self.bristo_search.fileTableWidget.item(_crow, _ccol).text()
@@ -2014,8 +2016,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 f.write(_file) # writes file to desktop
                 f.close()      # close file
             self.contactsStatusBar.showMessage(_file_row_name+' '\
-                                               +'saved on Desktop.', 2000)
+                                               +'saved on Desktop.', 3000)
             self.db_close()
+            self._conn_timer = 10000
 
     def get_path_filename(self,  _path):
 
