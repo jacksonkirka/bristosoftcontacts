@@ -1971,20 +1971,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value, file name and file need be entered.
 
         '''
-        self._conn_timer = 1200000
+
+        _owner = self._user
+        _oph = self.bristo_search.officePhoneLineEdit.text()
+        fdlg = QFileDialog()                               
+        filename = fdlg.getOpenFileName(self, 'Open file', 
+                   "Image files (*.jpg *.gif *.png)")       # Get Filename Path
+        _fnm = self.get_path_filename(filename)             # Get name to write
+        self._file_bin = open(filename, 'rb').read()        # Read > pointer
+        self._conn_timer = 1200000                          # Need large files
         self.db_login()
         if self._connected:
             self.reset_timer()
-            _owner = self._user
-            _oph = self.bristo_search.officePhoneLineEdit.text()
-            fdlg = QFileDialog()                               
-            filename = fdlg.getOpenFileName(self, 'Open file', 
-                       "Image files (*.jpg *.gif *.png)")       # Get Filename Path
-            _fnm = self.get_path_filename(filename)             # Get name to write
-            self._file_bin = open(filename, 'rb').read()        # Read > pointer
             self._cursor.execute("""INSERT INTO bristo_contacts_files
                (bristo_contacts_files_ct, bristo_contacts_files_name,
-                   bristo_contacts_files_file, bristo_contacts_file_owner)
+                   bristo_contacts_files_file, bristo_contacts_files_owner)
                VALUES (%s, %s, %s, %s); """, 
                (_oph, _fnm, psycopg2.Binary(self._file_bin), _owner))
             self._conn.commit()
