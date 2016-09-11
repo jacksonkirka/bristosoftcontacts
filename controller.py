@@ -34,14 +34,16 @@ import ast
 import re
 import os
 import webbrowser
-from bristo_exceptions import *
 from requests import get # Error on ordered_dict changed in compat.py
 import platform
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 # from PyQt4.uic import *
 import psycopg2
+
+from bristo_exceptions import *
 from view import *
 import contactsmain
 

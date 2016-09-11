@@ -1,7 +1,7 @@
 #!/usr/bin/python2
 #
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
-# techniques, algorithms are confidential trade secrets under Ohio and U.S. 
+# techniques, algorithms are confidential trade secrets under Ohio and U.S.
 # Federal law owned by bristoSOFT.
 #
 # Kirk A Jackson dba bristoSOFT
@@ -10,9 +10,9 @@
 # Cincinnati, OH  45241
 # Phone (513) 401-9114
 # email jacksonkirka@bristosoft.com
-# 
+#
 # The trade name bristoSOFT is a registered trade name with the State of Ohio
-# document No. 201607803210. 
+# document No. 201607803210.
 #
 '''
 
@@ -24,16 +24,22 @@ the python scripts herein.
 '''
 
 # Imports
+import sys
 import sip
 sip.setapi('QString', 2)
-import sys
-from controller import *
+
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+
+from controller import *
 
 __version__ = '0.1' # Version assignment
 
 def main():
+    '''
+    main is Contacts startup function and it has the task of setting up the
+    environment and main window it then invokes the controller.
+    '''
     app = QApplication(sys.argv)
     contacts = Controller()
     contacts.setWindowIcon(QIcon(":icons/family.ico"))
