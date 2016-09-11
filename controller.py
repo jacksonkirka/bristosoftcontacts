@@ -24,7 +24,7 @@ PostgreSQL 9.4+ database).
 '''
 
 # Imports
-import sip # Needed for conversion to Python types
+import sip  # Needed for conversion to Python types
 sip.setapi('QString', 2)
 import datetime
 import ntpath
@@ -51,6 +51,7 @@ __version__ = '0.1' # Version assignment
 #bristocontacts = loadUiType('contacts_main.ui')[0]
 
 # class Controller(QMainWindow,  bristocontacts):
+
 
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
@@ -246,12 +247,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionSearch.triggered.connect(self.db_fetch_contact)
         self.actionUpdate.triggered.connect(self.db_update_contact)
 
-
         # Set contactsStatusBar to red
         self._conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
         self.contactsStatusBar.addWidget(self._conn_msg)
         self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(230, 128, 128);")
+        rgb(230, 128, 128);")
 
         # Settings
         settings = QSettings()
@@ -289,7 +289,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         All rights reserved.
         <p>This is a PostgreSQL database contacts management system.  It is
         based on the PyQt frontend GUI.
-        <p>Python %s - Qt %s - PyQt %s on %s""" % (
+            <p>Python %s - Qt %s - PyQt %s on %s""" % (
         __version__, platform.python_version(),
         QT_VERSION_STR, PYQT_VERSION_STR, platform.system()))
 
@@ -370,7 +370,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn.cursor()
             self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
             bristo_contacts_users_name = %s LIMIT %s", (
-                self._user, self._limit ))
+                self._user, self._limit))
             if not self._cursor.rowcount:
                 self.incorrectlogin()
             else:
@@ -392,7 +392,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor = self._conn.cursor()
                 self._cursor.execute("SELECT bristo_contacts_users_pwd FROM \
                 bristo_contacts_users WHERE bristo_contacts_users_name = %s \
-                LIMIT %s", (
+                    LIMIT %s", (
                     self._user, self._limit))
                 _db_usrpwdhash = self._cursor.fetchone()[0]
                 _usr_pwd_match = self.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
@@ -419,14 +419,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._cursor.execute("SELECT bristo_contacts_users_webmail FROM \
                     bristo_contacts_users WHERE bristo_contacts_users_name = %s \
                      LIMIT %s", (
-                        self._user, self._limit))
+                                         self._user, self._limit))
                     self._user_webmail_tuple = self._cursor.fetchone()
                     self._user_webmail = self._user_webmail_tuple[0]
 
 
                     if self._disconnected:
                         self.contactsStatusBar.removeWidget(self._conn_msg)
-                    self._conn_msg = QLabel("ssl:"+self._user +"@"+
+                    self._conn_msg = QLabel("ssl:"+self._user + "@"+
                                             self._host+
                                           '/'+ self._db +'.')
                     if not self._account_expired:
@@ -457,8 +457,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             bristo_contacts_authlog_ctry,
                             bristo_contacts_authlog_postal,
                             bristo_contacts_authlog_success)
-                            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
-                            (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                            (_usr_nm, _in, _grplogin, _usr_ip, _usr_city, 
                             _usr_reg, _usr_ctry, _usr_zip, _suc ))
                     self._conn.commit()
                     _tz = self._usr_tz
@@ -618,7 +618,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         sha256 algorithm and adds a uuid prefix salt.
         '''
         salt = uuid.uuid4().hex
-        return hashlib.sha256(salt.encode() +\
+        return hashlib.sha256(salt.encode() +
             _pwd.encode()).hexdigest() + ':' + salt
 
 
@@ -1094,7 +1094,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.availabilityPushButton.clicked.connect(
             self.update_usercontact_availablity)
         self.bristo_search.notesTableWidget.cellChanged.connect(
-                self.db_insert_contact_note)
+            self.db_insert_contact_note)
         self.bristo_search.callsTableWidget.cellChanged.connect(
             self.db_insert_contact_call)
         self.bristo_search.apptTableWidget.cellChanged.connect(
@@ -1170,7 +1170,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         of contact.
 
         '''
-        if self._clear == False:
+        if self._clear is False:
             self.clear_search_fields()
             self._clear = True
         elif self.bristo_search:
@@ -1663,7 +1663,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_note_col = 1 # static
         for _contact_note in range(len(self.fetch_notes)):
             if self.fetch_notes[_contact_note][self._notes_ct] ==\
-                self.fetch_results[self._ITEM][self._OPHONE]:
+                    self.fetch_results[self._ITEM][self._OPHONE]:
                 _date_row = self.fetch_notes[_contact_note][self._stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
@@ -1711,7 +1711,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.callsTableWidget.clearContents()
         _tblwgt_calls_row = 0  # dynamic
         _tblwgt_calls_date = 2 # static
-        _tblwgt_phone_col = 3 #static
+        _tblwgt_phone_col = 3  # static
         _tblwgt_in_col = 4 # static
         _tblwgt_results_col = 5 # static
 

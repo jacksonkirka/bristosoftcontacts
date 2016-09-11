@@ -16,11 +16,14 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
+
 
 class Ui_contactsDialog(object):
     def setupUi(self, contactsDialog):
@@ -55,7 +58,7 @@ class Ui_contactsDialog(object):
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
         self.mrmrsLabel = QtGui.QLabel(self.layoutWidget1)
         self.mrmrsLabel.setMaximumSize(QtCore.QSize(55, 16777215))
-        self.mrmrsLabel.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
+        self.mrmrsLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.mrmrsLabel.setObjectName(_fromUtf8("mrmrsLabel"))
         self.horizontalLayout_2.addWidget(self.mrmrsLabel)
         self.mrmrsLineEdit = QtGui.QLineEdit(self.layoutWidget1)

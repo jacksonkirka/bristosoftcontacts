@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-class ConnectException(Exception): pass
+
+class ConnectException(Exception):
+    pass
+
 
 
 

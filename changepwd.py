@@ -16,11 +16,14 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+
+
 
 class Ui_changepwdDialog(object):
     def setupUi(self, changepwdDialog):
@@ -32,7 +35,7 @@ class Ui_changepwdDialog(object):
         self.changepwdButtonBox = QtGui.QDialogButtonBox(changepwdDialog)
         self.changepwdButtonBox.setGeometry(QtCore.QRect(260, 290, 191, 32))
         self.changepwdButtonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.changepwdButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.changepwdButtonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel | QtGui.QDialogButtonBox.Ok)
         self.changepwdButtonBox.setObjectName(_fromUtf8("changepwdButtonBox"))
         self.label = QtGui.QLabel(changepwdDialog)
         self.label.setGeometry(QtCore.QRect(220, 20, 221, 31))
