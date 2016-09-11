@@ -33,6 +33,7 @@ import uuid
 import ast
 import re
 import os
+import webbrowser
 from bristo_exceptions import *
 from requests import get # Error on ordered_dict changed in compat.py
 import platform
@@ -2317,6 +2318,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.block_signals()
         self.display_appts_by_date()
         self.unblock_signals()
+        
+    def open_url(self,  _url):
+        '''
+        
+        open_url opens a web url given by the caller in the default browser of the platform contacts
+        is currently running in.  
+        
+        '''
+        _opened = webbrowser.open(_url, autoraise=True)
+        if not _opened:
+            self.contactsStatusBar.showMessage('Unable to open url requested.', 5000)   
 
 
     def db_full_vacuum(self):
