@@ -54,7 +54,7 @@ __version__ = '0.1' # Version assignment
 
 # class Controller(QMainWindow,  bristocontacts):
 
-
+        
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
 
@@ -2328,9 +2328,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         is currently running in.  
         
         '''
-        _opened = webbrowser.open(_url, autoraise=True)
-        if not _opened:
-            self.contactsStatusBar.showMessage('Unable to open url requested.', 5000)   
+        webbrowser.open(_url)
+        #_opened = webbrowser.open(_url, autoraise=True)
+        #if not _opened:
+         #   self.contactsStatusBar.showMessage('Unable to open url requested.', 5000)   
 
 
     def db_full_vacuum(self):

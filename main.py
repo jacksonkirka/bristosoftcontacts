@@ -30,7 +30,6 @@ sip.setapi('QString', 2)
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-
 from controller import *
 
 __version__ = '0.1' # Version assignment
