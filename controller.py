@@ -1112,6 +1112,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.fileTableWidget.doubleClicked.connect(
             self.get_contact_file)
         self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
+        self.bristo_search.browserMapPushButton.clicked.connect(self.open_url_map)
         self.bristo_search.accessGroupPushButton.clicked.connect(
             self.display_group_contacts)
         self.bristo_search.emailRefreshPushButton.clicked.connect(
@@ -1895,8 +1896,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _map_addr = self.fetch_results[self._ITEM][self._ADDR]
         _map_zip = self.fetch_results[self._ITEM][self._POSTAL]
         _google = 'https://www.google.com/maps/place/'
-        _loc = _google+_map_addr+_map_zip
+        _loc = _google+_map_addr+" "+_map_zip
         self.google_com.load(QUrl(_loc))
+
+    def open_url_map(self):
+
+        '''
+        open_url_map opens the google map web page when the user clicks the browser 
+        button.
+        '''
+        _map_addr = self.fetch_results[self._ITEM][self._ADDR]
+        _map_zip = self.fetch_results[self._ITEM][self._POSTAL]
+        _google = 'https://www.google.com/maps/place/'
+        _loc = _google+_map_addr+" "+_map_zip
+        webbrowser.open(_loc)
 
     def refresh_email(self):
 

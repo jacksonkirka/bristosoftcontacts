@@ -21,7 +21,7 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-        
+
 # Needed for clickable urls extends QLineEdit only
 from PyQt4.QtGui import QLineEdit
 import webbrowser
@@ -44,6 +44,7 @@ class QLineEdit(QLineEdit):
             self.value = 'http://' + self.value
             webbrowser.open(self.value)
         
+
 class Ui_contactsSearchDialog(object):
     def setupUi(self, contactsSearchDialog):
         contactsSearchDialog.setObjectName(_fromUtf8("contactsSearchDialog"))
@@ -341,6 +342,9 @@ class Ui_contactsSearchDialog(object):
         self.refreshMapPushButton = QtGui.QPushButton(self.mapTab)
         self.refreshMapPushButton.setGeometry(QtCore.QRect(530, 380, 61, 27))
         self.refreshMapPushButton.setObjectName(_fromUtf8("refreshMapPushButton"))
+        self.browserMapPushButton = QtGui.QPushButton(self.mapTab)
+        self.browserMapPushButton.setGeometry(QtCore.QRect(460, 380, 61, 27))
+        self.browserMapPushButton.setObjectName(_fromUtf8("browserMapPushButton"))
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/icons/icons/Bevel-And-Emboss-Media-Map.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.contactTabWidget.addTab(self.mapTab, icon4, _fromUtf8(""))
@@ -711,6 +715,7 @@ class Ui_contactsSearchDialog(object):
         self.postalLabel.setText(_translate("contactsSearchDialog", "Zip:", None))
         self.contactTabWidget.setTabText(self.contactTabWidget.indexOf(self.addressTab), _translate("contactsSearchDialog", "Address", None))
         self.refreshMapPushButton.setText(_translate("contactsSearchDialog", "Refresh", None))
+        self.browserMapPushButton.setText(_translate("contactsSearchDialog", "Browser", None))
         self.contactTabWidget.setTabText(self.contactTabWidget.indexOf(self.mapTab), _translate("contactsSearchDialog", "Map", None))
         self.notesTableWidget.setSortingEnabled(True)
         self.notesDetailPushButton.setText(_translate("contactsSearchDialog", "Resize", None))
