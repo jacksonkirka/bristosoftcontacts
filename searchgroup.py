@@ -22,6 +22,16 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+# Needed for clickable urls extends QLineEdit only
+from PyQt4.QtGui import QLineEdit
+import webbrowser
+class QLineEdit(QLineEdit):
+    
+    def mouseDoubleClickEvent(self, event):
+        self.value = self.text()
+        webbrowser.open(self.value)
+        
+
 class Ui_searchGroupDialog(object):
     def setupUi(self, searchGroupDialog):
         searchGroupDialog.setObjectName(_fromUtf8("searchGroupDialog"))
