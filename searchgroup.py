@@ -28,8 +28,21 @@ import webbrowser
 class QLineEdit(QLineEdit):
     
     def mouseDoubleClickEvent(self, event):
+        '''
+        mouseDoubleClickEvent automatically performs url action based on
+        a valid url.
+        '''
         self.value = self.text()
-        webbrowser.open(self.value)
+        if 'http://' in self.value:
+            webbrowser.open(self.value)
+        elif 'https://' in self.value:
+            webbrowser.open(self.value)
+        elif '@' in self.value:
+            self.value = 'mailto:' + self.value
+            webbrowser.open(self.value)
+        else:
+            self.value = 'http://' + self.value
+            webbrowser.open(self.value)
         
 
 class Ui_searchGroupDialog(object):
