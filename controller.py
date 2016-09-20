@@ -1113,6 +1113,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.get_contact_file)
         self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
         self.bristo_search.browserMapPushButton.clicked.connect(self.open_url_map)
+        self.bristo_search.directionsPushButton.clicked.connect(
+            self.open_url_directions)
         self.bristo_search.accessGroupPushButton.clicked.connect(
             self.display_group_contacts)
         self.bristo_search.emailRefreshPushButton.clicked.connect(
@@ -2344,8 +2346,45 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         webbrowser.open(_url)
         #_opened = webbrowser.open(_url, autoraise=True)
         #if not _opened:
-         #   self.contactsStatusBar.showMessage('Unable to open url requested.', 5000)   
-
+         #   self.contactsStatusBar.showMessage('Unable to open url requested.', 5000)
+    
+    def open_url_directions(self):
+        '''
+        open_url_directions accepts a from direction based on users email to match contact
+        record in database using street address and zip code and also a destination address
+        as the current displayed contact address.  The class method returns a url then opens
+        it in the default browser as google directions.
+        '''
+       
+        # query for user contact record if found build _from address
+        _user_email = self._user_email
+        self.db_login()
+        self.reset_timer()
+        if self._connected:
+            if self._cursor.closed:
+                self._cursor = self.conn.cursor()
+            self._cursor.execute("""SELECT * FROM bristo_contacts_ct
+                    WHERE bristo_contacts_ct_email1 = %s LIMIT 1;""",
+                    (_user_email,  ))
+            _user_contact = self._cursor.fetchone()
+            self.db_close()
+            if _user_contact:
+                # _from address
+                _from_addr = _user_contact[self._ADDR]
+                _from_zip = _user_contact[self._POSTAL]
+                _from = _from_addr+" "+_from_zip
+                # _dest address
+                _dest_addr = self.fetch_results[self._ITEM][self._ADDR]
+                _dest_zip = self.fetch_results[self._ITEM][self._POSTAL]
+                _dest = _dest_addr+" "+_dest_zip
+                
+                # build directions url
+                _google = 'https://www.google.com/maps/dir/'
+                _dir_url = _google+_from+"/"+_dest
+                self.open_url(_dir_url)
+            elif not _user_contact:
+                _msg = 'No email or contact found for user.'
+                self.contactsStatusBar.showMessage(_msg, 5000)
 
     def db_full_vacuum(self):
         '''
