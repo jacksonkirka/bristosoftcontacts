@@ -2366,9 +2366,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor.execute("""SELECT * FROM bristo_contacts_ct
                     WHERE bristo_contacts_ct_email1 = %s LIMIT 1;""",
                     (_user_email,  ))
-            _user_contact = self._cursor.fetchone()
-            self.db_close()
-            if _user_contact:
+            _user_contact =  self._cursor.fetchone()
+            if self._cursor.rowcount:
                 # _from address
                 _from_addr = _user_contact[self._ADDR]
                 _from_zip = _user_contact[self._POSTAL]
@@ -2382,9 +2381,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _google = 'https://www.google.com/maps/dir/'
                 _dir_url = _google+_from+"/"+_dest
                 self.open_url(_dir_url)
-            elif not _user_contact:
-                _msg = 'No email or contact found for user.'
-                self.contactsStatusBar.showMessage(_msg, 5000)
+            elif not self._cursor.rowcount:
+                self.contactsStatusBar.showMessage(
+                    'No contact info found for user.', 5000)
+        self.db_close()
+
 
     def db_full_vacuum(self):
         '''
