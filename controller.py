@@ -1996,8 +1996,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         resize_appts resets the table widget resize mode to resize to contents.
         '''
 
-        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(3) 
-
+        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(3)
+    
+    def resize_msg(self):
+        '''
+        resiize_msg resets the table widget resize mode to resize to contents.
+        '''
+        self.bristo_search.msgTableWidget.verticalHeader().setResizeMode(3)
+        
     def db_insert_contact_file(self):
 
         '''
@@ -2353,7 +2359,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.block_signals()
         self.display_appts_by_date()
         self.unblock_signals()
-        
+    
     def open_url(self,  _url):
         '''
         
