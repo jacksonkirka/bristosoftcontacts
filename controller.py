@@ -1497,6 +1497,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(0)
         self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0)
         self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0) 
+        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0)
 
     def block_signals(self):
         '''
