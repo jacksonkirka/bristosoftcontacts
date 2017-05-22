@@ -116,7 +116,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # SQL class globals
         self._limit = 250
 
-        # Database constants cursor list return
+        # Contacts Database constants cursor list return
         self._ITEM = 0
         self._FIRSTITEM = 0
         self._ID = 0
@@ -217,6 +217,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Calendar
         self._calendar_activated = False
         self._qcal_date = None
+        
+        # Messages
+        self._msg_id = 0
+        self._msg_stamp = 1
+        self._msg_sender = 2
+        self._msg_receiver = 3
+        self._msg_text = 4
+        self._msg_chk_wait = 30000
 
         #Date and Time
         self._DATE = datetime.datetime.now()
@@ -949,7 +957,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search = bristoContactsSearchDialog()
 
 
-        # Hide columns on calls and appointments
+        # Hide columns on calls, appointments and messages
         self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
         self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
         self.bristo_search.callsTableWidget.setColumnHidden(self._calls_ct_id,
@@ -957,6 +965,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.setColumnHidden(self._appt_id,  True)
         self.bristo_search.apptTableWidget.setColumnHidden(self._appt_ct_id,  True)
         self.bristo_search.apptTableWidget.setColumnHidden(self._appt_stamp,  True)
+        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_id,  True)
+        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_receiver, True)
         self._live_set = False # Prevents Duplicate Live Widgets
         self._calendar_activated = False # User double clicked date on calendar
         self._displayed_apptsbydate = False # Appointments by date display once
@@ -998,12 +1008,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Appointments
         self.bristo_search.apptTableWidget.setHorizontalHeaderLabels(
             ['ID', 'CTID', 'Time Stamp', 'Date/Time', 'CO', 'Purpose'])
-
         self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
             self._appt_time, 150)
         self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
             self._appt_complete, 28)
-
+        
+        # Messages
+        self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
+            ['ID','Time Stamp','Sender','Receiver','Messages'])
+        self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
+            self._msg_stamp, 140)
+        self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
+            self._msg_sender, 150)
+            
         # Fetch Data from tables --> Python lists
         _user = self._user
         _email = self._user_email
