@@ -1124,6 +1124,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.resize_calls)
         self.bristo_search.apptDetailPushButton.clicked.connect(
             self.resize_appts)
+        self.bristo_search.msgDetailPushButton.clicked.connect(
+            self.resize_msg)
         self.bristo_search.filePushButton.clicked.connect(
             self.db_insert_contact_file)
         self.bristo_search.fileTableWidget.doubleClicked.connect(
@@ -1497,7 +1499,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(0)
         self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0)
         self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0) 
-        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0)
+        self.bristo_search.msgTableWidget.verticalHeader().setResizeMode(0)
 
     def block_signals(self):
         '''
