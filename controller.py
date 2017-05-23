@@ -1980,9 +1980,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         db_insert_contact_msg inserts one new contact message into the PostgreSQL
-        database table bristo_contacts_msg after contact/user availability has been
-        verified.  The serial ID, Time Date Stamp are automatically generated.  Only the
-        message need be entered.
+        database table bristo_contacts_messages after contact/user availability 
+        has been verified.  The serial ID, Time Date Stamp, Sender and Receiver
+        are automatically generated.  Only the message need be entered.
         '''
         if not self.fetch_results[self._ITEM][self._AVAIL]:
             self.contactsStatusBar.showMessage('User not available.....', 4000)
@@ -2005,12 +2005,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _receiver = _db_usrnm
             _crow = self.bristo_search.msgTableWidget.currentRow()
             _ccol = self.bristo_search.msgTableWidget.currentColumn()
-            # _oph = self.bristo_search.officePhoneLineEdit.text()
             _msg = self.bristo_search.msgTableWidget.cellWidget(
                                                 _crow,_ccol ).text()
-            self._cursor.execute("""INSERT INTO bristo_contacts_msg
-                    (bristo_contacts_msg_sender,bristo_contacts_receiver,
-                    bristo_contacts_msg_text)
+            self._cursor.execute("""INSERT INTO bristo_contacts_messages
+                    (bristo_contacts_messages_sender,
+                    bristo_contacts_messages_receiver,
+                    bristo_contacts_messages_msg)
                     VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Message sent.......', 4000)
