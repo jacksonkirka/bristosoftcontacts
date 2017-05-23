@@ -1512,6 +1512,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.notesTableWidget.blockSignals(True) # block during load
             self.bristo_search.callsTableWidget.blockSignals(True)
             self.bristo_search.apptTableWidget.blockSignals(True)
+            self.bristo_search.msgTableWidget.blockSignals(True)
         if self._groups:    
             self.search_groups.blockSignals(True)
 
@@ -1905,6 +1906,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.notesTableWidget.blockSignals(False) #unblock for update
             self.bristo_search.callsTableWidget.blockSignals(False) 
             self.bristo_search.apptTableWidget.blockSignals(False)
+            self.bristo_search.msgTableWidget.blockSignals(False)
         if self._groups:
              self.search_groups.blockSignals(False)
 
