@@ -1975,7 +1975,47 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
             self.db_close()
+            
+    def db_insert_contact_msg(self):
 
+        '''
+        db_insert_contact_msg inserts one new contact message into the PostgreSQL
+        database table bristo_contacts_msg after contact/user availability has been
+        verified.  The serial ID, Time Date Stamp are automatically generated.  Only the
+        message need be entered.
+        '''
+        if not self.fetch_results[self._ITEM][self._AVAIL]:
+            self.contactsStatusBar.showMessage('User not available.....', 4000)
+        self.db_login()
+        if self._connected:
+            self.reset_timer()
+            _sender = self._user
+            # Get username for current contact email address
+            _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
+            self._cursor = self._conn.cursor()
+            self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
+            bristo_contacts_users_email = %s LIMIT %s", (
+                _usr_email, self._limit))
+            if not self._cursor.rowcount:
+                self.contactsStatusBar.showMessage('User not found.....', 4000)
+                self.db_close()
+            else:
+                _temp = self._cursor.fetchone()
+                _db_usrnm = _temp[self._USERNM]            
+                _receiver = _db_usrnm
+            _crow = self.bristo_search.msgTableWidget.currentRow()
+            _ccol = self.bristo_search.msgTableWidget.currentColumn()
+            # _oph = self.bristo_search.officePhoneLineEdit.text()
+            _msg = self.bristo_search.msgTableWidget.cellWidget(
+                                                _crow,_ccol ).text()
+            self._cursor.execute("""INSERT INTO bristo_contacts_msg
+                    (bristo_contacts_msg_sender,bristo_contacts_receiver,
+                    bristo_contacts_msg_text)
+                    VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
+            self._conn.commit()
+            self.contactsStatusBar.showMessage('Message sent.......', 4000)
+            self.db_close()
+            
     def resize_notes(self):
 
         '''
