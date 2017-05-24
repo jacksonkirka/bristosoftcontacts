@@ -1119,6 +1119,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.db_insert_contact_call)
         self.bristo_search.apptTableWidget.cellChanged.connect(
             self.db_insert_update_appt)
+        self.bristo_search.msgTableWidget.cellChanged.connect(
+            self.db_insert_contact_msg)
         self.bristo_search.notesDetailPushButton.clicked.connect(
             self.resize_notes)
         self.bristo_search.callsDetailPushButton.clicked.connect(
@@ -1127,6 +1129,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.resize_appts)
         self.bristo_search.msgDetailPushButton.clicked.connect(
             self.resize_msg)
+        self.bristo_search.chkmsgPushButton.clicked.connect(
+            self.check_messages)
         self.bristo_search.filePushButton.clicked.connect(
             self.db_insert_contact_file)
         self.bristo_search.fileTableWidget.doubleClicked.connect(
@@ -2018,6 +2022,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         database table that were sent by the current user to the current contact
         and that were sent by the current contact to the current user.
         '''
+        # Block Signals
+        self.block_signals()
+        
         # Query the database to create list of messages returned by psycopg2
         # driver from the PostgreSQL database.
         _user = self._user
@@ -2060,6 +2067,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _tblwgt_row += 1
         self.contactsStatusBar.showMessage('Messages updated .......', 4000)
         self.db_close()
+        self.unblock_signals()
     
     def get_contact_username(self,  _contact_email):
         '''
