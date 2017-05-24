@@ -225,6 +225,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_receiver = 3
         self._msg_text = 4
         self._msg_chk_wait = 30000
+        self.fetch_msg = None
 
         #Date and Time
         self._DATE = datetime.datetime.now()
@@ -1994,17 +1995,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _sender = self._user
             # Get username for current contact email address
             _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
-            self._cursor = self._conn.cursor()
-            self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
-            bristo_contacts_users_email = %s LIMIT %s", (
-                _usr_email, self._limit))
-            if not self._cursor.rowcount:
-                self.contactsStatusBar.showMessage('User not found.....', 4000)
-                self.db_close()
-            else:
-                _temp = self._cursor.fetchone()
-                _db_usrnm = _temp[self._USERNM]            
-                _receiver = _db_usrnm
+            _receiver = get_contact_username(_usr_email)
             _crow = self.bristo_search.msgTableWidget.currentRow()
             _ccol = self.bristo_search.msgTableWidget.currentColumn()
             _msg = self.bristo_search.msgTableWidget.cellWidget(
@@ -2026,35 +2017,65 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         # Query the database to create list of messages returned by psycopg2
         # driver from the PostgreSQL database.
-        
+        _user = self._user
+        _contct_email = self.fetch_results[self._ITEM][self._OEMAIL]
+        _contct_usrnm = get_contact_username(_contct_email)
         self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
                 bristo_contacts_messages_sender = %s  AND 
-                bristo_contacts_messages_receiver = % ORDER by 
-                bristo_contacts_messages_stamp, LIMIT %s""", (_user, self._limit))
+                bristo_contacts_messages_receiver = % OR
+                bristo_contacts_messages_sender = %s  AND 
+                bristo_contacts_messages_receiver = %
+                ORDER by bristo_contacts_messages_stamp, 
+                LIMIT %s""", (_user, _contct_usrnm,_contct_usrnm,_user,self._limit))
         self.fetch_msg = self._cursor.fetchall() # Get messages
-        
         
         # Display the messages in msgTableWidget and make user sent messages
         # distinct (blue or dark or highlighted) while contact sent message are
         # displayed normally.
-        
+        self.bristo_search.msgTableWidget.clearContents()
+        _tblwgt_row = 0  # Changes each record
+        _tblwgt_stamp = 1 # static
+        _tblwgt_sender = 2 # static
+        _tblwgt_msg = 4 # static
+        for _msg in range(len(self.fetch_msg)):
+            
+            _stamp = self.fetch_msg[_msg][tblwgt_stamp].strftime(
+            "%m/%d/%y %I:%M%p")
+            _qwitem = QTableWidgetItem(_stamp)
+            self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
+                _tblwgt_stamp, _qwitem)
+                
+            _sender = self.fetch_msg[_msg][tblwgt_sender]
+            _qwitem = QTableWidgetItem(_sender)
+            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+                _tblwgt_sender, _qwitem)
+                
+            _message = self.fetch_msg[_contact_note][self._note]
+            _qwitem = QTableWidgetItem(_message)
+            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+                _tblwgt_msg, _qwitem)
+            _tblwgt_row += 1
         self.contactsStatusBar.showMessage('Messages updated .......', 4000)
         self.db_close()
     
-    def get_contact_username(self):
+    def get_contact_username(self,  _contact_email):
+        '''
+        get_contact_username accepts the contact email address and
+        returns the contact username in bristo_contacts_users for a user
+        email match.
+        '''
         # Get username for current contact email address
-        _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
         self._cursor = self._conn.cursor()
         self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
         bristo_contacts_users_email = %s LIMIT %s", (
-            _usr_email, self._limit))
+            _contact_email, self._limit))
         if not self._cursor.rowcount:
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             self.db_close()
         else:
-            _temp = self._cursor.fetchone()
-            _db_usrnm = _temp[self._USERNM]            
-            _receiver = _db_usrnm
+            _usr = self._cursor.fetchone()
+            return _usr[self._USERNM]            
+         
         
     def resize_notes(self):
 
