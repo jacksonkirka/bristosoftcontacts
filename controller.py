@@ -1986,6 +1986,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         database table bristo_contacts_messages after contact/user availability 
         has been verified.  The serial ID, Time Date Stamp, Sender and Receiver
         are automatically generated.  Only the message need be entered.
+        
+        Need to set up thread with wait time for check messages after sending.
         '''
         if not self.fetch_results[self._ITEM][self._AVAIL]:
             self.contactsStatusBar.showMessage('User not available.....', 4000)
@@ -2007,6 +2009,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Message sent.......', 4000)
+            self.check_messages() # Don't fore wait time
             self.db_close()
     
     def check_messages(self):
@@ -2050,7 +2053,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                 _tblwgt_sender, _qwitem)
                 
-            _message = self.fetch_msg[_contact_note][self._note]
+            _message = self.fetch_msg[_msg][_tblwgt_msg]
             _qwitem = QTableWidgetItem(_message)
             self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                 _tblwgt_msg, _qwitem)
