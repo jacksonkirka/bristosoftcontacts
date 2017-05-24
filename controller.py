@@ -2017,7 +2017,45 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('Message sent.......', 4000)
             self.db_close()
-            
+    
+    def check_messages(self):
+        '''
+        check_messages displays all messages in the bristo_contacts_messages
+        database table that were sent by the current user to the current contact
+        and that were sent by the current contact to the current user.
+        '''
+        # Query the database to create list of messages returned by psycopg2
+        # driver from the PostgreSQL database.
+        
+        self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
+                bristo_contacts_messages_sender = %s  AND 
+                bristo_contacts_messages_receiver = % ORDER by 
+                bristo_contacts_messages_stamp, LIMIT %s""", (_user, self._limit))
+        self.fetch_msg = self._cursor.fetchall() # Get messages
+        
+        
+        # Display the messages in msgTableWidget and make user sent messages
+        # distinct (blue or dark or highlighted) while contact sent message are
+        # displayed normally.
+        
+        self.contactsStatusBar.showMessage('Messages updated .......', 4000)
+        self.db_close()
+    
+    def get_contact_username(self):
+        # Get username for current contact email address
+        _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
+        self._cursor = self._conn.cursor()
+        self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
+        bristo_contacts_users_email = %s LIMIT %s", (
+            _usr_email, self._limit))
+        if not self._cursor.rowcount:
+            self.contactsStatusBar.showMessage('User not found.....', 4000)
+            self.db_close()
+        else:
+            _temp = self._cursor.fetchone()
+            _db_usrnm = _temp[self._USERNM]            
+            _receiver = _db_usrnm
+        
     def resize_notes(self):
 
         '''
