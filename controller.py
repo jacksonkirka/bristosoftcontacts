@@ -2036,9 +2036,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn.cursor()
             self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
                     bristo_contacts_messages_sender = %s AND 
-                    bristo_contacts_messages_receiver = % OR
+                    bristo_contacts_messages_receiver = %s OR
                     bristo_contacts_messages_sender = %s AND 
-                    bristo_contacts_messages_receiver = %
+                    bristo_contacts_messages_receiver = %s
                     ORDER by bristo_contacts_messages_stamp 
                     LIMIT %s;""",
                     (_user, _contct_usrnm, _contct_usrnm, _user, self._limit))
