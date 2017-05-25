@@ -1993,8 +1993,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         Need to set up thread with wait time for check messages after sending.
         '''
-        if not self.fetch_results[self._ITEM][self._AVAIL]:
-            self.contactsStatusBar.showMessage('User not available.....', 4000)
         self.db_login()
         if self._connected:
             self.reset_timer()
@@ -2013,7 +2011,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Message sent.......', 4000)
-            # self.check_messages() # Don't fore wait time
             self.db_close()
     
     def check_messages(self):
