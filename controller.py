@@ -1018,7 +1018,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
             ['ID','Time Stamp','Sender','Receiver','Messages'])
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
-            self._msg_stamp, 140)
+            self._msg_stamp, 75)
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
             self._msg_sender, 75)
             
@@ -2019,10 +2019,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         database table that were sent by the current user to the current contact
         and that were sent by the current contact to the current user.
         '''
-        # Block Signals
         self.block_signals()
-        # self.db_login()
-        # if self._connected:
         self.reset_timer()
         # Query the database to create list of messages returned by psycopg2
         # driver from the PostgreSQL database.
