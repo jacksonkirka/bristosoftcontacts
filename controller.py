@@ -1016,7 +1016,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Messages
         self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
-            ['ID','Time Stamp','Sender','Receiver','Messages'])
+            ['ID','Stamp','Sender','Receiver','Messages'])
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
             self._msg_stamp, 75)
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
