@@ -1020,7 +1020,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
             self._msg_stamp, 140)
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
-            self._msg_sender, 150)
+            self._msg_sender, 75)
             
         # Fetch Data from tables --> Python lists
         _user = self._user
@@ -2001,7 +2001,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _sender = self._user
             # Get username for current contact email address
             _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
-            _receiver = get_contact_username(_usr_email)
+            _receiver = self.get_contact_username(_usr_email)
             _crow = self.bristo_search.msgTableWidget.currentRow()
             _ccol = self.bristo_search.msgTableWidget.currentColumn()
             _msg = self.bristo_search.msgTableWidget.cellWidget(
@@ -2013,7 +2013,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
             self._conn.commit()
             self.contactsStatusBar.showMessage('Message sent.......', 4000)
-            self.check_messages() # Don't fore wait time
+            # self.check_messages() # Don't fore wait time
             self.db_close()
     
     def check_messages(self):
@@ -2054,13 +2054,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _tblwgt_msg = 4 # static
             for _msg in range(len(self.fetch_msg)):
                 
-                _stamp = self.fetch_msg[_msg][tblwgt_stamp].strftime(
+                _stamp = self.fetch_msg[_msg][_tblwgt_stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_stamp)
                 self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
                     _tblwgt_stamp, _qwitem)
                     
-                _sender = self.fetch_msg[_msg][tblwgt_sender]
+                _sender = self.fetch_msg[_msg][_tblwgt_sender]
                 _qwitem = QTableWidgetItem(_sender)
                 self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                     _tblwgt_sender, _qwitem)
