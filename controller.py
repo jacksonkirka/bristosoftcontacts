@@ -2024,69 +2024,79 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         # Block Signals
         self.block_signals()
-        
+        # self.db_login()
+        # if self._connected:
+        self.reset_timer()
         # Query the database to create list of messages returned by psycopg2
         # driver from the PostgreSQL database.
         _user = self._user
         _contct_email = self.fetch_results[self._ITEM][self._OEMAIL]
-        _contct_usrnm = get_contact_username(_contct_email)
-        self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
-                bristo_contacts_messages_sender = %s  AND 
-                bristo_contacts_messages_receiver = % OR
-                bristo_contacts_messages_sender = %s  AND 
-                bristo_contacts_messages_receiver = %
-                ORDER by bristo_contacts_messages_stamp, 
-                LIMIT %s""", (_user, _contct_usrnm,_contct_usrnm,_user,self._limit))
-        self.fetch_msg = self._cursor.fetchall() # Get messages
-        
-        # Display the messages in msgTableWidget and make user sent messages
-        # distinct (blue or dark or highlighted) while contact sent message are
-        # displayed normally.
-        self.bristo_search.msgTableWidget.clearContents()
-        _tblwgt_row = 0  # Changes each record
-        _tblwgt_stamp = 1 # static
-        _tblwgt_sender = 2 # static
-        _tblwgt_msg = 4 # static
-        for _msg in range(len(self.fetch_msg)):
+        _contct_usrnm = self.get_contact_username(_contct_email)
+        if _contct_usrnm:
+            self._cursor = self._conn.cursor()
+            self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
+                    bristo_contacts_messages_sender = %s AND 
+                    bristo_contacts_messages_receiver = % OR
+                    bristo_contacts_messages_sender = %s AND 
+                    bristo_contacts_messages_receiver = %
+                    ORDER by bristo_contacts_messages_stamp 
+                    LIMIT %s;""",
+                    (_user, _contct_usrnm, _contct_usrnm, _user, self._limit))
+            self.fetch_msg = self._cursor.fetchall() # Get messages
             
-            _stamp = self.fetch_msg[_msg][tblwgt_stamp].strftime(
-            "%m/%d/%y %I:%M%p")
-            _qwitem = QTableWidgetItem(_stamp)
-            self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
-                _tblwgt_stamp, _qwitem)
+            # Display the messages in msgTableWidget and make user sent messages
+            # distinct (blue or dark or highlighted) while contact sent message are
+            # displayed normally.
+            self.bristo_search.msgTableWidget.clearContents()
+            _tblwgt_row = 0  # Changes each record
+            _tblwgt_stamp = 1 # static
+            _tblwgt_sender = 2 # static
+            _tblwgt_msg = 4 # static
+            for _msg in range(len(self.fetch_msg)):
                 
-            _sender = self.fetch_msg[_msg][tblwgt_sender]
-            _qwitem = QTableWidgetItem(_sender)
-            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
-                _tblwgt_sender, _qwitem)
-                
-            _message = self.fetch_msg[_msg][_tblwgt_msg]
-            _qwitem = QTableWidgetItem(_message)
-            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
-                _tblwgt_msg, _qwitem)
-            _tblwgt_row += 1
-        self.contactsStatusBar.showMessage('Messages updated .......', 4000)
-        self.db_close()
-        self.unblock_signals()
-    
+                _stamp = self.fetch_msg[_msg][tblwgt_stamp].strftime(
+                "%m/%d/%y %I:%M%p")
+                _qwitem = QTableWidgetItem(_stamp)
+                self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
+                    _tblwgt_stamp, _qwitem)
+                    
+                _sender = self.fetch_msg[_msg][tblwgt_sender]
+                _qwitem = QTableWidgetItem(_sender)
+                self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+                    _tblwgt_sender, _qwitem)
+                    
+                _message = self.fetch_msg[_msg][_tblwgt_msg]
+                _qwitem = QTableWidgetItem(_message)
+                self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+                    _tblwgt_msg, _qwitem)
+                _tblwgt_row += 1
+            self.contactsStatusBar.showMessage('Messages updated .......', 4000)
+            self.db_close()
+            self.unblock_signals()
+        else:
+            self.contactsStatusBar.showMessage('User not found.....', 4000)
+            self.db_close()
+
     def get_contact_username(self,  _contact_email):
         '''
         get_contact_username accepts the contact email address and
         returns the contact username in bristo_contacts_users for a user
         email match.
         '''
-        # Get username for current contact email address
-        self._cursor = self._conn.cursor()
-        self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
-        bristo_contacts_users_email = %s LIMIT %s", (
-            _contact_email, self._limit))
-        if not self._cursor.rowcount:
-            self.contactsStatusBar.showMessage('User not found.....', 4000)
-            self.db_close()
-        else:
-            _usr = self._cursor.fetchone()
-            return _usr[self._USERNM]            
-         
+        self.db_login()
+        if self._connected:
+            # Get username for current contact email address
+            self._cursor = self._conn.cursor()
+            self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
+            bristo_contacts_users_email = %s LIMIT %s", (
+                _contact_email, self._limit))
+            if not self._cursor.rowcount:
+                self.contactsStatusBar.showMessage('User not found.....', 4000)
+                self.db_close()
+            else:
+                _usr = self._cursor.fetchone()
+                return _usr[self._USERNM]            
+             
         
     def resize_notes(self):
 
