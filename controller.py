@@ -1018,7 +1018,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
             ['ID','Stamp','Sender','Receiver','Messages'])
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
-            self._msg_stamp, 75)
+            self._msg_stamp, 70)
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
             self._msg_sender, 75)
             
@@ -2061,6 +2061,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     
                 _message = self.fetch_msg[_msg][_tblwgt_msg]
                 _qwitem = QTableWidgetItem(_message)
+                if _sender == _user:
+                    _qwitem.setForeground(QColor(65,105,225))
                 self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                     _tblwgt_msg, _qwitem)
                 _tblwgt_row += 1
