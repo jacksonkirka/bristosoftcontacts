@@ -586,7 +586,7 @@ class Ui_contactsSearchDialog(object):
         self.msgTableWidget.setGridStyle(QtCore.Qt.DotLine)
         self.msgTableWidget.setWordWrap(True)
         self.msgTableWidget.setRowCount(2000)
-        self.msgTableWidget.setColumnCount(5)
+        self.msgTableWidget.setColumnCount(6)
         self.msgTableWidget.setObjectName(_fromUtf8("msgTableWidget"))
         self.msgTableWidget.horizontalHeader().setCascadingSectionResizes(False)
         self.msgTableWidget.horizontalHeader().setDefaultSectionSize(140)
