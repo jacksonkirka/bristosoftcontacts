@@ -2037,38 +2037,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     LIMIT %s;""",
                     (_user, _contct_usrnm, _contct_usrnm, _user, self._limit))
             self.fetch_msg = self._cursor.fetchall() # Get messages
-            
-            # Display the messages in msgTableWidget and make user sent messages
-            # distinct (blue or dark or highlighted) while contact sent message are
-            # displayed normally.
-            self.bristo_search.msgTableWidget.clearContents()
-            _tblwgt_row = 0  # Changes each record
-            _tblwgt_stamp = 1 # static
-            _tblwgt_sender = 2 # static
-            _tblwgt_msg = 4 # static
-            for _msg in range(len(self.fetch_msg)):
-                
-                _stamp = self.fetch_msg[_msg][_tblwgt_stamp].strftime(
-                "%m/%d/%y %I:%M%p")
-                _qwitem = QTableWidgetItem(_stamp)
-                self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
-                    _tblwgt_stamp, _qwitem)
-                    
-                _sender = self.fetch_msg[_msg][_tblwgt_sender]
-                _qwitem = QTableWidgetItem(_sender)
-                self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
-                    _tblwgt_sender, _qwitem)
-                    
-                _message = self.fetch_msg[_msg][_tblwgt_msg]
-                _qwitem = QTableWidgetItem(_message)
-                if _sender == _user:
-                    _qwitem.setForeground(QColor(65,105,225))
-                self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
-                    _tblwgt_msg, _qwitem)
-                _tblwgt_row += 1
+            self.display_messages(self.fetch_msg) # Display messages
             self.contactsStatusBar.showMessage('Messages updated .......', 4000)
             self.db_close()
             self.unblock_signals()
+            
         else:
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             self.db_close()
@@ -2091,9 +2064,43 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.db_close()
             else:
                 _usr = self._cursor.fetchone()
-                return _usr[self._USERNM]            
-             
-        
+                return _usr[self._USERNM]
+                
+    def display_messages(_messages):
+        '''
+        display_messages accepts a message list returned by psycopg2 form a
+        PostgreSQL database and displays these messages in the message
+        table widget.
+        '''
+        # Display the messages in msgTableWidget and make user sent messages
+        # distinct (blue or dark or highlighted) while contact sent message are
+        # displayed normally.
+        self.bristo_search.msgTableWidget.clearContents()
+        _tblwgt_row = 0  # Changes each record
+        _tblwgt_stamp = 1 # static
+        _tblwgt_sender = 2 # static
+        _tblwgt_msg = 4 # static
+        for _msg in range(len(_messages)):
+            
+            _stamp = self.fetch_msg[_msg][_tblwgt_stamp].strftime(
+            "%m/%d/%y %I:%M%p")
+            _qwitem = QTableWidgetItem(_stamp)
+            self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
+                _tblwgt_stamp, _qwitem)
+                
+            _sender = self.fetch_msg[_msg][_tblwgt_sender]
+            _qwitem = QTableWidgetItem(_sender)
+            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+                _tblwgt_sender, _qwitem)
+                
+            _message = self.fetch_msg[_msg][_tblwgt_msg]
+            _qwitem = QTableWidgetItem(_message)
+            if _sender == _user:
+                _qwitem.setForeground(QColor(65,105,225))
+            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+                _tblwgt_msg, _qwitem)
+            _tblwgt_row += 1
+    
     def resize_notes(self):
 
         '''
