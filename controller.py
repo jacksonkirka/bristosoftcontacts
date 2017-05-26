@@ -220,10 +220,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Messages
         self._msg_id = 0
-        self._msg_stamp = 1
-        self._msg_sender = 2
-        self._msg_receiver = 3
-        self._msg_text = 4
+        self._msg_uuid = 1
+        self._msg_stamp = 2
+        self._msg_sender = 3
+        self._msg_receiver =4
+        self._msg_text = 5
         self._msg_chk_wait = 30000
         self.fetch_msg = None
 
@@ -968,6 +969,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.setColumnHidden(self._appt_stamp,  True)
         self.bristo_search.msgTableWidget.setColumnHidden(self._msg_id,  True)
         self.bristo_search.msgTableWidget.setColumnHidden(self._msg_receiver, True)
+        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_uuid, True)
         self._live_set = False # Prevents Duplicate Live Widgets
         self._calendar_activated = False # User double clicked date on calendar
         self._displayed_apptsbydate = False # Appointments by date display once
@@ -1016,7 +1018,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Messages
         self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
-            ['ID','Stamp','Sender','Receiver','Messages'])
+            ['ID','UUID','Stamp','Sender','Receiver','Messages'])
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
             self._msg_stamp, 70)
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
@@ -2066,20 +2068,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _usr = self._cursor.fetchone()
                 return _usr[self._USERNM]
                 
-    def display_messages(_messages):
+    def display_messages(self, _messages):
         '''
         display_messages accepts a message list returned by psycopg2 form a
         PostgreSQL database and displays these messages in the message
         table widget.
         '''
+        _user = self._user
         # Display the messages in msgTableWidget and make user sent messages
         # distinct (blue or dark or highlighted) while contact sent message are
         # displayed normally.
         self.bristo_search.msgTableWidget.clearContents()
         _tblwgt_row = 0  # Changes each record
-        _tblwgt_stamp = 1 # static
-        _tblwgt_sender = 2 # static
-        _tblwgt_msg = 4 # static
+        _tblwgt_stamp = 2 # static
+        _tblwgt_sender = 3 # static
+        _tblwgt_msg = 5 # static
         for _msg in range(len(_messages)):
             
             _stamp = self.fetch_msg[_msg][_tblwgt_stamp].strftime(

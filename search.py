@@ -717,7 +717,7 @@ class Ui_contactsSearchDialog(object):
 
         self.retranslateUi(contactsSearchDialog)
         self.contactTabWidget.setCurrentIndex(0)
-        self.activityTabWidget.setCurrentIndex(3)
+        self.activityTabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(contactsSearchDialog)
         contactsSearchDialog.setTabOrder(self.companyLineEdit, self.mrmrsLineEdit)
         contactsSearchDialog.setTabOrder(self.mrmrsLineEdit, self.firstNameLineEdit)
