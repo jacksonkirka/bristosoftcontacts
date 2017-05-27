@@ -34,7 +34,7 @@ class Messages:
     self._msg_sender = 3
     self._msg_receiver =4
     self._msg_text = 5
-    self._msg_chk_wait = 30000
+    # self._msg_chk_wait = 30000
     self.fetch_msg = None
     
     # Controller module
