@@ -20,7 +20,7 @@ and receiving as well as archiving.  Currently it has only one class Messages.
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 
-class Messages():
+class Messages:
     '''
     The Messages class provides methods to add, check and display messages system wide.
     '''
