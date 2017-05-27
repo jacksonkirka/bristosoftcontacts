@@ -227,7 +227,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_text = 5
         self._msg_chk_wait = 30000
         self.fetch_msg = None
-        self._msg = Messages()
+
 
         #Date and Time
         self._DATE = datetime.datetime.now()
