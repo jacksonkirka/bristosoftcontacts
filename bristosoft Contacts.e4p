@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2016-08-22, 22:15:14 -->
-<!-- Copyright (C) 2016 Kirk A Jackson, jacksonkirka@bristosoft.com -->
+<!-- Saved: 2017-05-26, 20:40:27 -->
+<!-- Copyright (C) 2017 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
   <Hash>29fd26a5fcd9a9fc902de441c7211e61817358a9</Hash>
@@ -12,7 +12,6 @@
   <Version>0.1</Version>
   <Author>Kirk A Jackson</Author>
   <Email>jacksonkirka@bristosoft.com</Email>
-  <Eol index="-1"/>
   <Sources>
     <Source>__init__.py</Source>
     <Source>bristo_exceptions.py</Source>
@@ -24,6 +23,7 @@
     <Source>family.ico</Source>
     <Source>login.py</Source>
     <Source>main.py</Source>
+    <Source>messages.py</Source>
     <Source>newgroup.py</Source>
     <Source>resources_rc.py</Source>
     <Source>search.py</Source>
@@ -141,9 +141,6 @@
         </value>
       </dict>
     </VcsOptions>
-    <VcsOtherData>
-      <dict/>
-    </VcsOtherData>
   </Vcs>
   <FiletypeAssociations>
     <FiletypeAssociation pattern="*.idl" type="INTERFACES"/>
