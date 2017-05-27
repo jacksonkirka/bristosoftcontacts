@@ -81,7 +81,7 @@ class Messages:
         # Query the database to create list of messages returned by psycopg2
         # driver from the PostgreSQL database.
         _user = self_cntl._user
-        _contct_email = self._cntrl.fetch_results[self._ITEM][self._OEMAIL]
+        _contct_email = self._cntrl.fetch_results[self._cntrl._ITEM][self._cntrl._OEMAIL]
         _contct_usrnm = self.get_contact_username(_contct_email)
         if _contct_usrnm:
             self._cntrl._cursor = self._conn.cursor()
