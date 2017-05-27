@@ -1123,7 +1123,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.cellChanged.connect(
             self.db_insert_update_appt)
         self.bristo_search.msgTableWidget.cellChanged.connect(
-            self._msg.db_insert_contact_msg())
+            self.db_insert_contact_msg)
         self.bristo_search.notesDetailPushButton.clicked.connect(
             self.resize_notes)
         self.bristo_search.callsDetailPushButton.clicked.connect(

@@ -19,11 +19,27 @@ and receiving as well as archiving.  Currently it has only one class Messages.
 '''
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from controller import Controller
+
 
 class Messages:
     '''
     The Messages class provides methods to add, check and display messages system wide.
     '''
+    
+    # Messages
+    self._msg_id = 0
+    self._msg_uuid = 1
+    self._msg_stamp = 2
+    self._msg_sender = 3
+    self._msg_receiver =4
+    self._msg_text = 5
+    self._msg_chk_wait = 30000
+    self.fetch_msg = None
+    
+    # Controller module
+    self._cntrl = Controller()
+
     def db_insert_contact_msg(self):
 
         '''
@@ -34,25 +50,25 @@ class Messages:
         
         Need to set up thread with wait time for check messages after sending.
         '''
-        self.db_login()
-        if self._connected:
-            self.reset_timer()
-            _sender = self._user
+        self._cntrl.db_login()
+        if self._cntrl._connected:
+            self._cntrl.reset_timer()
+            _sender = self._cntrl._user
             # Get username for current contact email address
-            _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
+            _usr_email = self._cntrl.fetch_results[self._cntrl._ITEM][self._cntrl._OEMAIL]
             _receiver = self.get_contact_username(_usr_email)
-            _crow = self.bristo_search.msgTableWidget.currentRow()
-            _ccol = self.bristo_search.msgTableWidget.currentColumn()
-            _msg = self.bristo_search.msgTableWidget.cellWidget(
+            _crow = self._cntrl.bristo_search.msgTableWidget.currentRow()
+            _ccol = self._cntrl.bristo_search.msgTableWidget.currentColumn()
+            _msg = self._cntrl.bristo_search.msgTableWidget.cellWidget(
                                                 _crow,_ccol ).text()
-            self._cursor.execute("""INSERT INTO bristo_contacts_messages
+            self._cntrl._cursor.execute("""INSERT INTO bristo_contacts_messages
                     (bristo_contacts_messages_sender,
                     bristo_contacts_messages_receiver,
                     bristo_contacts_messages_msg)
                     VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
-            self._conn.commit()
-            self.contactsStatusBar.showMessage('Message sent.......', 4000)
-            self.db_close()
+            self._cntrl._conn.commit()
+            self._cntrl.contactsStatusBar.showMessage('Message sent.......', 4000)
+            self._cntrl.db_close()
     
     def check_messages(self):
         '''
@@ -60,32 +76,32 @@ class Messages:
         database table that were sent by the current user to the current contact
         and that were sent by the current contact to the current user.
         '''
-        self.block_signals()
-        self.reset_timer()
+        self._cntrl.block_signals()
+        self._cntrl.reset_timer()
         # Query the database to create list of messages returned by psycopg2
         # driver from the PostgreSQL database.
-        _user = self._user
-        _contct_email = self.fetch_results[self._ITEM][self._OEMAIL]
+        _user = self_cntl._user
+        _contct_email = self._cntrl.fetch_results[self._ITEM][self._OEMAIL]
         _contct_usrnm = self.get_contact_username(_contct_email)
         if _contct_usrnm:
-            self._cursor = self._conn.cursor()
-            self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
+            self._cntrl._cursor = self._conn.cursor()
+            self._cntrl._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
                     bristo_contacts_messages_sender = %s AND 
                     bristo_contacts_messages_receiver = %s OR
                     bristo_contacts_messages_sender = %s AND 
                     bristo_contacts_messages_receiver = %s
                     ORDER by bristo_contacts_messages_stamp 
                     LIMIT %s;""",
-                    (_user, _contct_usrnm, _contct_usrnm, _user, self._limit))
-            self.fetch_msg = self._cursor.fetchall() # Get messages
+                    (_user, _contct_usrnm, _contct_usrnm, _user, self._cntrl._limit))
+            self.fetch_msg = self._cntrl._cursor.fetchall() # Get messages
             self.display_messages(self.fetch_msg) # Display messages
-            self.contactsStatusBar.showMessage('Messages updated .......', 4000)
-            self.db_close()
-            self.unblock_signals()
+            self._cntrl.contactsStatusBar.showMessage('Messages updated .......', 4000)
+            self._cntrl.db_close()
+            self._cntrl.unblock_signals()
             
         else:
-            self.contactsStatusBar.showMessage('User not found.....', 4000)
-            self.db_close()
+            self._cntrl.contactsStatusBar.showMessage('User not found.....', 4000)
+            self._cntrl.db_close()
 
     def get_contact_username(self,  _contact_email):
         '''
@@ -93,19 +109,19 @@ class Messages:
         returns the contact username in bristo_contacts_users for a user
         email match.
         '''
-        self.db_login()
-        if self._connected:
+        self._cntrl.db_login()
+        if self._cntrl._connected:
             # Get username for current contact email address
-            self._cursor = self._conn.cursor()
-            self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
+            self._cntrl._cursor = self._conn.cursor()
+            self._cntrl._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
             bristo_contacts_users_email = %s LIMIT %s", (
                 _contact_email, self._limit))
-            if not self._cursor.rowcount:
-                self.contactsStatusBar.showMessage('User not found.....', 4000)
-                self.db_close()
+            if not self._cntrl._cursor.rowcount:
+                self._cntrl.contactsStatusBar.showMessage('User not found.....', 4000)
+                self._cntrl.db_close()
             else:
-                _usr = self._cursor.fetchone()
-                return _usr[self._USERNM]
+                _usr = self._cntrl._cursor.fetchone()
+                return _usr[self._cntrl._USERNM]
                 
     def display_messages(self, _messages):
         '''
@@ -113,11 +129,11 @@ class Messages:
         PostgreSQL database and displays these messages in the message
         table widget.
         '''
-        _user = self._user
+        _user = self._cntrl._user
         # Display the messages in msgTableWidget and make user sent messages
         # distinct (blue or dark or highlighted) while contact sent message are
         # displayed normally.
-        self.bristo_search.msgTableWidget.clearContents()
+        self._cntrl.bristo_search.msgTableWidget.clearContents()
         _tblwgt_row = 0  # Changes each record
         _tblwgt_stamp = 2 # static
         _tblwgt_sender = 3 # static
@@ -127,18 +143,18 @@ class Messages:
             _stamp = self.fetch_msg[_msg][_tblwgt_stamp].strftime(
             "%m/%d/%y %I:%M%p")
             _qwitem = QTableWidgetItem(_stamp)
-            self.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
+            self._cntrl.bristo_search.msgTableWidget.setItem(_tblwgt_row, 
                 _tblwgt_stamp, _qwitem)
                 
             _sender = self.fetch_msg[_msg][_tblwgt_sender]
             _qwitem = QTableWidgetItem(_sender)
-            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+            self._cntrl.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                 _tblwgt_sender, _qwitem)
                 
             _message = self.fetch_msg[_msg][_tblwgt_msg]
             _qwitem = QTableWidgetItem(_message)
             if _sender == _user:
                 _qwitem.setForeground(QColor(65,105,225))
-            self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
+            self._cntrl.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                 _tblwgt_msg, _qwitem)
             _tblwgt_row += 1
