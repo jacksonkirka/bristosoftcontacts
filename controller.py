@@ -227,6 +227,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_text = 5
         self._msg_chk_wait = 30000
         self.fetch_msg = None
+        self._msg = Messages()
 
         #Date and Time
         self._DATE = datetime.datetime.now()
@@ -1122,7 +1123,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.apptTableWidget.cellChanged.connect(
             self.db_insert_update_appt)
         self.bristo_search.msgTableWidget.cellChanged.connect(
-            self.db_insert_contact_msg)
+            self._msg.db_insert_contact_msg())
         self.bristo_search.notesDetailPushButton.clicked.connect(
             self.resize_notes)
         self.bristo_search.callsDetailPushButton.clicked.connect(
@@ -1957,6 +1958,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             _loc = _mail_search + _email_addr_filter
         self.google_mail_com.load(QUrl(_loc))
+        
+   
 
     def db_insert_contact_note(self):
 
@@ -1984,6 +1987,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn.commit()
             self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
             self.db_close()
+            
             
     def db_insert_contact_msg(self):
 

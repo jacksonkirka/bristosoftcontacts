@@ -24,6 +24,35 @@ class Messages:
     '''
     The Messages class provides methods to add, check and display messages system wide.
     '''
+    def db_insert_contact_msg(self):
+
+        '''
+        db_insert_contact_msg inserts one new contact message into the PostgreSQL
+        database table bristo_contacts_messages after contact/user availability 
+        has been verified.  The serial ID, Time Date Stamp, Sender and Receiver
+        are automatically generated.  Only the message need be entered.
+        
+        Need to set up thread with wait time for check messages after sending.
+        '''
+        self.db_login()
+        if self._connected:
+            self.reset_timer()
+            _sender = self._user
+            # Get username for current contact email address
+            _usr_email = self.fetch_results[self._ITEM][self._OEMAIL]
+            _receiver = self.get_contact_username(_usr_email)
+            _crow = self.bristo_search.msgTableWidget.currentRow()
+            _ccol = self.bristo_search.msgTableWidget.currentColumn()
+            _msg = self.bristo_search.msgTableWidget.cellWidget(
+                                                _crow,_ccol ).text()
+            self._cursor.execute("""INSERT INTO bristo_contacts_messages
+                    (bristo_contacts_messages_sender,
+                    bristo_contacts_messages_receiver,
+                    bristo_contacts_messages_msg)
+                    VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
+            self._conn.commit()
+            self.contactsStatusBar.showMessage('Message sent.......', 4000)
+            self.db_close()
     
     def check_messages(self):
         '''
