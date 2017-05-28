@@ -47,6 +47,7 @@ from bristo_exceptions import *
 from view import *
 import contactsmain
 
+
 __version__ = '0.1' # Version assignment
 
 # contactsdialog = loadUiType('contacts_combo.ui')[0]
