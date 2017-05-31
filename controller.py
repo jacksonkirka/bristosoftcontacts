@@ -28,11 +28,9 @@ import sip  # Needed for conversion to Python types
 sip.setapi('QString', 2)
 import datetime
 import ntpath
-import hashlib
-import uuid
 import ast
-import re
 import os
+from secure import Security
 import webbrowser
 from requests import get # Error on ordered_dict changed in compat.py
 import platform
@@ -55,8 +53,8 @@ __version__ = '0.1' # Version assignment
 
 # class Controller(QMainWindow,  bristocontacts):
 
-class Security:
-    pass    
+
+
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
 
@@ -90,6 +88,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.fetch_results = None
         self._grprpt = None
 
+        # Security
+        self._secure = Security()
+        
         # Authentication
         self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
         self._usr_city = self._usr_loc['city']
@@ -410,7 +411,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     LIMIT %s", (
                     self._user, self._limit))
                 _db_usrpwdhash = self._cursor.fetchone()[0]
-                _usr_pwd_match = self.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
+                _usr_pwd_match = self._secure.authenticatepwd(_db_usrpwdhash,  _usr_pwd)
 
                 if _usr_nm_match and _usr_pwd_match:
 
@@ -505,13 +506,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _oldpwd = self.chgpwd.oldPasswordLineEdit.text()
         _newpwd = self.chgpwd.newPasswordLineEdit.text()
         _reenter = self.chgpwd.reenterPasswordLineEdit.text()
-        _complex = self.mincomplex(_newpwd)
+        _complex = self._secure.mincomplex(_newpwd)
         self._user = _usrnm
         self._passwd = _oldpwd
         self._chgpwd = True
         self.db_login()
         if self._connected and _newpwd == _reenter and _complex:
-            _newpwdhash = self.hashpwd(_newpwd) # Hash new password
+            _newpwdhash = self._secure.hashpwd(_newpwd) # Hash new password
             self._cursor = self._conn.cursor()
             _username = self._user
             self._cursor.execute("""UPDATE bristo_contacts_users SET 
@@ -527,21 +528,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage(
             "Disconnected, New Password didn't match or password uncomplex.", 10000)
 
-    def mincomplex(self, _pwd):
-        '''
-        mincomplex evaluates a plain text password and returns true if the
-        password evaluated contains 1) uppercase letter, 2) lowercase letter,
-        3) a digit 0 - 9, 4) a special character and 5) is 8 characters.
-        '''
-        _digit = re.search('[0-9]', _pwd)
-        _lower = re.search('[a-z]', _pwd)
-        _upper = re.search('[A-Z]',_pwd)
-        _special = re.search('.[!@#$%^&*()_~-]',_pwd)
 
-        if len(_pwd) > 7 and _digit and _lower and _upper and _special:
-            return True
-        else:
-            return False
 
     def incorrectlogin(self):
 
@@ -624,29 +611,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.removeWidget(self._conn_msg)
         self._conn_msg = QLabel('Group login incorrect, please try again.')
         self.contactsStatusBar.addWidget(self._conn_msg)
-
-
-    def hashpwd(self, _pwd):
-
-        '''
-        hashpwd hashes a password by NSA Secure Hash Algorithm 2 
-        sha256 algorithm and adds a uuid prefix salt.
-        '''
-        salt = uuid.uuid4().hex
-        return hashlib.sha256(salt.encode() +
-            _pwd.encode()).hexdigest() + ':' + salt
-
-
-    def authenticatepwd(self, _dbhashpwd, _usrpwd):
-
-        '''
-        authenticatepwd authenticates the password entered by the user by
-        comparing the database hash with a hash of the user entered
-        password.
-        '''
-        dbpwd, salt = _dbhashpwd.split(':')
-        return dbpwd == hashlib.sha256(salt.encode() +\
-            _usrpwd.encode()).hexdigest()
 
     def db_contact_new(self):
 
@@ -827,7 +791,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _complex = self.mincomplex(_pwd)
                 if self._connected and _pwd_match and _complex:
                     self.reset_timer()
-                    _hashedpwd = self.hashpwd(_pwd)
+                    _hashedpwd = self._secure.hashpwd(_pwd)
                     self._cursor = self._conn.cursor()
                     self._cursor.execute("""INSERT INTO bristo_contacts_groups
                             (bristo_contacts_groups_owner, 
@@ -1405,7 +1369,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.db_login()
             if self._connected and _pwd_match and _complex:
                 self.reset_timer()
-                _hashedpwd = self.hashpwd(_pwd)
+                _hashedpwd = self._secure.hashpwd(_pwd)
                 if self._cursor.closed:
                     self._cursor = self._conn.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_groups SET
@@ -1651,7 +1615,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             bristo_contacts_groups WHERE bristo_contacts_groups_group = %s", (
                 _grp_nm, ))
             _db_grppwdhash = self._cursor.fetchone()[0]
-            _grp_pwd_match = self.authenticatepwd(_db_grppwdhash,  _pwd)
+            _grp_pwd_match = self._secure.authenticatepwd(_db_grppwdhash,  _pwd)
 
             if _grp_nm_match and _grp_pwd_match:
 
