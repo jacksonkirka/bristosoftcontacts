@@ -17,7 +17,9 @@
 
 '''
 This secure module provides security for bristoSOFT Contacts v. 0.1.
-It uses Python's hashlib uuid and re modules.
+It uses Python's hashlib, uuid and re modules.  A one way salted
+hash is used to encrypt the user password.  The actual password is
+not stored in the database.
 '''
 import hashlib
 import uuid
