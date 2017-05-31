@@ -55,7 +55,8 @@ __version__ = '0.1' # Version assignment
 
 # class Controller(QMainWindow,  bristocontacts):
 
-        
+class Security:
+    pass    
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
 
