@@ -31,6 +31,7 @@ import ntpath
 import ast
 import os
 from secure import Security
+from bristoprint import PrintServices
 import webbrowser
 from requests import get # Error on ordered_dict changed in compat.py
 import platform
@@ -240,6 +241,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._NEXT = 0
         self._PREV = 0
         self._LASTITEM = 0
+        
+        # Printing
+        self._prt = PrintServices()
 
         # Main Signals
         self.actionAbout_Qt.triggered.connect(self.aboutqt)
@@ -254,7 +258,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionSearchGroupsDialog.triggered.connect(self.search_groups_dlg)
         self.actionDisconnect.triggered.connect(self.db_close)
         self.actionQuery.triggered.connect(self.db_contacts_fetch_flag)
-        self.action_Print.triggered.connect(self.print_users_contacts)
+        self.action_Print.triggered.connect(self.printuserscontacts)
         self.actionQuit.triggered.connect(self.close_contacts)
         self.actionFirst_Item.triggered.connect(self.db_item_fetch_first)
         self.actionPrevious_Item.triggered.connect(self.db_item_prev)
@@ -2239,52 +2243,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         p.loadFromData(picture)     # Load picture from data
         _qobject.setPixmap(p)       # Display picture on object
     
-    def print_users_contacts(self):
-        
-        '''
-        print_users_contacts prints all the contacts in memory with
-        the query limit.
-        '''
-        
-        if self.fetch_results:
-            if len(self.fetch_results) > 0:
-                
-                # Setup printer
-                doc = ''
-                bristoprint = QPrintDialog()
-                if bristoprint.exec_() == QDialog.Accepted:
-                    # begin printing to printer line by line
-                    qtxtedit = QTextEdit()
-                    qtxtedit.setFontPointSize(12.0)
-                    doc = 'bristoSOFT Contacts v. 0.1    ' +self._TODAY+'\n\r'
-                    if self._grprpt:
-                        doc = doc + self._grprpt+'\n\r'
-                    for x in range(len(self.fetch_results)):
-                        if not self.fetch_results[x][self._SUITE]:
-                            doc = doc + self.fetch_results[x][self._FNAME]\
-                            + ' '+ self.fetch_results[x][self._LNAME]+'\n'\
-                            + self.fetch_results[x][self._CRED]+'\n'\
-                            + self.fetch_results[x][self._COMPANY]+'\n'\
-                            + self.fetch_results[x][self._ADDR]+'\n'\
-                            + self.fetch_results[x][self._CITY]\
-                            + ', '+ self.fetch_results[x][self._ST]\
-                            + '  '+ self.fetch_results[x][self._POSTAL]+'\n'\
-                            + self.fetch_results[x][self._OPHONE]+'\n'\
-                            + self.fetch_results[x][self._OEMAIL]+'\n\r'
-                        else:
-                            doc = doc + self.fetch_results[x][self._FNAME]\
-                            + ' '+ self.fetch_results[x][self._LNAME]+'\n'\
-                            + self.fetch_results[x][self._CRED]+'\n'\
-                            + self.fetch_results[x][self._COMPANY]+'\n'\
-                            + self.fetch_results[x][self._ADDR]+'\n'\
-                            + self.fetch_results[x][self._SUITE]+'\n'\
-                            + self.fetch_results[x][self._CITY]\
-                            + ', '+ self.fetch_results[x][self._ST]\
-                            + '  '+ self.fetch_results[x][self._POSTAL]+'\n'\
-                            + self.fetch_results[x][self._OPHONE]+'\n'\
-                            + self.fetch_results[x][self._OEMAIL]+'\n\r'
-                    qtxtedit.setText(doc)
-                    qtxtedit.print_(bristoprint.printer())
 
     def live_call_widgets(self):
         '''
@@ -2569,6 +2527,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self._cursor.execute(query)
         self._conn.commit()
+    
+    def printuserscontacts(self):
+        self._prt.print_users_contacts(
+            self.fetch_results,self._grprpt)
 
     def db_close(self):
         '''
