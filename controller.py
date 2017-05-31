@@ -2077,6 +2077,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.msgTableWidget.setItem(_tblwgt_row,
                 _tblwgt_msg, _qwitem)
             _tblwgt_row += 1
+        self.bristo_search.msgTableWidget.setCurrentCell(_tblwgt_row, _tblwgt_msg)
     
     def resize_notes(self):
 
