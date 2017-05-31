@@ -32,7 +32,7 @@ class PrintServices:
     The PrintServices class in contacts provides all the resources required
     for print information in contacts.
     '''
-    def _init_(self, parent=None):
+    def __init__(self, parent=None):
         '''
         This initialization class method initializes
         contacts fields.
@@ -93,27 +93,27 @@ class PrintServices:
                         doc = doc + _grprpt+'\n\r'
                     for x in range(len(_contacts)):
                         if not _contacts[x][self._SUITE]:
-                            doc = doc + self.fetch_results[x][self._FNAME]\
-                            + ' '+ self.fetch_results[x][self._LNAME]+'\n'\
-                            + self.fetch_results[x][self._CRED]+'\n'\
-                            + self.fetch_results[x][self._COMPANY]+'\n'\
-                            + self.fetch_results[x][self._ADDR]+'\n'\
-                            + self.fetch_results[x][self._CITY]\
-                            + ', '+ self.fetch_results[x][self._ST]\
-                            + '  '+ self.fetch_results[x][self._POSTAL]+'\n'\
-                            + self.fetch_results[x][self._OPHONE]+'\n'\
-                            + self.fetch_results[x][self._OEMAIL]+'\n\r'
+                            doc = doc + _contacts[x][self._FNAME]\
+                            + ' '+ _contacts[x][self._LNAME]+'\n'\
+                            + _contacts[x][self._CRED]+'\n'\
+                            + _contacts[x][self._COMPANY]+'\n'\
+                            + _contacts[x][self._ADDR]+'\n'\
+                            + _contacts[x][self._CITY]\
+                            + ', '+ _contacts[x][self._ST]\
+                            + '  '+ _contacts[x][self._POSTAL]+'\n'\
+                            + _contacts[x][self._OPHONE]+'\n'\
+                            + _contacts[x][self._OEMAIL]+'\n\r'
                         else:
-                            doc = doc + self.fetch_results[x][self._FNAME]\
-                            + ' '+ self.fetch_results[x][self._LNAME]+'\n'\
-                            + self.fetch_results[x][self._CRED]+'\n'\
-                            + self.fetch_results[x][self._COMPANY]+'\n'\
-                            + self.fetch_results[x][self._ADDR]+'\n'\
-                            + self.fetch_results[x][self._SUITE]+'\n'\
-                            + self.fetch_results[x][self._CITY]\
-                            + ', '+ self.fetch_results[x][self._ST]\
-                            + '  '+ self.fetch_results[x][self._POSTAL]+'\n'\
-                            + self.fetch_results[x][self._OPHONE]+'\n'\
-                            + self.fetch_results[x][self._OEMAIL]+'\n\r'
+                            doc = doc + _contacts[x][self._FNAME]\
+                            + ' '+ _contacts[x][self._LNAME]+'\n'\
+                            + _contacts[x][self._CRED]+'\n'\
+                            + _contacts[x][self._COMPANY]+'\n'\
+                            + _contacts[x][self._ADDR]+'\n'\
+                            + _contacts[x][self._SUITE]+'\n'\
+                            + _contacts[x][self._CITY]\
+                            + ', '+ _contacts[x][self._ST]\
+                            + '  '+ _contacts[x][self._POSTAL]+'\n'\
+                            + _contacts[x][self._OPHONE]+'\n'\
+                            + _contacts[x][self._OEMAIL]+'\n\r'
                     qtxtedit.setText(doc)
                     qtxtedit.print_(bristoprint.printer())
