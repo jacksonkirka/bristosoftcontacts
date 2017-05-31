@@ -1976,14 +1976,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _ccol = self.bristo_search.msgTableWidget.currentColumn()
             _msg = self.bristo_search.msgTableWidget.cellWidget(
                                                 _crow,_ccol ).text()
-            self._cursor.execute("""INSERT INTO bristo_contacts_messages
-                    (bristo_contacts_messages_sender,
-                    bristo_contacts_messages_receiver,
-                    bristo_contacts_messages_msg)
-                    VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
-            self._conn.commit()
-            self.contactsStatusBar.showMessage('Message sent.......', 4000)
-            self.db_close()
+            if _msg:
+                self._cursor.execute("""INSERT INTO bristo_contacts_messages
+                        (bristo_contacts_messages_sender,
+                        bristo_contacts_messages_receiver,
+                        bristo_contacts_messages_msg)
+                        VALUES (%s,%s,%s);""", (_sender,  _receiver,  _msg))
+                self._conn.commit()
+                self.contactsStatusBar.showMessage('Message sent.......', 4000)
+                self.db_close()
+            else:
+                self.contactsStatusBar.showMessage('No Message to send...', 4000)
+                self.db_close()
     
     def check_messages(self):
         '''
