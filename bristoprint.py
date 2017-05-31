@@ -22,6 +22,8 @@ other devices via QPrintDialog.
 
 # Imports
 from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+import datetime
 
 
 class PrintServices:
@@ -35,6 +37,10 @@ class PrintServices:
         This initialization class method initializes
         contacts fields.
         '''
+        #Date and Time
+        self._DATE = datetime.datetime.now()
+        self._TODAY = self._DATE.strftime("%m/%d/%y %I:%M%p")
+        
         self._ITEM = 0
         self._FIRSTITEM = 0
         self._ID = 0
