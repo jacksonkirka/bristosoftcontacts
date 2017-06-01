@@ -2023,6 +2023,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.unblock_signals()
             
         else:
+            self.bristo_search.msgTableWidget.clearContents()
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             self.db_close()
 
