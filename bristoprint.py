@@ -41,32 +41,7 @@ class PrintServices:
         self._DATE = datetime.datetime.now()
         self._TODAY = self._DATE.strftime("%m/%d/%y %I:%M%p")
         
-        self._ITEM = 0
-        self._FIRSTITEM = 0
-        self._ID = 0
-        self._COMPANY = 1
-        self._MRMRS = 2
-        self._FNAME = 3
-        self._MIDDLE = 4
-        self._LNAME = 5
-        self._CRED = 6
-        self._ADDR = 7
-        self._SUITE = 8
-        self._CITY = 9
-        self._ST = 10
-        self._POSTAL = 11
-        self._OPHONE = 12
-        self._CELL = 13
-        self._HPHONE = 14
-        self._OEMAIL = 15
-        self._PEMAIL = 16
-        self._OWEB = 17
-        self._PWEB = 18
-        self._PIC = 19
-        self._FAX = 20
-        self._OWNER = 21
-        self._AVAIL = 22
-        self._GROUP = 23
+
         
     def print_users_contacts(self,  _contacts, _grprpt):
         
@@ -77,43 +52,53 @@ class PrintServices:
         _contacts - python list of contacts to print queried from db
         _grprpt - group name is group query or if null then skipped.
         '''
-        
-        if _contacts:
-            if len(_contacts) > 0:
-                
-                # Setup printer
-                doc = ''
-                bristoprint = QPrintDialog()
-                if bristoprint.exec_() == QDialog.Accepted:
-                    # begin printing to printer line by line
-                    qtxtedit = QTextEdit()
-                    qtxtedit.setFontPointSize(12.0)
-                    doc = 'bristoSOFT Contacts v. 0.1    ' +self._TODAY+'\n\r'
-                    if _grprpt:
-                        doc = doc + _grprpt+'\n\r'
-                    for x in range(len(_contacts)):
-                        if not _contacts[x][self._SUITE]:
-                            doc = doc + _contacts[x][self._FNAME]\
-                            + ' '+ _contacts[x][self._LNAME]+'\n'\
-                            + _contacts[x][self._CRED]+'\n'\
-                            + _contacts[x][self._COMPANY]+'\n'\
-                            + _contacts[x][self._ADDR]+'\n'\
-                            + _contacts[x][self._CITY]\
-                            + ', '+ _contacts[x][self._ST]\
-                            + '  '+ _contacts[x][self._POSTAL]+'\n'\
-                            + _contacts[x][self._OPHONE]+'\n'\
-                            + _contacts[x][self._OEMAIL]+'\n\r'
-                        else:
-                            doc = doc + _contacts[x][self._FNAME]\
-                            + ' '+ _contacts[x][self._LNAME]+'\n'\
-                            + _contacts[x][self._CRED]+'\n'\
-                            + _contacts[x][self._COMPANY]+'\n'\
-                            + _contacts[x][self._ADDR]+'\n'\
-                            + _contacts[x][self._SUITE]+'\n'\
-                            + _contacts[x][self._CITY]\
-                            + ', '+ _contacts[x][self._ST]\
-                            + '  '+ _contacts[x][self._POSTAL]+'\n'\
-                            + _contacts[x][self._OPHONE]+'\n'\
-                            + _contacts[x][self._OEMAIL]+'\n\r'
-                    qtxtedit.setText(doc)
-                    qtxtedit.print_(bristoprint.printer())
+        _COMPANY = 1
+        _FNAME = 3
+        _LNAME = 5
+        _CRED = 6
+        _ADDR = 7
+        _SUITE = 8
+        _CITY = 9
+        _ST = 10
+        _POSTAL = 11
+        _OPHONE = 12
+        _OEMAIL = 15
+
+        if len(_contacts) > 0:
+            
+            # Setup printer
+            doc = ''
+            bristoprint = QPrintDialog()
+            if bristoprint.exec_() == QDialog.Accepted:
+                # begin printing to printer line by line
+                qtxtedit = QTextEdit()
+                qtxtedit.setFontPointSize(12.0)
+                doc = 'bristoSOFT Contacts v. 0.1    ' +self._TODAY+'\n\r'
+                if _grprpt:
+                    doc = doc + _grprpt+'\n\r'
+                for x in range(len(_contacts)):
+                    if not _contacts[x][_SUITE]:
+                        doc = doc + _contacts[x][_FNAME]\
+                        + ' '+ _contacts[x][_LNAME]+'\n'\
+                        + _contacts[x][_CRED]+'\n'\
+                        + _contacts[x][_COMPANY]+'\n'\
+                        + _contacts[x][_ADDR]+'\n'\
+                        + _contacts[x][_CITY]\
+                        + ', '+ _contacts[x][_ST]\
+                        + '  '+ _contacts[x][_POSTAL]+'\n'\
+                        + _contacts[x][_OPHONE]+'\n'\
+                        + _contacts[x][_OEMAIL]+'\n\r'
+                    else:
+                        doc = doc + _contacts[x][_FNAME]\
+                        + ' '+ _contacts[x][_LNAME]+'\n'\
+                        + _contacts[x][_CRED]+'\n'\
+                        + _contacts[x][_COMPANY]+'\n'\
+                        + _contacts[x][_ADDR]+'\n'\
+                        + _contacts[x][_SUITE]+'\n'\
+                        + _contacts[x][_CITY]\
+                        + ', '+ _contacts[x][_ST]\
+                        + '  '+ _contacts[x][_POSTAL]+'\n'\
+                        + _contacts[x][_OPHONE]+'\n'\
+                        + _contacts[x][_OEMAIL]+'\n\r'
+                qtxtedit.setText(doc)
+                qtxtedit.print_(bristoprint.printer())
