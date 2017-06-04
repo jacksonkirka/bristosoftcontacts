@@ -1,0 +1,36 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>message.ico</file>
+    <file>icons/document-print-2.ico</file>
+    <file>icons/family.ico</file>
+    <file>icons/call-start.ico</file>
+    <file>icons/view-calendar-month.ico</file>
+    <file>icons/appointment-new-2.ico</file>
+    <file>icons/mail-generic-2.ico</file>
+    <file>icons/edit-group.ico</file>
+    <file>icons/Bevel-And-Emboss-Media-Map.ico</file>
+    <file>icons/document-open-2.ico</file>
+    <file>icons/media-skip-forward-4.ico</file>
+    <file>icons/media-seek-forward-4.ico</file>
+    <file>icons/media-seek-backward-4.ico</file>
+    <file>icons/lock.ico</file>
+    <file>icons/media-skip-backward-6.ico</file>
+    <file>icons/system-search-4.ico</file>
+    <file>icons/edit-find-user.ico</file>
+    <file>icons/edit-user.ico</file>
+    <file>icons/document-sign.ico</file>
+    <file>icons/contact-new-2.ico</file>
+    <file>icons/address-book-new-2.ico</file>
+    <file>bristo_logo.png</file>
+    <file>icons/process-stop-5.ico</file>
+    <file>icons/db_comit.ico</file>
+    <file>icons/db_remove.ico</file>
+    <file>icons/db_status.ico</file>
+    <file>icons/db_update.ico</file>
+    <file>icons/db_add.ico</file>
+    <file>icons/network-connect.ico</file>
+    <file>icons/network-disconnect.ico</file>
+    <file>icons/system-shutdown-5.ico</file>
+    <file>icons/system-search-3.ico</file>
+  </qresource>
+</RCC>

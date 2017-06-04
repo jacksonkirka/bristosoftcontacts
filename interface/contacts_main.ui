@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>bristosoftContacts</class>
+ <widget class="QMainWindow" name="bristosoftContacts">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>630</width>
+    <height>733</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>bristoSOFT Contacts v. 0.1</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/icons/icons/edit-user.ico</normaloff>:/icons/icons/edit-user.ico</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Triangular</enum>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(178, 193, 241);</string>
+   </property>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>620</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/icons/bristo_logo.png</pixmap>
+    </property>
+    <property name="scaledContents">
+     <bool>true</bool>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="contactsStatusBar">
+   <property name="toolTip">
+    <string/>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>630</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuContacts">
+    <property name="title">
+     <string>Contacts</string>
+    </property>
+    <addaction name="actionConnect"/>
+    <addaction name="actionDisconnect"/>
+    <addaction name="actionNew"/>
+    <addaction name="actionQuery"/>
+   </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>About</string>
+    </property>
+    <addaction name="actionAbout_Qt"/>
+    <addaction name="actionAbout_bristoSOFT_Contacts"/>
+   </widget>
+   <widget class="QMenu" name="menuMaintenance">
+    <property name="title">
+     <string>Maintenance</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionChangePassword"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_Print"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuNav">
+    <property name="title">
+     <string>Nav</string>
+    </property>
+    <addaction name="actionFirst_Item"/>
+    <addaction name="actionPrevious_Item"/>
+    <addaction name="actionNext_Item"/>
+    <addaction name="actionLast_Item"/>
+    <addaction name="actionSearch"/>
+    <addaction name="actionUpdate"/>
+   </widget>
+   <widget class="QMenu" name="menuGroups">
+    <property name="title">
+     <string>Groups</string>
+    </property>
+    <addaction name="action_Add_Group"/>
+    <addaction name="actionSearchGroupsDialog"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuContacts"/>
+   <addaction name="menuGroups"/>
+   <addaction name="menuNav"/>
+   <addaction name="menuMaintenance"/>
+   <addaction name="menuAbout"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Contacts</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>22</width>
+     <height>22</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionQuit"/>
+   <addaction name="actionConnect"/>
+   <addaction name="actionDisconnect"/>
+   <addaction name="actionNew"/>
+   <addaction name="actionQuery"/>
+  </widget>
+  <widget class="QToolBar" name="navToolBar">
+   <property name="windowTitle">
+    <string>Navigation</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionFirst_Item"/>
+   <addaction name="actionPrevious_Item"/>
+   <addaction name="actionNext_Item"/>
+   <addaction name="actionLast_Item"/>
+   <addaction name="actionSearch"/>
+   <addaction name="actionUpdate"/>
+  </widget>
+  <widget class="QToolBar" name="groupToolBar">
+   <property name="windowTitle">
+    <string>Groups</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Add_Group"/>
+   <addaction name="actionSearchGroupsDialog"/>
+  </widget>
+  <action name="actionConnect">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/network-connect.ico</normaloff>:/icons/icons/network-connect.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Connect</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/edit-user.ico</normaloff>:/icons/icons/edit-user.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+N</string>
+   </property>
+  </action>
+  <action name="actionQuery">
+   <property name="icon">
+    <iconset>
+     <normalon>:/icons/icons/system-search-3.ico</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Search Dialog</string>
+   </property>
+   <property name="toolTip">
+    <string>Search Dialog</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="icon">
+    <iconset>
+     <normalon>:/icons/icons/system-shutdown-5.ico</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+X</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About &amp;Qt</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Q</string>
+   </property>
+  </action>
+  <action name="actionAbout_bristoSOFT_Contacts">
+   <property name="text">
+    <string>About &amp;bristoSOFT Contacts</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+B</string>
+   </property>
+  </action>
+  <action name="actionVacuum">
+   <property name="text">
+    <string>&amp;Vacuum</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+V</string>
+   </property>
+  </action>
+  <action name="actionReIndex">
+   <property name="text">
+    <string>&amp;ReIndex</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+R</string>
+   </property>
+  </action>
+  <action name="actionDisconnect">
+   <property name="icon">
+    <iconset>
+     <normalon>:/icons/icons/network-connect.ico</normalon>
+    </iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Disconnect</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+D</string>
+   </property>
+  </action>
+  <action name="actionFirst_Item">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/media-skip-backward-6.ico</normaloff>:/icons/icons/media-skip-backward-6.ico</iconset>
+   </property>
+   <property name="text">
+    <string>First Item</string>
+   </property>
+   <property name="toolTip">
+    <string>First Item</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Up</string>
+   </property>
+  </action>
+  <action name="actionPrevious_Item">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/media-seek-backward-4.ico</normaloff>:/icons/icons/media-seek-backward-4.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Previous Item</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous Item</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Left</string>
+   </property>
+  </action>
+  <action name="actionNext_Item">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/media-seek-forward-4.ico</normaloff>:/icons/icons/media-seek-forward-4.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Next Item</string>
+   </property>
+   <property name="toolTip">
+    <string>Next Item</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Right</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionLast_Item">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/media-skip-forward-4.ico</normaloff>:/icons/icons/media-skip-forward-4.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Last Item</string>
+   </property>
+   <property name="toolTip">
+    <string>Last Item</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Down</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/system-search-4.ico</normaloff>:/icons/icons/system-search-4.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Search</string>
+   </property>
+   <property name="toolTip">
+    <string>Search: click then enter fields then click this icon again.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionUpdate">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/db_update.ico</normaloff>:/icons/icons/db_update.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Update</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="actionChangePassword">
+   <property name="text">
+    <string>&amp;Change Password</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
+   </property>
+  </action>
+  <action name="action_Add_Group">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/family.ico</normaloff>:/icons/icons/family.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Add Group</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+A</string>
+   </property>
+  </action>
+  <action name="actionSearchGroupsDialog">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/system-search-3.ico</normaloff>:/icons/icons/system-search-3.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Search Groups Dialog</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+G</string>
+   </property>
+  </action>
+  <action name="action_Print">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/icons/icons/document-print-2.ico</normaloff>:/icons/icons/document-print-2.ico</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Print</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+P</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
