@@ -25,12 +25,12 @@ view.py module is imported by the controller.py.
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 from PyQt4.uic import *
-import contacts
-import login
-import search
-import changepwd
-import newgroup
-import searchgroup
+import interface.contacts
+import interface.login
+import interface.search
+import interface.changepwd
+import interface.newgroup
+import interface.searchgroup
 
 class bristoContactsLogin(QDialog,  login.Ui_loginDialog):
     '''

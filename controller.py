@@ -44,7 +44,7 @@ import psycopg2
 
 from bristo_exceptions import *
 from view import *
-import contactsmain
+import interface.contactsmain
 
 
 __version__ = '0.1' # Version assignment
