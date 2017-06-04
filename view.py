@@ -30,7 +30,7 @@ import interface.login
 import interface.search
 import interface.changepwd
 import interface.newgroup
-import interface.searchgroup
+import interface.searchgroup 
 
 class bristoContactsLogin(QDialog,  login.Ui_loginDialog):
     '''
