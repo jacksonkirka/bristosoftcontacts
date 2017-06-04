@@ -56,7 +56,7 @@ __version__ = '0.1' # Version assignment
 
 
 
-class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
+class Controller(QMainWindow, interface.contactsmain.Ui_bristosoftContacts):
     '''
 
     Controller is the Main Application window with
