@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2017-06-05, 22:03:35 -->
+<!-- Saved: 2017-06-05, 22:09:45 -->
 <!-- Copyright (C) 2017 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -14,11 +14,13 @@
   <Email>jacksonkirka@bristosoft.com</Email>
   <Sources>
     <Source>__init__.py</Source>
-    <Source>bristo_exceptions.py</Source>
     <Source>bristocontacts.sql</Source>
-    <Source>bristoprint.py</Source>
     <Source>control/__init__.py</Source>
-    <Source>controller.py</Source>
+    <Source>control/bristo_exceptions.py</Source>
+    <Source>control/bristoprint.py</Source>
+    <Source>control/controller.py</Source>
+    <Source>control/secure.py</Source>
+    <Source>control/view.py</Source>
     <Source>family.ico</Source>
     <Source>interface/__init__.py</Source>
     <Source>interface/changepwd.py</Source>
@@ -30,8 +32,6 @@
     <Source>interface/search.py</Source>
     <Source>interface/searchgroup.py</Source>
     <Source>main.py</Source>
-    <Source>secure.py</Source>
-    <Source>view.py</Source>
   </Sources>
   <Forms/>
   <Translations/>
