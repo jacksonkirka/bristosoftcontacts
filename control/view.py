@@ -25,15 +25,15 @@ view.py module is imported by the controller.py.
 from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 from PyQt4.uic import *
-import interface.contacts
-import interface.login
-import interface.search
-import interface.changepwd
-import interface.newgroup
-import interface.searchgroup 
+from .interface import contacts
+from .interface import login
+from .interface import search
+from .interface import changepwd
+from .interface import newgroup
+from .interface import searchgroup 
 
 
-class bristoContactsLogin(QDialog, interface.login.Ui_loginDialog):
+class bristoContactsLogin(QDialog, login.Ui_loginDialog):
     '''
     
     bristoContactsLogin is the login dialog used to login
@@ -51,7 +51,7 @@ class bristoContactsLogin(QDialog, interface.login.Ui_loginDialog):
         super(bristoContactsLogin,  self).__init__(parent)
         self.setupUi(self)
 
-class bristoContactsDialog(QDialog,  interface.contacts.Ui_contactsDialog):
+class bristoContactsDialog(QDialog,  contacts.Ui_contactsDialog):
     '''
     
     bristoContactsDialog provides a GUI interface for building
@@ -69,7 +69,7 @@ class bristoContactsDialog(QDialog,  interface.contacts.Ui_contactsDialog):
         self.setupUi(self)
 
 class bristoContactsSearchDialog(
-    QDialog,  interface.search.Ui_contactsSearchDialog):
+    QDialog,  search.Ui_contactsSearchDialog):
     '''
     
     bristoContactsSearchDialog is the a dialog for traversing
@@ -87,7 +87,7 @@ class bristoContactsSearchDialog(
         self.setupUi(self)
         
 class bristoContactsChgPwdDlg(
-    QDialog,  interface.changepwd.Ui_changepwdDialog):
+    QDialog,  changepwd.Ui_changepwdDialog):
     '''
     
     bristoContactsChgPwdDlg is the a dialog changing the user password.
@@ -103,7 +103,7 @@ class bristoContactsChgPwdDlg(
         super(bristoContactsChgPwdDlg,  self).__init__(parent)
         self.setupUi(self)
 
-class bristoNewGroupDlg(QDialog,  interface.newgroup.Ui_newGroupDialog):
+class bristoNewGroupDlg(QDialog,  newgroup.Ui_newGroupDialog):
     '''
     
     bristoNewGroupDlg is the a dialog for adding new groups.
@@ -120,7 +120,7 @@ class bristoNewGroupDlg(QDialog,  interface.newgroup.Ui_newGroupDialog):
         self.setupUi(self)
 
 class bristoSearchGroupDlg(
-    QDialog,  interface.searchgroup.Ui_searchGroupDialog):
+    QDialog,  searchgroup.Ui_searchGroupDialog):
     '''
     
     bristoSearchGroupDlg is the a dialog for navigating groups.

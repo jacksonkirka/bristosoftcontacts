@@ -44,7 +44,7 @@ import psycopg2
 
 from bristo_exceptions import *
 from view import *
-import interface.contactsmain
+from .interface import contactsmain
 
 
 __version__ = '0.1' # Version assignment
@@ -56,7 +56,7 @@ __version__ = '0.1' # Version assignment
 
 
 
-class Controller(QMainWindow, interface.contactsmain.Ui_bristosoftContacts):
+class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
 
     Controller is the Main Application window with
