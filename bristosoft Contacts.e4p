@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2017-06-05, 21:45:30 -->
+<!-- Saved: 2017-06-05, 22:03:35 -->
 <!-- Copyright (C) 2017 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -17,6 +17,7 @@
     <Source>bristo_exceptions.py</Source>
     <Source>bristocontacts.sql</Source>
     <Source>bristoprint.py</Source>
+    <Source>control/__init__.py</Source>
     <Source>controller.py</Source>
     <Source>family.ico</Source>
     <Source>interface/__init__.py</Source>
