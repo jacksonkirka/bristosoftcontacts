@@ -1929,8 +1929,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _loc = _mail_search + _email_addr_filter
         self.google_mail_com.load(QUrl(_loc))
         
-   
-
     def db_insert_contact_note(self):
 
         '''
@@ -2021,7 +2019,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('Messages updated .......', 4000)
             self.db_close()
             self.unblock_signals()
-            
         else:
             self.bristo_search.msgTableWidget.clearContents()
             self.contactsStatusBar.showMessage('User not found.....', 4000)
