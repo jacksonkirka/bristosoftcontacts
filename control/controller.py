@@ -2023,6 +2023,31 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_search.msgTableWidget.clearContents()
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             self.db_close()
+            
+    def poll_messages(self, _user):
+        '''
+        poll_messages checks messages for the current user updated in the
+        last 5 minutes from any user or sender.
+        '''
+        self.db_login()
+        if self._connected:
+            self.reset_timer()
+            self._cursor = self._conn.cursor()
+            self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
+                    bristo_contacts_messages_receiver = %s
+                    LIMIT 1;""",
+                    (_user))
+            self.fetch_msg = self._cursor.fetchone() # Get message
+            if not self._cursor.rowcount:
+                return
+            else:
+                _sender = 3 # static
+                _msg = 5 # static
+                self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(200, 128, 128);")
+                self.contactsStatusBar.showMessage(
+                    self._fetch_msg[_sender]+': '+self._fetch_msg[_msg], 9000)
+                self.db_close()
 
     def get_contact_username(self,  _contact_email):
         '''
