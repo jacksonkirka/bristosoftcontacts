@@ -84,6 +84,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
+        self._firstlogin = False
         
         # Reports
         self.fetch_results = None
@@ -229,7 +230,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_sender = 3
         self._msg_receiver =4
         self._msg_text = 5
-        self._msg_chk_wait = 30000
+        self._poll_msg_time = 300000
         self.fetch_msg = None
 
 
@@ -326,7 +327,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._idle.singleShot(self._conn_timer,  self.db_idle)
         self._idle.start() # start idle timer
 
-
     # class Database Methods
     def db_connect(self):
         '''
@@ -348,6 +348,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._user = self.login.userNameLineEdit.text()
         self._passwd = self.login.passwordLineEdit.text()
         self.db_login()
+        
 
     def db_login(self):
         ''' 
@@ -484,9 +485,26 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _tz = self._usr_tz
                     self._cursor.execute("""SET TIME ZONE %s;""", (_tz, ))
                     self.reset_timer() # Initial set after user login
+                    if not self._firstlogin:
+                        self._firstlogin = True
+                        self.msg_poll_timer()
+                        
 
                 else:
                     self.incorrectlogin()
+                    
+    def msg_poll_timer(self):
+        '''
+        reset_msg_poll_timer resets QTimer singleShot for self._poll_msg_qtimer
+        amount of time.  It stops the existing timer and starts a new one.  When
+        the time has elapsed it calls self.poll_messages and informs the user of
+        any messages through the status bar.
+        '''
+        _poll_msg_qtimer = QTimer()
+        _poll_msg_qtimer.setSingleShot(False)
+        _poll_msg_qtimer.timeout.connect(self.poll_messages)
+        _poll_msg_qtimer.start(self._poll_msg_time)
+
 
     def chgpwddlg(self):
         '''
@@ -2024,7 +2042,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             self.db_close()
             
-    def poll_messages(self, _user):
+    def poll_messages(self):
         '''
         poll_messages checks messages for the current user updated in the
         last 5 minutes from any user or sender.
@@ -2033,10 +2051,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._connected:
             self.reset_timer()
             self._cursor = self._conn.cursor()
-            self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
-                    bristo_contacts_messages_receiver = %s
-                    LIMIT 1;""",
-                    (_user))
+            # Query the database for the most recent message for user with 5
+            # minutes.  Select s/b only for new entries last 5 minutes.
+            self._cursor.execute("""SELECT * FROM bristo_contacts_messages
+                WHERE bristo_contacts_messages_receiver = %s LIMIT 1""",
+                    (self._user, ))
             self.fetch_msg = self._cursor.fetchone() # Get message
             if not self._cursor.rowcount:
                 return
@@ -2046,7 +2065,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(200, 128, 128);")
                 self.contactsStatusBar.showMessage(
-                    self._fetch_msg[_sender]+': '+self._fetch_msg[_msg], 9000)
+                    self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 10000)
                 self.db_close()
 
     def get_contact_username(self,  _contact_email):
