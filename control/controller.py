@@ -233,6 +233,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._poll_msg_time = 300000
         self._poll_msg_qtimer = QTimer()
         self.fetch_msg = None
+        self._msg_read_uuid = None
 
 
         #Date and Time
@@ -496,15 +497,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     
     def poll_messages(self):
         '''
-        poll_messages checks messages for the current user updated in the
-        last 5 minutes from any user or sender.
+        poll_messages checks recent messages for the current user every
+        300000 milliseconds or 5 minutes.  It first queries all user
+        messages and sorts them by stamp date in decending order.  Then
+        it pops the top message of the stack.  This user and message
+        is displayed in the status bar.
         '''
         self.db_login()
         if self._connected:
             self.reset_timer()
             self._cursor = self._conn.cursor()
-            # Query the database for the most recent message for user with 5
-            # minutes.  Select s/b only for new entries last 5 minutes.
+            # query needs to be updated to select only messages insert
+            # in the last 20 minutes or so.
             self._cursor.execute("""SELECT * FROM (SELECT * FROM
                 bristo_contacts_messages WHERE bristo_contacts_messages_receiver
                 = %s ORDER BY bristo_contacts_messages_stamp DESC) AS 
@@ -514,15 +518,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if not self._cursor.rowcount:
                 return
             else:
+                _msg_uuid = 1 # static
                 _sender = 3 # static
                 _msg = 5 # static
-                self.db_close()
-                self.contactsStatusBar.removeWidget(self._conn_msg)
-                self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(244, 160, 66);")
-                self.contactsStatusBar.showMessage(
-                    self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
-                
+                if not self._msg_read_uuid == self.fetch_msg[_msg_uuid]:
+                    self.db_close()
+                    self.contactsStatusBar.removeWidget(self._conn_msg)
+                    self.contactsStatusBar.setStyleSheet("background-color: \
+                                                  rgb(244, 160, 66);")
+                    self.contactsStatusBar.showMessage(
+                        self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
+                    self._msg_read_uuid = self.fetch_msg[_msg_uuid]
+                    self.restore_status_bar() # Status bar red again
+                    
                 
                 
 
@@ -2626,6 +2634,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                       '/'+ self._db+'.')
             self.contactsStatusBar.addWidget(self._conn_msg)
             self._disconnected = True
+            
+    def restore_status_bar(self):
+        '''
+        restore_status_bar restores the status bar to red with 
+        '''
+        self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+        # self.contactsStatusBar.removeWidget(self._conn_msg)
+        # self._conn_msg = QLabel(self._user+'@'+self._host+
+        #                          '/'+ self._db+' logged out due to inactivity.')
+        self.contactsStatusBar.addWidget(self._conn_msg)
 
     def db_idle(self):
         '''
