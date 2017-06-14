@@ -529,8 +529,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self.contactsStatusBar.showMessage(
                         self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
                     self._msg_read_uuid = self.fetch_msg[_msg_uuid]
-                    self.restore_status_bar() # Status bar red again
-                    
                 
                 
 
