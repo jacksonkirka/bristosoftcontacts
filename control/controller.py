@@ -86,6 +86,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._chgpwd = False
         self._cursor = None
         self._firstlogin = True
+        self.conn_msg = None
         
         # Connection Pooling
         self._min_con = 2
@@ -276,8 +277,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionUpdate.triggered.connect(self.db_update_contact)
 
         # Set contactsStatusBar to red
-        self._conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
-        self.contactsStatusBar.addWidget(self._conn_msg)
+        self.conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
+        self.contactsStatusBar.addWidget(self.conn_msg)
         self.contactsStatusBar.setStyleSheet("background-color: \
         rgb(230, 128, 128);")
 
@@ -459,8 +460,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
 
                     if self._disconnected:
-                        self.contactsStatusBar.removeWidget(self._conn_msg)
-                    self._conn_msg = QLabel("ssl:"+self._user + "@"+
+                        self.contactsStatusBar.removeWidget(self.conn_msg)
+                    self.conn_msg = QLabel("ssl:"+self._user + "@"+
                                             self._host+
                                           '/'+ self._db +'.')
                     if not self._account_expired:
@@ -470,7 +471,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(255, 165, );")
                     if not self._chgpwd:
-                        self.contactsStatusBar.addWidget(self._conn_msg)
+                        self.contactsStatusBar.addWidget(self.conn_msg)
 
                     # Log authentication
                     _usr_ip = self._usr_ip
@@ -514,8 +515,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         it pops the top message of the stack.  This user and message
         is displayed in the status bar.
         '''
-        self._conn_msg = self._pool.getconn()
-        self._cursor_msg = self._conn_msg.cursor()
+        self._conn_mesg = self._pool.getconn()
+        self._cursor_msg = self._conn_mesg.cursor()
         # query needs to be updated to select only messages insert
         # in the last 20 minutes or so.
         self._cursor_msg.execute("""SELECT * FROM (SELECT * FROM
@@ -532,8 +533,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _msg = 5 # static
             if not self._msg_read_uuid == self.fetch_msg[_msg_uuid]:
                 self._cursor_msg.close()
-                self._pool.putconn(conn=self._conn_msg)
-                self.contactsStatusBar.removeWidget(self._conn_msg)
+                self._pool.putconn(conn=self._conn_mesg)
+                self.contactsStatusBar.removeWidget(self.conn_msg)
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(244, 160, 66);")
                 self.contactsStatusBar.showMessage(
@@ -678,9 +679,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
         if self._disconnected:
-            self.contactsStatusBar.removeWidget(self._conn_msg)
-        self._conn_msg = QLabel('Group login incorrect, please try again.')
-        self.contactsStatusBar.addWidget(self._conn_msg)
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+        self.conn_msg = QLabel('Group login incorrect, please try again.')
+        self.contactsStatusBar.addWidget(self.conn_msg)
 
     def db_contact_new(self):
 
@@ -2656,10 +2657,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
-            self.contactsStatusBar.removeWidget(self._conn_msg)
-            self._conn_msg = QLabel(self._host+
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+            self.conn_msg = QLabel(self._host+
                                       '/'+ self._db+'.')
-            self.contactsStatusBar.addWidget(self._conn_msg)
+            self.contactsStatusBar.addWidget(self.conn_msg)
             self._disconnected = True
             
     def restore_status_bar(self):
@@ -2668,10 +2669,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-        # self.contactsStatusBar.removeWidget(self._conn_msg)
-        # self._conn_msg = QLabel(self._user+'@'+self._host+
+        # self.contactsStatusBar.removeWidget(self.conn_msg)
+        # self.conn_msg = QLabel(self._user+'@'+self._host+
         #                          '/'+ self._db+' logged out due to inactivity.')
-        self.contactsStatusBar.addWidget(self._conn_msg)
+        self.contactsStatusBar.addWidget(self.conn_msg)
 
     def db_idle(self):
         '''
@@ -2713,10 +2714,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
-            self.contactsStatusBar.removeWidget(self._conn_msg)
-            self._conn_msg = QLabel(self._user+'@'+self._host+
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+            self.conn_msg = QLabel(self._user+'@'+self._host+
                                       '/'+ self._db+' logged out due to inactivity.')
-            self.contactsStatusBar.addWidget(self._conn_msg)
+            self.contactsStatusBar.addWidget(self.conn_msg)
             self._disconnected = True
 
     def close_contacts(self):
@@ -2755,12 +2756,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main.commit()
             self._cursor.close()
             self._pool.closeall()
-            self.contactsStatusBar.removeWidget(self._conn_msg)
+            self.contactsStatusBar.removeWidget(self.conn_msg)
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
             
-            self._conn_msg = QLabel(self._host+
+            self.conn_msg = QLabel(self._host+
                                   '/'+ self._db+'.')
-            self.contactsStatusBar.addWidget(self._conn_msg)
+            self.contactsStatusBar.addWidget(self.conn_msg)
 
         self.close()
