@@ -383,7 +383,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             
             self._pool = psycopg2.pool.ThreadedConnectionPool(
                 self._min_con,  self._max_con,  con)
-            self._conn_main = self._pool.getconn(key ='main')
+            self._conn_main = self._pool.getconn()
             #self._conn_main = psycopg2.connect(con) # Authenticate and login owner
             self._connected = True # Set connection to True
 
@@ -514,7 +514,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         it pops the top message of the stack.  This user and message
         is displayed in the status bar.
         '''
-        self._conn_msg = self._pool.getconn(key ='msg')
+        self._conn_msg = self._pool.getconn()
         self._cursor_msg = self._conn_msg.cursor()
         # query needs to be updated to select only messages insert
         # in the last 20 minutes or so.
@@ -532,7 +532,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _msg = 5 # static
             if not self._msg_read_uuid == self.fetch_msg[_msg_uuid]:
                 self._cursor_msg.close()
-                self._conn_msg.putconn('msg')
+                self._pool.putconn(conn=self._conn_msg)
                 self.contactsStatusBar.removeWidget(self._conn_msg)
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(244, 160, 66);")
@@ -628,15 +628,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
                 _usr_reg, _usr_ctry, _usr_zip))
         self._conn_main.commit()
-        self._conn_main.putconn('main')
+        self._pool.putconn(conn=self._conn_main)
         self._connected = False
         self._disconnected = True
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
         if self._disconnected:
-            self.contactsStatusBar.removeWidget(self._conn_msg)
-        self._conn_msg = QLabel('Login incorrect, please try again.')
-        self.contactsStatusBar.addWidget(self._conn_msg)
+            self.contactsStatusBar.removeWidget(self.conn_msg)
+        self.conn_msg = QLabel('Login incorrect, please try again.')
+        self.contactsStatusBar.addWidget(self.conn_msg)
 
     def incorrectgrouplogin(self):
 
@@ -672,7 +672,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _usr_reg, _usr_ctry, _usr_zip))
         self._conn_main.commit()
         self._cursor.close()
-        self._conn_main.putconn('main')
+        self._pool.putconn(conn=self._conn_main)
         self._connected = False
         self._disconnected = True
         self.contactsStatusBar.setStyleSheet("background-color: \
@@ -2063,8 +2063,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         database table that were sent by the current user to the current contact
         and that were sent by the current contact to the current user.
         '''
-        self._conn_main = self._pool.getconn(key ='main')
-        self._cursor = self._conn_main.cursor()
+        self._conn_main = self._pool.getconn()
         self.block_signals()
         self.reset_timer()
         # Query the database to create list of messages returned by psycopg2
@@ -2085,13 +2084,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.fetch_msg = self._cursor.fetchall() # Get messages
             self.display_messages(self.fetch_msg) # Display messages
             self.contactsStatusBar.showMessage('Messages updated .......', 4000)
-            self.db_close()
+            self._cursor.close()
+            self._pool.putconn(conn=self._conn_main)
             self.unblock_signals()
         else:
             self.bristo_search.msgTableWidget.clearContents()
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
             
 
     def get_contact_username(self,  _contact_email):
@@ -2100,8 +2100,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         returns the contact username in bristo_contacts_users for a user
         email match.
         '''
-        self._conn_main = self._pool.getconn(key ='main')
-        self._cursor = self._conn_main.cursor()
+        self._conn_main = self._pool.getconn()
         if self._connected:
             # Get username for current contact email address
             self._cursor = self._conn_main.cursor()
@@ -2111,7 +2110,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if not self._cursor.rowcount:
                 self.contactsStatusBar.showMessage('User not found.....', 4000)
                 self._cursor.close()
-                self._conn_main.putconn('main')
+                self._pool.putconn(conn=self._conn_main)
             else:
                 _usr = self._cursor.fetchone()
                 return _usr[self._USERNM]
@@ -2202,7 +2201,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _fnm = self.get_path_filename(filename)             # Get name to write
         self._file_bin = open(filename, 'rb').read()        # Read > pointer
         self._conn_main_timer = 120000                          # Need large files
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
         if self._connected:
             self.reset_timer()
@@ -2213,7 +2212,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                (_oph, _fnm, psycopg2.Binary(self._file_bin), _owner))
             self._conn_main.commit()
             self.contactsStatusBar.showMessage('New contact file inserted.', 3000)
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
         self._conn_main_timer = 10000
 
     def get_contact_file(self):
@@ -2223,7 +2222,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the users desktop.
         '''
         self._conn_main_timer = 120000                          # Need large files
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
         if self._connected:
             self.reset_timer()
@@ -2242,7 +2241,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage(_file_row_name+' '\
                                                +'saved on Desktop.', 3000)
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
             self._conn_main_timer = 10000
 
     def get_path_filename(self,  _path):
@@ -2268,7 +2267,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.picLabel.setPixmap(self._image)  # Display
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
         if self._connected:
             _id = self.fetch_results[self._ITEM][self._ID]
@@ -2281,7 +2280,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
         self._cursor.close()
-        self._conn_main.putconn('main')
+        self._pool.putconn(conn=self._conn_main)
         self._conn_main_timer = 10000
 
     def update_group_pic(self):
@@ -2289,7 +2288,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_group pic opens a group logo provided by the PostgreSQL database
         user and displays it then returns self._image_bin to the caller dialog.
         '''
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
         self.reset_timer()
         fdlg = QFileDialog()                               
@@ -2308,7 +2307,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main.commit()
             self.contactsStatusBar.showMessage('Image updated.', 3000)
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
 
 
     def display_pic(self,  _qobject, _buffer):
@@ -2353,7 +2352,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         or outbound and results need be entered.
 
         '''
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         if self._connected:
             self.reset_timer()
             if self._cursor.closed:
@@ -2377,7 +2376,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
 
     def appt_display_contact(self):
 
@@ -2439,7 +2438,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the appointment, open or closed and purpose need be entered.
 
         '''
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
         if self._connected:
             _owner = self._user
@@ -2461,7 +2460,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._live_set = False
             self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
 
     def db_update_contact_appt(self):
 
@@ -2471,7 +2470,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         complete/open checkbox and purpose can be updated.
 
         '''
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
         self.reset_timer()
         _crow = self.bristo_search.apptTableWidget.currentRow()
@@ -2489,7 +2488,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._live_set = False
         self.contactsStatusBar.showMessage('Contact Appointment Updated.', 5000)
         self._cursor.close()
-        self._conn_main.putconn('main')
+        self._pool.putconn(conn=self._conn_main)
 
     def display_appts_bydate(self):
 
@@ -2528,7 +2527,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
        
         # query for user contact record if found build _from address
         _user_email = self._user_email
-        self._conn_main = self._pool.getconn(key ='main')
+        self._conn_main = self._pool.getconn()
         self.reset_timer()
         if self._connected:
             if self._cursor.closed:
@@ -2555,7 +2554,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.showMessage(
                     'No contact info found for user.', 5000)
         self._cursor.close()
-        self._conn_main.putconn('main')
+        self._pool.putconn(conn=self._conn_main)
 
 
     def db_full_vacuum(self):
@@ -2564,7 +2563,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_full_vacuum does a complete vacuum of the database.
 
         '''
-        self._conn_admin = self._pool.getconn(key ='admin')
+        self._conn_admin = self._pool.getconn('admin')
         if self._connected:
             self._cursor_admin = self._conn_admin.cursor()
             old_isolation_level = self._conn_admin.isolation_level
@@ -2575,7 +2574,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _msg ='Vacumming Database '+self._db+' complete.'
             self.contactsStatusBar.showMessage(_msg, 5000)
             self._cursor_admin.close()
-            self._conn_admin.putconn('admin')
+            self._conn_admin.putconn(conn=self._conn_main)
         else:
             _msg = 'Please connect to the database to vacuum.'
             self.contactsStatusBar.showMessage(_msg, 5000)
@@ -2653,7 +2652,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _usr_reg, _usr_ctry, _usr_zip, _suc))
             self._conn_main.commit()
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
@@ -2681,6 +2680,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         then turns the status bar red.
 
         '''
+        
         if self._connected:
             if self._cursor.close:
                 self._cursor = self._conn_main.cursor()
@@ -2709,7 +2709,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _usr_reg, _usr_ctry, _usr_zip, _suc))
             self._conn_main.commit()
             self._cursor.close()
-            self._conn_main.putconn('main')
+            self._pool.putconn(conn=self._conn_main)
             self._connected = False
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
@@ -2754,7 +2754,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _usr_reg, _usr_ctry, _usr_zip, _suc))
             self._conn_main.commit()
             self._cursor.close()
-            self._conn_main.closeall()
+            self._pool.closeall()
             self.contactsStatusBar.removeWidget(self._conn_msg)
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
