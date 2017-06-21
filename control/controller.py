@@ -46,7 +46,7 @@ import psycopg2.pool # import polling extension
 from bristo_exceptions import *
 from view import *
 from interface import contactsmain
-
+import time
 
 __version__ = '0.1' # Version assignment
 
@@ -541,6 +541,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.showMessage(
                     self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
                 self._msg_read_uuid = self.fetch_msg[_msg_uuid]
+                #self.contactsStatusBar.setStyleSheet("background-color: \
+                                              #rgb(230, 128, 128);")
                 
                 
 
@@ -2095,28 +2097,28 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('User not found.....', 4000)
             
 
-    def get_contact_username(self,  _contact_eml):
+    def get_contact_username(self,  _contact_email):
         '''
         get_contact_username accepts the contact email address and
         returns the contact username in bristo_contacts_users for a user
         email match.
         '''
-        _contact_email = _contact_eml
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
         self._cursor = self._conn_main.cursor()
-        if _contact_eml and self._connected:
+        self._connected = True
+        if self._connected:
             # Get username for current contact email address
-            self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
-            bristo_contacts_users_email = %s LIMIT 1", (
-                _contact_email,))
+            self._cursor.execute("""SELECT * FROM bristo_contacts_users WHERE
+            bristo_contacts_users_email = %s LIMIT 1;""", (_contact_email,))
             if not self._cursor.rowcount:
-                self.contactsStatusBar.showMessage('User not found.....', 4000)
+                self.contactsStatusBar.showMessage('No User Found.....', 4000)
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main)
             else:
                 _usr = self._cursor.fetchone()
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main)
+                self._connected = False
                 return _usr[self._USERNM]                
                 
     def display_messages(self, _messages):
