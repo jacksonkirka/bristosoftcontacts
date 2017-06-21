@@ -2063,7 +2063,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         database table that were sent by the current user to the current contact
         and that were sent by the current contact to the current user.
         '''
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self.block_signals()
         self.reset_timer()
         # Query the database to create list of messages returned by psycopg2
@@ -2101,7 +2101,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         email match.
         '''
         _contact_email = _contact_eml
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         if _contact_eml and self._connected:
             # Get username for current contact email address
             self._cursor = self._conn_main.cursor()
@@ -2203,7 +2203,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _fnm = self.get_path_filename(filename)             # Get name to write
         self._file_bin = open(filename, 'rb').read()        # Read > pointer
         self._conn_main_timer = 120000                          # Need large files
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self._cursor = self._conn_main.cursor()
         if self._connected:
             self.reset_timer()
@@ -2224,7 +2224,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the users desktop.
         '''
         self._conn_main_timer = 120000                          # Need large files
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self._cursor = self._conn_main.cursor()
         if self._connected:
             self.reset_timer()
@@ -2269,7 +2269,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.picLabel.setPixmap(self._image)  # Display
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self._cursor = self._conn_main.cursor()
         if self._connected:
             _id = self.fetch_results[self._ITEM][self._ID]
@@ -2290,7 +2290,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         update_group pic opens a group logo provided by the PostgreSQL database
         user and displays it then returns self._image_bin to the caller dialog.
         '''
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self._cursor = self._conn_main.cursor()
         self.reset_timer()
         fdlg = QFileDialog()                               
@@ -2354,7 +2354,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         or outbound and results need be entered.
 
         '''
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         if self._connected:
             self.reset_timer()
             if self._cursor.closed:
@@ -2440,7 +2440,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the appointment, open or closed and purpose need be entered.
 
         '''
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self._cursor = self._conn_main.cursor()
         if self._connected:
             _owner = self._user
@@ -2472,7 +2472,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         complete/open checkbox and purpose can be updated.
 
         '''
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self._cursor = self._conn_main.cursor()
         self.reset_timer()
         _crow = self.bristo_search.apptTableWidget.currentRow()
@@ -2529,7 +2529,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
        
         # query for user contact record if found build _from address
         _user_email = self._user_email
-        self._conn_main = self._pool.getconn()
+        self._conn_main = self._pool.getconn(con=self._conn_main)
         self.reset_timer()
         if self._connected:
             if self._cursor.closed:
