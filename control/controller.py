@@ -56,7 +56,6 @@ __version__ = '0.1' # Version assignment
 # class Controller(QMainWindow,  bristocontacts):
 
 
-
 class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     '''
 
@@ -980,11 +979,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         click and a program method call namely display_goup_contacts.
         '''
         self.search_groups = None
-        self.db_login()
         self._groupqry = False
         self._grprpt = None
         self.db_contacts_fetch()
-        self._pool.putconn(conn=self._conn_main)
 
     def db_contacts_fetch(self):
         '''
@@ -1068,6 +1065,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Fetch Data from tables --> Python lists
         _user = self._user
         _email = self._user_email
+        self._conn_main = self._pool.getconn(key=self._conn_main_key)
         if self._connected:
             self._cursor = self._conn_main.cursor()
 
@@ -1138,6 +1136,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.update_fetch_results()
             _msg = 'All data fetched from database.'
             self.contactsStatusBar.showMessage(_msg, 7000)
+            self._pool.putconn(conn=self._conn_main)
 
 
     def update_fetch_results(self):
