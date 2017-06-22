@@ -46,7 +46,7 @@ import psycopg2.pool # import polling extension
 from bristo_exceptions import *
 from view import *
 from interface import contactsmain
-import time
+import threading
 
 __version__ = '0.1' # Version assignment
 
@@ -979,11 +979,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         button on toolbar is clicked.  It is needed to distinguish between a
         click and a program method call namely display_goup_contacts.
         '''
+        db_contacts_fetch_thread = threading.Thread(target=self.db_contacts_fetch)
         self.search_groups = None
         self.db_login()
         self._groupqry = False
         self._grprpt = None
-        self.db_contacts_fetch()
+        db_contacts_fetch_thread.start()
+        # self.db_contacts_fetch()
         self._pool.putconn(conn=self._conn_main)
 
     def db_contacts_fetch(self):
