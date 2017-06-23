@@ -46,7 +46,7 @@ import psycopg2.pool # import polling extension
 from bristo_exceptions import *
 from view import *
 from interface import contactsmain
-# import threading
+import threading
 
 __version__ = '0.1' # Version assignment
 
@@ -235,8 +235,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_sender = 3
         self._msg_receiver =4
         self._msg_text = 5
-        self._poll_msg_time = 300000
-        self._poll_msg_qtimer = QTimer()
+        self._poll_msg_time = 300
+        #self._poll_msg_qtimer = QTimer()
+        self._poll_msg_timer = threading.Timer(self._poll_msg_time,
+                                                self.msg_poll_timer)
         self.fetch_msg = None
         self._msg_read_uuid = None
 
@@ -545,15 +547,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
     def msg_poll_timer(self):
         '''
-        reset_msg_poll_timer resets QTimer singleShot for self._poll_msg_qtimer
-        amount of time.  It stops the existing timer and starts a new one.  When
-        the time has elapsed it calls self.poll_messages and informs the user of
+        msg_poll_timer starts the polling messages in messages table.
+        It stops the existing timer and starts a new one.  Every time
+        the time elapses it calls self.poll_messages and informs the user of
         any messages through the status bar.
         '''
-        self._poll_msg_qtimer.setSingleShot(False)
-        self._poll_msg_qtimer.timeout.connect(self.poll_messages)
-        self._poll_msg_qtimer.start(self._poll_msg_time)
-
+        
+        #self._poll_msg_qtimer.setSingleShot(False)
+        #self._poll_msg_qtimer.timeout.connect(self.poll_messages)
+        #self._poll_msg_qtimer.start(self._poll_msg_time)
+        self._poll_msg_timer.start()
+        self.poll_messages()
+    
 
     def chgpwddlg(self):
         '''
