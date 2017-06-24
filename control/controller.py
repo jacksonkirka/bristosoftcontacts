@@ -500,17 +500,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     # Initial set after user login
                     self._cursor.close()
                     self._pool.putconn(self._conn_main)
-                    time.sleep(2)
                     if self._firstlogin:
                         self._firstlogin = False
                         self.msg_poll_timer()
                     self._connected = False
+                    self.contactsStatusBar.showMessage(
+                        self._user+'@'+self._host+'/'+ self._db+' logged in.',
+                            40000)
                     self.contactsStatusBar.setStyleSheet("background-color: \
                                                           rgb(230, 128, 128);")
-                    self.contactsStatusBar.removeWidget(self.conn_msg)
-                    self.conn_msg = QLabel(self._user+'@'+self._host+
-                                              '/'+ self._db+'logged in.')
-                    self.contactsStatusBar.addWidget(self.conn_msg)
+                    #self.contactsStatusBar.removeWidget(self.conn_msg)
+                    #self.conn_msg = QLabel(self._user+'@'+self._host+
+                                              #'/'+ self._db+'logged in.')
+                    #self.contactsStatusBar.addWidget(self.conn_msg)
                     self._disconnected = True
                     
                 else:
