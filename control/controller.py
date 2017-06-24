@@ -47,7 +47,7 @@ from bristo_exceptions import *
 from view import *
 from interface import contactsmain
 import threading
-import time
+# import time
 
 __version__ = '0.1' # Version assignment
 
