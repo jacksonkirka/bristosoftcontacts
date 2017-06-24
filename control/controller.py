@@ -377,21 +377,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         if self._user and self._passwd:
             
+            # Step 1 Setup connection pool
             self._pool = psycopg2.pool.ThreadedConnectionPool(
                 self._min_con,  self._max_con,  con)
+            
+            # Step 2 Get a connection from the pool and setup main conn
             self._conn_main = self._pool.getconn()
             self._connected = True # Set connection to True
 
 
-            # Step 2 User database authentication
+            # Step 3 User database authentication
             _usr_nm_match = False
             _usr_pwd_match = False
 
-            # Save login credentials
+            # Step 5 login credentials
             _usr_nm = self._user # Set Text for User Name
             _usr_pwd = self._passwd # Set Text for password
 
-            # Verify user name
+            # Step 6 Verify user name
             # If user enters incorrect user name this is not yet resolved.
             self._cursor = self._conn_main.cursor()
             self._cursor.execute("SELECT * FROM bristo_contacts_users WHERE \
@@ -492,14 +495,23 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._conn_main.commit()
                     _tz = self._usr_tz
                     self._cursor.execute("""SET TIME ZONE %s;""", (_tz, ))
-                    #self.reset_timer() # Initial set after user login
+                    #self.reset_timer() 
+                    # Initial set after user login
                     self._cursor.close()
                     self._pool.putconn(self._conn_main)
+                    time.sleep(2)
                     if self._firstlogin:
                         self._firstlogin = False
                         self.msg_poll_timer()
-                        
-
+                    self._connected = False
+                    self.contactsStatusBar.setStyleSheet("background-color: \
+                                                          rgb(230, 128, 128);")
+                    self.contactsStatusBar.removeWidget(self.conn_msg)
+                    self.conn_msg = QLabel(self._user+'@'+self._host+
+                                              '/'+ self._db+'logged in.')
+                    self.contactsStatusBar.addWidget(self.conn_msg)
+                    self._disconnected = True
+                    
                 else:
                     self.incorrectlogin()
                     
