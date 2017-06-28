@@ -1,8 +1,12 @@
 #!/usr/bin/python
 
 
-class ConnectException(Exception):
+class QueryException(Exception):
     pass
+
+class ConnectionException(Exception):
+    pass
+    
 
 if __name__ == '__main__':
     pass

@@ -2764,7 +2764,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _suc = True
             _in = False
             _grplogin = False
-            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+            try:
+                self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                     (bristo_contacts_authlog_uname,
                     bristo_contacts_authlog_in,
                     bristo_contacts_authlog_group,
@@ -2777,6 +2778,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
                     (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
                     _usr_reg, _usr_ctry, _usr_zip, _suc))
+            except psycopg2.DatabaseError:
+                self.contactsStatusBar.removeWidget(self.conn_msg)
+                self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+                _err_msg =QLabel(psycopg2.DatabaseError.pgerror)
+                self.contactsStatusBar.addWidget(_err_msg)
             self._conn_main.commit()
             self._cursor.close()
             self._pool.closeall()
