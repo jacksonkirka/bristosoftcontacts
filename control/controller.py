@@ -15,6 +15,8 @@
 # The trade name bristoSOFT is a registered trade name with the State of Ohio
 # document No. 201607803210. 
 #
+# Note: Testing can be done using perhaps unitest and other test that do not
+# require database connection.
 
 '''
 This controller module is the main controller for bristoSOFT Contacts v. 0.1.
@@ -2751,48 +2753,49 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         and closes bristoSOFT Contacts.
 
         '''
-        if self._connected:
-            if self._cursor.close:
-                self._cursor = self._conn_main.cursor()
-            # Log authentication
-            _usr_nm = self._user
-            _usr_ip = self._usr_ip
-            _usr_city = self._usr_city
-            _usr_reg = self._usr_region
-            _usr_ctry = self._usr_ctry
-            _usr_zip = self._usr_zip
-            _suc = True
-            _in = False
-            _grplogin = False
-            try:
-                self._cursor.execute("""INSERT INTO bristo_contacts_authlog
-                    (bristo_contacts_authlog_uname,
-                    bristo_contacts_authlog_in,
-                    bristo_contacts_authlog_group,
-                    bristo_contacts_authlog_inet,
-                    bristo_contacts_authlog_city,
-                    bristo_contacts_authlog_region,
-                    bristo_contacts_authlog_ctry,
-                    bristo_contacts_authlog_postal,
-                    bristo_contacts_authlog_success)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
-                    (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                    _usr_reg, _usr_ctry, _usr_zip, _suc))
-            except psycopg2.DatabaseError:
-                self.contactsStatusBar.removeWidget(self.conn_msg)
-                self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(230, 128, 128);")
-                _err_msg =QLabel(psycopg2.DatabaseError.pgerror)
-                self.contactsStatusBar.addWidget(_err_msg)
-            self._conn_main.commit()
-            self._cursor.close()
-            self._pool.closeall()
+                
+        # Log authentication
+        _usr_nm = self._user
+        _usr_ip = self._usr_ip
+        _usr_city = self._usr_city
+        _usr_reg = self._usr_region
+        _usr_ctry = self._usr_ctry
+        _usr_zip = self._usr_zip
+        _suc = True
+        _in = False
+        _grplogin = False
+        try:
+            self._conn_main = self._pool.getconn()
+            self._cursor = self._conn_main.cursor()
+            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                (bristo_contacts_authlog_uname,
+                bristo_contacts_authlog_in,
+                bristo_contacts_authlog_group,
+                bristo_contacts_authlog_inet,
+                bristo_contacts_authlog_city,
+                bristo_contacts_authlog_region,
+                bristo_contacts_authlog_ctry,
+                bristo_contacts_authlog_postal,
+                bristo_contacts_authlog_success)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                _usr_reg, _usr_ctry, _usr_zip, _suc))
+        except psycopg2.DatabaseError, dberror:
+            self._conn_main.rollback()
             self.contactsStatusBar.removeWidget(self.conn_msg)
             self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(230, 128, 128);")
-            
-            self.conn_msg = QLabel(self._host+
-                                  '/'+ self._db+'.')
-            self.contactsStatusBar.addWidget(self.conn_msg)
+                                          rgb(230, 128, 128);")
+            _err_msg =QLabel(str(dberror))
+            self.contactsStatusBar.addWidget(_err_msg)
+        self._conn_main.commit()
+        self._cursor.close()
+        self._pool.closeall()
+        self.contactsStatusBar.removeWidget(self.conn_msg)
+        self.contactsStatusBar.setStyleSheet("background-color: \
+                                          rgb(230, 128, 128);")
+        
+        self.conn_msg = QLabel(self._host+
+                              '/'+ self._db+'.')
+        self.contactsStatusBar.addWidget(self.conn_msg)
 
         self.close()

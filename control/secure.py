@@ -67,3 +67,15 @@ class Security:
         dbpwd, salt = _dbhashpwd.split(':')
         return dbpwd == hashlib.sha256(salt.encode() +\
             _usrpwd.encode()).hexdigest()
+
+# Test script
+if __name__ == '__main__':
+    sec = Security()
+    # mincomplex()
+    _min_complex_f = sec.mincomplex('Guest123')
+    _min_complex_t = sec.mincomplex('Gwa*493l')
+    if _min_complex_t and not _min_complex_f:
+        print 'mincomplex(): Pass'
+    if  _min_complex_f or not _min_complex_t:
+        print 'mincomplex(): Fail'
+        
