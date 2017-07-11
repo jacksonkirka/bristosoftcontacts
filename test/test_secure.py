@@ -1,6 +1,3 @@
-#!/usr/bin/python
-#
-#
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
 # techniques, algorithms are confidential trade secrets under Ohio and U.S. 
 # Federal law owned by bristoSOFT.
@@ -23,13 +20,13 @@ This test_secure module is the testing module for bristoSOFT Contacts v. 0.1
 secure module in the control package.
 """
 import unittest
-from control.secure import Security
+
+from control import secure
 
 class TestSecurity(unittest.TestCase):
     
     def test_minimumcomplex(self):
-        
-        _digit = Security().mincomplex('Bmw$tieow')
+        _digit = control.secure.Security().mincomplex('Bmw$tieow')
         self.assertFalse(_digit)
 
 if __name__ == "__main__":
