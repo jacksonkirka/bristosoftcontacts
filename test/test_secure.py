@@ -18,17 +18,20 @@
 # Note: Testing can be done using perhaps unitest and other test that do not
 # require database connection.
 
-'''
+"""
 This test_secure module is the testing module for bristoSOFT Contacts v. 0.1
 secure module in the control package.
-'''
-
-# Imports
+"""
 import unittest
-import control.secure
-# classes
+from control.secure import Security
+
 class TestSecurity(unittest.TestCase):
     
     def test_minimumcomplex(self):
-        _digit = control.secure.Security.mincomplex('Bmw$tieow')
+        
+        _digit = Security().mincomplex('Bmw$tieow')
         self.assertFalse(_digit)
+
+if __name__ == "__main__":
+    runner = unittest.TextTestRunner(verbosity=2)
+    unittest.main(testRunner=runner)
