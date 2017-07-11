@@ -12,7 +12,7 @@
 # The trade name bristoSOFT is a registered trade name with the State of Ohio
 # document No. 201607803210. 
 #
-# Note: Testing can be done using perhaps unitest and other test that do not
+# Note: Testing can be done using perhaps unittest and other test that do not
 # require database connection.
 
 """
@@ -21,13 +21,12 @@ secure module in the control package.
 """
 # from __future__ import absolute_import
 import unittest
-
-from ..control import secure
+from .. import control
 
 class TestSecurity(unittest.TestCase):
     
     def test_minimumcomplex(self):
-        _digit = secure.Security().mincomplex('Bmw$tieow')
+        _digit = control.secure.Security().mincomplex('Bmw$tieow')
         self.assertFalse(_digit)
 
 if __name__ == "__main__":
