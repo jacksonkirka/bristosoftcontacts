@@ -22,7 +22,7 @@ secure module in the control package.
 # from __future__ import absolute_import
 import unittest
 
-from control import secure
+from .control import secure
 
 class TestSecurity(unittest.TestCase):
     
