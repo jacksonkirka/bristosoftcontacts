@@ -19,6 +19,7 @@
 This test_secure module is the testing module for bristoSOFT Contacts v. 0.1
 secure module in the control package.
 """
+# from __future__ import absolute_import
 import unittest
 
 from control import secure
@@ -26,7 +27,7 @@ from control import secure
 class TestSecurity(unittest.TestCase):
     
     def test_minimumcomplex(self):
-        _digit = control.secure.Security().mincomplex('Bmw$tieow')
+        _digit = secure.Security().mincomplex('Bmw$tieow')
         self.assertFalse(_digit)
 
 if __name__ == "__main__":
