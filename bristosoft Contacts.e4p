@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2017-07-11, 01:27:41 -->
+<!-- Saved: 2017-07-11, 21:56:52 -->
 <!-- Copyright (C) 2017 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -12,7 +12,6 @@
   <Version>0.1</Version>
   <Author>Kirk A Jackson</Author>
   <Email>jacksonkirka@bristosoft.com</Email>
-  <Eol index="-1"/>
   <Sources>
     <Source>control/__init__.py</Source>
     <Source>control/bristo_exceptions.py</Source>
@@ -31,8 +30,8 @@
     <Source>interface/search.py</Source>
     <Source>interface/searchgroup.py</Source>
     <Source>main.py</Source>
-    <Source>test/__init__.py</Source>
-    <Source>test/test_secure.py</Source>
+    <Source>testing/__init__.py</Source>
+    <Source>testing/test_secure.py</Source>
   </Sources>
   <Forms/>
   <Translations/>
@@ -145,9 +144,6 @@
         </value>
       </dict>
     </VcsOptions>
-    <VcsOtherData>
-      <dict/>
-    </VcsOtherData>
   </Vcs>
   <FiletypeAssociations>
     <FiletypeAssociation pattern="*.idl" type="INTERFACES"/>
