@@ -24,8 +24,10 @@ secure module in the control package.
 # Limit usage of relative imports and use absolute dotted imports.
 import sys
 _curpath = sys.path 
-if _curpath[1] != '/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts':
-    sys.path.append('/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts')    
+try:
+    saved = _curpath.index('/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts')
+except:
+    sys.path.insert(2,'/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts')    
     
 import unittest
 import control.secure
