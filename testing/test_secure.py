@@ -33,7 +33,10 @@ import unittest
 import control.secure
 
 class TestSecurity(unittest.TestCase):
-    
+    '''
+    TestSecurity is a class test case unit test designed to test whether the
+    Security class in the module secure.py provides validated security.
+    '''
     def test_minimumcomplex(self):
         '''
         test_minimumcomplex test the Security classes mincomplex()
