@@ -19,13 +19,24 @@
 This test_secure module is the testing module for bristoSOFT Contacts v. 0.1
 secure module in the control package.
 """
-# from __future__ import absolute_import
+
+# sys.path must be updated for the project directory when running tests.
+# Limit usage of relative imports and use absolute dotted imports.
+import sys
+_curpath = sys.path 
+if _curpath[1] != '/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts':
+    sys.path.append('/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts')    
+    
 import unittest
-from .. import control
+import control.secure
 
 class TestSecurity(unittest.TestCase):
     
     def test_minimumcomplex(self):
+        '''
+        test_minimumcomplex test the Security classes mincomplex()
+        method to ensure it requires a complex password.
+        '''
         _digit = control.secure.Security().mincomplex('Bmw$tieow')
         self.assertFalse(_digit)
 
