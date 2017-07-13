@@ -37,17 +37,24 @@ class TestSecurity(unittest.TestCase):
     TestSecurity is a class test case unit test designed to test whether the
     Security class in the module secure.py provides validated security.
     '''
+    def setUp(self):
+        '''
+        setUp overrides the default setUp to initialize the fixture
+        self.security instance.
+        '''
+        self.sec = control.secure.Security()
+        
     def test_minimumcomplex(self):
         '''
         test_minimumcomplex test the Security classes mincomplex()
         method to ensure it requires a complex password.
         '''
-        _digit = control.secure.Security().mincomplex('Bmw$tieow')
-        _upper = control.secure.Security().mincomplex('bmw$tie1w')
-        _lower = control.secure.Security().mincomplex('BMW$TIE1W')
-        _special = control.secure.Security().mincomplex('Bmw535is')
-        _eight = control.secure.Security().mincomplex('Bmw$535')
-        _complex = control.secure.Security().mincomplex('A3$902abM')
+        _digit = self.sec.mincomplex('Bmw$tieow')
+        _upper = self.sec.mincomplex('bmw$tie1w')
+        _lower = self.sec.mincomplex('BMW$TIE1W')
+        _special = self.sec.mincomplex('Bmw535is')
+        _eight = self.sec.mincomplex('Bmw$535')
+        _complex = self.sec.mincomplex('A3$902abM')
         self.assertFalse(_digit)
         self.assertFalse(_upper)
         self.assertFalse(_lower)
