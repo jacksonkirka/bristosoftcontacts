@@ -43,7 +43,17 @@ class TestSecurity(unittest.TestCase):
         method to ensure it requires a complex password.
         '''
         _digit = control.secure.Security().mincomplex('Bmw$tieow')
+        _upper = control.secure.Security().mincomplex('bmw$tie1w')
+        _lower = control.secure.Security().mincomplex('BMW$TIE1W')
+        _special = control.secure.Security().mincomplex('Bmw535is')
+        _eight = control.secure.Security().mincomplex('Bmw$535')
+        _complex = control.secure.Security().mincomplex('A3$902abM')
         self.assertFalse(_digit)
+        self.assertFalse(_upper)
+        self.assertFalse(_lower)
+        self.assertFalse(_special)
+        self.assertFalse(_eight)
+        self.assertTrue(_complex)
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
