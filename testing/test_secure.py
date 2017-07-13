@@ -49,12 +49,15 @@ class TestSecurity(unittest.TestCase):
         test_minimumcomplex test the Security classes mincomplex()
         method to ensure it requires a complex password.
         '''
+        # Tests
         _digit = self.sec.mincomplex('Bmw$tieow')
         _upper = self.sec.mincomplex('bmw$tie1w')
         _lower = self.sec.mincomplex('BMW$TIE1W')
         _special = self.sec.mincomplex('Bmw535is')
         _eight = self.sec.mincomplex('Bmw$535')
         _complex = self.sec.mincomplex('A3$902abM')
+        
+        # Assertions
         self.assertFalse(_digit)
         self.assertFalse(_upper)
         self.assertFalse(_lower)
