@@ -25,9 +25,9 @@ secure module in the control package.
 import sys
 _curpath = sys.path 
 try:
-    saved = _curpath.index('/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts')
-except:
-    sys.path.insert(2,'/media/jacksonkirka/MSDOS/workspace/bristosoftcontacts')    
+    saved = _curpath.index('/media/jacksonkirka/63BF-2E47/workspace/bristosoftcontacts')
+except ValueError:
+    sys.path.insert(2,'/media/jacksonkirka/63BF-2E47/workspace/bristosoftcontacts')    
     
 import unittest
 import control.secure
