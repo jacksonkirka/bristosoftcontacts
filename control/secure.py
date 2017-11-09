@@ -32,14 +32,26 @@ class Security:
     and authentication in contacts.
     '''
     def mincomplex(self, _pwd):
-        '''
+        r'''
         mincomplex evaluates a plain text password and returns true if the
         password evaluated contains 1) uppercase letter, 2) lowercase letter,
         3) a digit 0 - 9, 4) a special character and 5) is 8 characters.
+        
+        >>> sec = Security()
+        >>> testone = sec.mincomplex('Bmw$4839')
+        >>> testone
+        True
+        >>> testtwo = sec.mincomplex('bmw$28l4')
+        >>> testtwo
+        False
+        >>> testthree = sec.mincomplex('2938clq;')
+        >>> testthree
+        False
+        >>> 
         '''
         _digit = re.search('[0-9]', _pwd)
         _lower = re.search('[a-z]', _pwd)
-        _upper = re.search('[A-Z]',_pwd)
+        _upper = re.search('[A-Z]', _pwd)
         _special = re.search('.[!@#$%^&*()_~-]',_pwd)
 
         if len(_pwd) > 7 and _digit and _lower and _upper and _special:
@@ -68,14 +80,8 @@ class Security:
         return dbpwd == hashlib.sha256(salt.encode() +\
             _usrpwd.encode()).hexdigest()
 
-# Test script
 if __name__ == '__main__':
-    sec = Security()
-    # mincomplex()
-    _min_complex_f = sec.mincomplex('Guest123')
-    _min_complex_t = sec.mincomplex('Gwa*493l')
-    if _min_complex_t and not _min_complex_f:
-        print 'mincomplex(): Pass'
-    if  _min_complex_f or not _min_complex_t:
-        print 'mincomplex(): Fail'
+    import doctest
+    doctest.testmod(verbose=True)
+
         

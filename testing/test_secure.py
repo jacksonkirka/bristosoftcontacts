@@ -19,18 +19,19 @@
 This test_secure module is the testing module for bristoSOFT Contacts v. 0.1
 secure module in the control package.
 """
-
-# sys.path must be updated for the project directory when running tests.
-# Limit usage of relative imports and use absolute dotted imports.
-import sys
-_curpath = sys.path 
-try:
-    saved = _curpath.index('/media/jacksonkirka/63BF-2E47/workspace/bristosoftcontacts')
-except ValueError:
-    sys.path.insert(2,'/media/jacksonkirka/63BF-2E47/workspace/bristosoftcontacts')    
     
 import unittest
-import control.secure
+import doctest
+# import control.secure
+
+from control import secure
+
+def load_tests(loader, tests, ignore):
+    '''
+    load tests loads docstrings testing from original module and runs the tests.
+    '''
+    tests.addTests(doctest.DocTestSuite(secure))
+    return tests
 
 class TestSecurity(unittest.TestCase):
     '''
@@ -42,11 +43,18 @@ class TestSecurity(unittest.TestCase):
         setUp overrides the default setUp to initialize the fixture
         self.security instance.
         '''
-        self.sec = control.secure.Security()
+        self.sec = secure.Security()
+        
+    def tearDown(self):
+        '''
+        tearDown reverses the setup in setUp and cleans up the 
+        environment.
+        '''
+        del self.sec
         
     def test_minimumcomplex(self):
         '''
-        test_minimumcomplex test the Security classes mincomplex()
+        test_minimumcomplex test the Security classes minimumcomplex()
         method to ensure it requires a complex password.
         '''
         # Tests
@@ -68,3 +76,4 @@ class TestSecurity(unittest.TestCase):
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     unittest.main(testRunner=runner)
+
