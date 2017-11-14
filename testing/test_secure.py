@@ -22,7 +22,7 @@ secure module in the control package.
     
 import unittest
 import doctest
-# import control.secure
+
 
 from control import secure
 
@@ -33,47 +33,8 @@ def load_tests(loader, tests, ignore):
     tests.addTests(doctest.DocTestSuite(secure))
     return tests
 
-class TestSecurity(unittest.TestCase):
-    '''
-    TestSecurity is a class test case unit test designed to test whether the
-    Security class in the module secure.py provides validated security.
-    '''
-    def setUp(self):
-        '''
-        setUp overrides the default setUp to initialize the fixture
-        self.security instance.
-        '''
-        self.sec = secure.Security()
-        
-    def tearDown(self):
-        '''
-        tearDown reverses the setup in setUp and cleans up the 
-        environment.
-        '''
-        del self.sec
-        
-    def test_minimumcomplex(self):
-        '''
-        test_minimumcomplex test the Security classes minimumcomplex()
-        method to ensure it requires a complex password.
-        '''
-        # Tests
-        _digit = self.sec.mincomplex('Bmw$tieow')
-        _upper = self.sec.mincomplex('bmw$tie1w')
-        _lower = self.sec.mincomplex('BMW$TIE1W')
-        _special = self.sec.mincomplex('Bmw535is')
-        _eight = self.sec.mincomplex('Bmw$535')
-        _complex = self.sec.mincomplex('A3$902abM')
-        
-        # Assertions
-        self.assertFalse(_digit)
-        self.assertFalse(_upper)
-        self.assertFalse(_lower)
-        self.assertFalse(_special)
-        self.assertFalse(_eight)
-        self.assertTrue(_complex)
 
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=2)
-    unittest.main(testRunner=runner)
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
+    
 

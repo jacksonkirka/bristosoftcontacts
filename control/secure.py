@@ -35,7 +35,7 @@ class Security:
         r'''
         mincomplex evaluates a plain text password and returns true if the
         password evaluated contains 1) uppercase letter, 2) lowercase letter,
-        3) a digit 0 - 9, 4) a special character and 5) is 8 characters.
+        3) a digit 0 - 9, 4) a special character and 5) is at least 8 characters.
         
         >>> sec = Security()
         >>> testone = sec.mincomplex('Bmw$4839')
@@ -64,6 +64,13 @@ class Security:
         '''
         hashpwd hashes a password by NSA Secure Hash Algorithm 2 
         sha256 algorithm and adds a uuid prefix salt.
+        
+        >>> sec = Security()
+        >>> hashed_password = sec.hashpwd('Bmw$535is')
+        >>> match = sec.authenticatepwd(hashed_password,'Bmw$535is')
+        >>> match
+        True
+        >>> 
         '''
         salt = uuid.uuid4().hex
         return hashlib.sha256(salt.encode() +
@@ -75,6 +82,14 @@ class Security:
         authenticatepwd authenticates the password entered by the user by
         comparing the database hash with a hash of the user entered
         password.
+        
+        >>> sec = Security()
+        >>> _usrpwd = 'Guest$123'
+        >>> _dbhashpwd = sec.hashpwd('Guest$123')
+        >>> match = sec.authenticatepwd(_dbhashpwd,_usrpwd)
+        >>> match
+        True
+    
         '''
         dbpwd, salt = _dbhashpwd.split(':')
         return dbpwd == hashlib.sha256(salt.encode() +\
