@@ -38,16 +38,36 @@ class Security:
         3) a digit 0 - 9, 4) a special character and 5) is at least 8 characters.
         
         >>> sec = Security()
-        >>> testone = sec.mincomplex('Bmw$4839')
-        >>> testone
+        >>> test_digit = sec.mincomplex('Bmw$4839')
+        >>> test_digit
         True
-        >>> testtwo = sec.mincomplex('bmw$28l4')
-        >>> testtwo
+        >>> test_digit = sec.mincomplex('Bmw$xkeo')
+        >>> test_digit
         False
-        >>> testthree = sec.mincomplex('2938clq;')
-        >>> testthree
+        >>> test_lower = sec.mincomplex('Bmw$4839')
+        >>> test_lower
+        True
+        >>> test_lower = sec.mincomplex('BMW$4839')
+        >>> test_lower
         False
-        >>> 
+        >>> test_upper = sec.mincomplex('Bmw$4839')
+        >>> test_upper
+        True
+        >>> test_upper = sec.mincomplex('bmw$xkeo')
+        >>> test_upper
+        False
+        >>> test_special = sec.mincomplex('Bmw$4839')
+        >>> test_special
+        True
+        >>> test_special = sec.mincomplex('BmwZ4839')
+        >>> test_special
+        False
+        >>> test_eight = sec.mincomplex('Bmw$4839')
+        >>> test_eight
+        True
+        >>> test_eight = sec.mincomplex('Bmw$483')
+        >>> test_eight
+        False
         '''
         _digit = re.search('[0-9]', _pwd)
         _lower = re.search('[a-z]', _pwd)
