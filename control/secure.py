@@ -87,8 +87,11 @@ class Security:
         
         >>> sec = Security()
         >>> hashed_password = sec.hashpwd('Bmw$535is')
-        >>> match = sec.authenticatepwd(hashed_password,'Bmw$535is')
-        >>> match
+        >>> _pwd = 'Bmw$535is'
+        >>> hashed_password_split, salt_prefix = hashed_password.split(':')
+        >>> manual_hash_pwd = hashlib.sha256(salt_prefix.encode() +
+        ... _pwd.encode()).hexdigest() + ':' + salt_prefix
+        >>> hashed_password == manual_hash_pwd
         True
         >>> 
         '''
@@ -104,12 +107,29 @@ class Security:
         password.
         
         >>> sec = Security()
+        >>> salt = uuid.uuid4().hex
+        >>> _dbhashpwd = hashlib.sha256(salt.encode() +
+        ... 'Guest$123'.encode()).hexdigest() + ':' + salt
+        >>> dbpwd, salt = _dbhashpwd.split(':')
         >>> _usrpwd = 'Guest$123'
-        >>> _dbhashpwd = sec.hashpwd('Guest$123')
+        >>> usrhashedpwd = hashlib.sha256(salt.encode() +
+        ... _usrpwd.encode()).hexdigest()
+        >>> dbpwd == usrhashedpwd
+        True
         >>> match = sec.authenticatepwd(_dbhashpwd,_usrpwd)
         >>> match
         True
-    
+        >>> _dbhashpwd = hashlib.sha256(salt.encode() +
+        ... 'Guest$123'.encode()).hexdigest() + ':' + salt
+        >>> dbpwd, salt = _dbhashpwd.split(':')
+        >>> _usrpwd = 'Guost$124'
+        >>> usrhashedpwd = hashlib.sha256(salt.encode() +
+        ... _usrpwd.encode()).hexdigest()
+        >>> dbpwd == usrhashedpwd
+        False
+        >>> match = sec.authenticatepwd(_dbhashpwd,_usrpwd)
+        >>> match
+        False
         '''
         dbpwd, salt = _dbhashpwd.split(':')
         return dbpwd == hashlib.sha256(salt.encode() +\
