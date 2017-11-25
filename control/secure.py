@@ -93,7 +93,12 @@ class Security:
         ... _pwd.encode()).hexdigest() + ':' + salt_prefix
         >>> hashed_password == manual_hash_pwd
         True
-        >>> 
+        >>> _pwd = 'Bmw$435is'
+        >>> manual_hash_pwd = hashlib.sha256(salt_prefix.encode() +
+        ... _pwd.encode()).hexdigest() + ':' + salt_prefix
+        >>> hashed_password == manual_hash_pwd
+        False
+        
         '''
         salt = uuid.uuid4().hex
         return hashlib.sha256(salt.encode() +
