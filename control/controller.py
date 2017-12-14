@@ -2250,25 +2250,25 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn_main_timer = 120000                          # Need large files
         self._conn_main = self._pool.getconn()
         self._cursor = self._conn_main.cursor()
-        if self._connected:
-            #self.reset_timer()
-            _crow = self.bristo_search.fileTableWidget.currentRow() # Critical tested
-            _ccol = self._file_id
-            _file_id = self.bristo_search.fileTableWidget.item(_crow, _ccol).text()
-            self._cursor.execute("SELECT * FROM\
-                bristo_contacts_files WHERE bristo_contacts_files_id = %s", (_file_id,))
-            _file_row = self._cursor.fetchone()
-            _file_row_name = _file_row[self._file_name]
-            _file = _file_row[self._file_file] # binary file
-            path = os.path.join(os.path.expanduser("~"), "Desktop", _file_row_name)
-            with open(path, 'wb') as f:
-                f.write(_file) # writes file to desktop
-                f.close()      # close file
-            self.contactsStatusBar.showMessage(_file_row_name+' '\
-                                               +'saved on Desktop.', 3000)
-            self._cursor.close()
-            self._pool.putconn(conn=self._conn_main)
-            self._conn_main_timer = 10000
+        # if self._connected:
+        # self.reset_timer()
+        _crow = self.bristo_search.fileTableWidget.currentRow() # Critical tested
+        _ccol = self._file_id
+        _file_id = self.bristo_search.fileTableWidget.item(_crow, _ccol).text()
+        self._cursor.execute("SELECT * FROM\
+            bristo_contacts_files WHERE bristo_contacts_files_id = %s", (_file_id,))
+        _file_row = self._cursor.fetchone()
+        _file_row_name = _file_row[self._file_name]
+        _file = _file_row[self._file_file] # binary file
+        path = os.path.join(os.path.expanduser("~"), "Desktop", _file_row_name)
+        with open(path, 'wb') as f:
+            f.write(_file) # writes file to desktop
+            f.close()      # close file
+        self.contactsStatusBar.showMessage(_file_row_name+' '\
+                                           +'saved on Desktop.', 3000)
+        self._cursor.close()
+        self._pool.putconn(conn=self._conn_main)
+        self._conn_main_timer = 10000
 
     def get_path_filename(self,  _path):
 
