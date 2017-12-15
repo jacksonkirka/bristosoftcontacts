@@ -2275,6 +2275,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         get_path_filename extracts linux/windows/mac 
         filenames from a path and returns them.
+        
+        >>> ctl = Controller()
+        >>> _path = '/home/jacksonkirka/test.pdf'
+        >>>> filename0 = ctl.get_path_filename(_path)
+        >>> filename0
+        'test.pdf'
+        
         '''
 
         head, tail = ntpath.split(_path)
