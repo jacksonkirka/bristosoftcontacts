@@ -2806,3 +2806,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.addWidget(self.conn_msg)
 
         self.close()
+        
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
