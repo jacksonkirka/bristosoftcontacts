@@ -100,17 +100,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         # Security
         self._secure = Security()
-        
-        # Authentication
-        self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
-        self._usr_city = self._usr_loc['city']
-        self._usr_ip = self._usr_loc['ip']
-        self._usr_region = self._usr_loc['region']
-        self._usr_lon = self._usr_loc['longitude']
-        self._usr_ctry = self._usr_loc['country']
-        self._usr_lat = self._usr_loc['latitude']
-        self._usr_tz = self._usr_loc['timezone']
-        self._usr_zip = self._usr_loc['postal']
 
         # Dialogs
         self.bristo_search = None
@@ -363,6 +352,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         with the standard connection string.
 
         '''
+        # Authentication
+        self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
+        self._usr_city = self._usr_loc['city']
+        self._usr_ip = self._usr_loc['ip']
+        self._usr_region = self._usr_loc['region']
+        self._usr_lon = self._usr_loc['longitude']
+        self._usr_ctry = self._usr_loc['country']
+        self._usr_lat = self._usr_loc['latitude']
+        self._usr_tz = self._usr_loc['timezone']
+        self._usr_zip = self._usr_loc['postal']
+        
          # Step 1 owner authentication security string
         #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
         #dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
