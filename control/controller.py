@@ -2278,7 +2278,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         >>> ctl = Controller()
         >>> _path = '/home/jacksonkirka/test.pdf'
-        >>>> filename0 = ctl.get_path_filename(_path)
+        >>> filename0 = ctl.get_path_filename(_path)
         >>> filename0
         'test.pdf'
         
@@ -2807,7 +2807,5 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         self.close()
         
-if __name__ == '__main__':
-    import doctest
-    doctest.testmod(verbose=True)
+
 
