@@ -2806,6 +2806,5 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.addWidget(self.conn_msg)
 
         self.close()
-        
 
 
