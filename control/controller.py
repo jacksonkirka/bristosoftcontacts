@@ -2646,6 +2646,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn_main.commit()
     
     def printuserscontacts(self):
+        '''
+        printuserscontacts prints contacts in the current python contacts list in memory
+        to the printer.
+        '''
         self._prt.print_users_contacts(
             self.fetch_results,self._grprpt)
 
