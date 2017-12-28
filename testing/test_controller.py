@@ -25,14 +25,14 @@ __version__ = "$Revision: 0.1 $"
 __date__ = "$Date: 2017/12/10 $"
 __copyright__ = "Copyright 2017 bristoSOFT all rights reserved."
 
-import sys
+# import sys
 import sip
 sip.setapi('QString', 2)
 import unittest
 import doctest
-from PyQt4.QtGui import QApplication
-from PyQt4.QtTest import QTest
-from PyQt4.QtCore import Qt
+# from PyQt4.QtGui import QApplication
+# from PyQt4.QtTest import QTest
+# from PyQt4.QtCore import Qt
 
 
 # Set sip to version 2
