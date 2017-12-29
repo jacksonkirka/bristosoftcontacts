@@ -2639,11 +2639,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
 
         _doQuery performs a query with a cursor and then commits the
-        transaction.
+        transaction.  This query will be used by default unless a 
+        non standard query is needed.  This is an EXPERIMENTAL standardized
+        SQL method to standardize SQL Queries in bristoSOFT Contacts.
 
         '''
-        self._cursor.execute(query)
-        self._conn_main.commit()
+        
+        self._conn_main = self._pool.getconn()  # Get connection from the pool
+        self._cursor = self._conn_main.cursor() # Get cursor for connection
+        self._cursor.execute(query)             # Submit query for execution
+        self._conn_main.commit()                # Commit the transaction
+        
+                                                # Note: can't close cursor
+                                                # and need to return cusor info
+                                                # to the caller.
+        
+        self._cursor.close()                    # Close the cursor
+        self._pool.putconn(self._conn_main)     # Put the connection away
+        
     
     def printuserscontacts(self):
         '''
