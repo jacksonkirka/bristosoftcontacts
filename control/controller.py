@@ -2651,8 +2651,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn_main.commit()                # Commit the transaction
         
                                                 # Note: can't close cursor
-                                                # and need to return cusor info
+                                                # and need to return cursor info
                                                 # to the caller.
+    
+    def _doQueryClean(self):
+        '''
+        _doQueryClean closes the main cursor and puts away the connection to
+        the threaded connection pool.  This is EXPERIMENTAL.
+        '''
         
         self._cursor.close()                    # Close the cursor
         self._pool.putconn(self._conn_main)     # Put the connection away
