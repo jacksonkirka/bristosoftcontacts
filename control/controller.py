@@ -573,7 +573,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         msg_poll_timer starts the polling messages in messages table.
         It stops the existing timer and starts a new one.  Every time
         the time elapses it calls self.poll_messages and informs the user of
-        any messages through the status bar.
+        any messages through the status bar.  Note: must use Qt timers
+        for compatibility issues with other Qt modules.
         '''
         
         self._poll_msg_qtimer.setSingleShot(False)
