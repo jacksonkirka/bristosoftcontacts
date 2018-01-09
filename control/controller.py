@@ -48,7 +48,7 @@ import psycopg2.pool # import polling extension
 from bristo_exceptions import *
 from view import *
 from interface import contactsmain
-import threading
+# import threading
 # import time
 
 __version__ = '0.1' # Version assignment
@@ -84,7 +84,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._disconnected = True
         self._connected = False
         self._conn_main_timer = 10
-        # self._idle = QTimer()
+        self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
         self._firstlogin = True
@@ -228,7 +228,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_receiver =4
         self._msg_text = 5
         self._poll_msg_time = 300
-        #self._poll_msg_qtimer = QTimer()
+        self._poll_msg_qtimer = QTimer()
         self.fetch_msg = None
         self._msg_read_uuid = None
 
@@ -317,10 +317,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         reset_timer resets QTimer singleShot for self._conn_main_timer amount of time.
         It stops existing timer and starts a new one.  When the time has elapsed
-        it calls self.db_idle and informs the user.
+        it calls self.db_idle and informs the user.  Note: we must use the Qt timers
+        instead of the native threading timers in python for compatibility.  This
+        means greater dependency on Qt resources.
         '''
 
-        threading.Timer(self._conn_main_timer,  self.db_idle).start()
+        # threading.Timer(self._conn_main_timer,  self.db_idle).start()
+        
+        # idle
+        self._idle.stop()
+        self._idle = QTimer()
+        self._idle.singleShot(self._conn_timer,  self.db_idle)
+        self._idle.start() # start idle timer
+        
+        
 
     # class Database Methods
     def db_connect(self):
@@ -566,10 +576,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         any messages through the status bar.
         '''
         
-        #self._poll_msg_qtimer.setSingleShot(False)
-        #self._poll_msg_qtimer.timeout.connect(self.poll_messages)
-        #self._poll_msg_qtimer.start(self._poll_msg_time)
-        threading.Timer(self._poll_msg_time, self.msg_poll_timer).start()
+        self._poll_msg_qtimer.setSingleShot(False)
+        self._poll_msg_qtimer.timeout.connect(self.poll_messages)
+        self._poll_msg_qtimer.start(self._poll_msg_time)
+        # threading.Timer(self._poll_msg_time, self.msg_poll_timer).start()
         self.poll_messages()
     
 
