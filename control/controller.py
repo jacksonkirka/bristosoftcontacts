@@ -511,7 +511,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     #self.reset_timer() 
                     # Initial set after user login
                     self._cursor.close()
-                    self._pool.putconn(self._conn_main)
+                    self._pool.putconn(conn=self._conn_main)
                     if self._firstlogin:
                         self._firstlogin = False
                         self.msg_poll_timer()
@@ -1164,6 +1164,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.update_fetch_results()
             _msg = 'All data fetched from database.'
             self.contactsStatusBar.showMessage(_msg, 7000)
+            self._cursor.close()
             self._pool.putconn(conn=self._conn_main)
             self._connected = False
             
