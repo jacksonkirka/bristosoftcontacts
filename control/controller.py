@@ -225,7 +225,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_uuid = 1
         self._msg_stamp = 2
         self._msg_sender = 3
-        self._msg_receiver =4
+        self._msg_receiver = 4
         self._msg_text = 5
         self._poll_msg_time = 300
         self._poll_msg_qtimer = QTimer()
@@ -391,7 +391,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._user and self._passwd:
             
             # Step 1 Setup connection pool
-            self._pool = psycopg2.pool.ThreadedConnectionPool(
+            self._pool = psycopg2.pool.PersistentConnectionPool(
                 self._min_con,  self._max_con,  con)
             
             # Step 2 Get a connection from the pool and setup main conn
@@ -581,7 +581,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._poll_msg_qtimer.timeout.connect(self.poll_messages)
         self._poll_msg_qtimer.start(self._poll_msg_time)
         # threading.Timer(self._poll_msg_time, self.msg_poll_timer).start()
-        self.poll_messages()
+        # self.poll_messages()
     
 
     def chgpwddlg(self):
