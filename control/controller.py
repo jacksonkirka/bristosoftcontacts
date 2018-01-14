@@ -2786,8 +2786,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_idle(self):
         '''
 
-        db_close closing the current cursor if any and database connection.  It
-        then turns the status bar red.
+        db_idle closes the current cursor if any and database connection as
+        well ass the connection pool.  It then turns the status bar red.
 
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
@@ -2822,6 +2822,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
             self._connected = False
+            self._pool.closeall()
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
             self.contactsStatusBar.removeWidget(self.conn_msg)
@@ -2829,6 +2830,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                       '/'+ self._db+' logged out due to inactivity.')
             self.contactsStatusBar.addWidget(self.conn_msg)
             self._disconnected = True
+            
 
     def close_contacts(self):
         '''
