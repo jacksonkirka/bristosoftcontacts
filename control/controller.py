@@ -228,7 +228,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_sender = 3
         self._msg_receiver = 4
         self._msg_text = 5
-        self._poll_msg_time = 300
+        self._poll_msg_time = 300000
         self._poll_msg_qtimer = QTimer()
         self.fetch_msg = None
         self._msg_read_uuid = None
@@ -537,7 +537,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         poll_messages checks recent messages for the current user every
         300000 milliseconds or 5 minutes.  It first queries all user
         messages and sorts them by stamp date in descending order.  Then
-        it pops the top message of the stack.  This user and message
+        it pops the top message off the stack.  This user and message
         is displayed in the status bar.
         '''
         self._conn_mesg = self._pool.getconn(key=self._conn_mesg_key)
@@ -559,6 +559,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if not self._msg_read_uuid == self.fetch_msg[_msg_uuid]:
                 self._cursor_msg.close()
                 self._pool.putconn(self._conn_mesg, key=self._conn_mesg_key)
+                self._connected = False
                 self.contactsStatusBar.removeWidget(self.conn_msg)
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(244, 160, 66);")
@@ -796,10 +797,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._conn_main.commit()
                 self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
             else:
                 self.contactsStatusBar.showMessage(
                 'Duplicate email or office phone. Please Retry.', 5000)
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
 
     def db_copy_group_address(self, _group):
         '''
@@ -822,6 +825,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _grpinfo = self._cursor.fetchone()
                 return _grpinfo
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
 
     def db_user_owns_group(self, _group):
         '''
@@ -842,6 +846,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             else:
                 return True
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
 
 
 
@@ -917,9 +922,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._cursor.close()
                     self.contactsStatusBar.showMessage('New Group Inserted.', 3000)
                     self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                    self._connected = False
             else:
                 self.contactsStatusBar.showMessage('Group name unavailable.', 5000)
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
 
     def search_groups_dlg(self):
         '''
@@ -984,6 +991,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         get_groups_owned returns only the groups user created and currently
         owns.
         '''
+        self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         if self._connected:
             #self.reset_timer()
             _user = self._user
@@ -999,7 +1008,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.display_data()
             self.search_groups.picPushButton.clicked.connect(
                 self.update_group_pic)
-            self._search_groups_dlg = False        
+            self._search_groups_dlg = False
+            self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
 
     def db_contacts_fetch_flag(self):
         '''
@@ -1417,10 +1428,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._conn_main.commit()
                     self.contactsStatusBar.showMessage('Contact Updated.', 3000)
                     self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                    self._connected = False
                 elif not _owner:
                     self.contactsStatusBar.showMessage(
                     'Group nonexistent or user unauthorized. Please Retry.', 5000)
                     self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                    self._connected = False
             else:
                 self._cursor.execute("""UPDATE bristo_contacts_ct SET
                     (bristo_contacts_ct_co, bristo_contacts_ct_title,
@@ -1446,6 +1459,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._conn_main.commit()
                 self.contactsStatusBar.showMessage('Contact Updated.', 3000)
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
 
     def db_update_group(self):
         '''
@@ -1500,6 +1514,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self.contactsStatusBar.showMessage('Group Updated.', 3000)
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
         else:
             self.contactsStatusBar.showMessage('Please enter group password.',
                 3000)
@@ -1522,9 +1537,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self.contactsStatusBar.showMessage('User Contact Availability Updated.', 3000)
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
         else:
             self.contactsStatusBar.showMessage('User Email must match contact email.', 5000)
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
 
     def display_data(self):
         '''
@@ -1755,6 +1772,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._groupqry = True  # Key variable.
                 self.db_contacts_fetch()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
             self.incorrectgrouplogin()
 
     def display_notes(self):
@@ -2056,6 +2074,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main.commit()
             self.contactsStatusBar.showMessage('New Contact Note Inserted.', 3000)
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
             
             
     def db_insert_contact_msg(self):
@@ -2069,8 +2088,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         Need to set up thread with wait time for check messages after sending.
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
-        self._cursor = self._conn_main.cursor()
         self._connected = True
+        self._cursor = self._conn_main.cursor()
         if self._connected:
             #self.reset_timer()
             _sender = self._user
@@ -2112,6 +2131,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _contct_usrnm = self.get_contact_username(_contct_email)
         if _contct_usrnm:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
             self._cursor = self._conn_main.cursor()
             self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
                     bristo_contacts_messages_sender = %s AND 
@@ -2126,6 +2146,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('Messages updated .......', 4000)
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
             self.unblock_signals()
         else:
             self.bristo_search.msgTableWidget.clearContents()
@@ -2139,8 +2160,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         email match.
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
-        self._cursor = self._conn_main.cursor()
         self._connected = True
+        self._cursor = self._conn_main.cursor()
         if self._connected:
             # Get username for current contact email address
             self._cursor.execute("""SELECT * FROM bristo_contacts_users WHERE
@@ -2149,6 +2170,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.showMessage('No User Found.....', 4000)
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
             else:
                 _usr = self._cursor.fetchone()
                 self._cursor.close()
@@ -2242,6 +2264,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._file_bin = open(filename, 'rb').read()        # Read > pointer
         self._conn_main_timer = 120000                          # Need large files
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         self._cursor = self._conn_main.cursor()
         if self._connected:
             #self.reset_timer()
@@ -2253,6 +2276,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main.commit()
             self.contactsStatusBar.showMessage('New contact file inserted.', 3000)
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
         self._conn_main_timer = 10000
 
     def get_contact_file(self):
@@ -2263,6 +2287,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self._conn_main_timer = 120000                          # Need large files
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         self._cursor = self._conn_main.cursor()
         # if self._connected:
         # self.reset_timer()
@@ -2282,6 +2307,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                            +'saved on Desktop.', 3000)
         self._cursor.close()
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
         self._conn_main_timer = 10000
 
     def get_path_filename(self,  _path):
@@ -2315,6 +2341,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.picLabel.setPixmap(self._image)  # Display
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         self._cursor = self._conn_main.cursor()
         if self._connected:
             _id = self.fetch_results[self._ITEM][self._ID]
@@ -2328,6 +2355,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('Image updated.', 3000)
         self._cursor.close()
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
         self._conn_main_timer = 10000
 
     def update_group_pic(self):
@@ -2336,6 +2364,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         user and displays it then returns self._image_bin to the caller dialog.
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         self._cursor = self._conn_main.cursor()
         #self.reset_timer()
         fdlg = QFileDialog()                               
@@ -2355,6 +2384,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('Image updated.', 3000)
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
 
 
     def display_pic(self,  _qobject, _buffer):
@@ -2400,6 +2430,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         if self._connected:
             #self.reset_timer()
             if self._cursor.closed:
@@ -2424,6 +2455,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('New Contact Call Inserted.', 5000)
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
 
     def appt_display_contact(self):
 
@@ -2486,6 +2518,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         self._cursor = self._conn_main.cursor()
         if self._connected:
             _owner = self._user
@@ -2508,6 +2541,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage('New Contact Appointment Inserted.', 5000)
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
 
     def db_update_contact_appt(self):
 
@@ -2518,6 +2552,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         self._cursor = self._conn_main.cursor()
         #self.reset_timer()
         _crow = self.bristo_search.apptTableWidget.currentRow()
@@ -2536,6 +2571,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.showMessage('Contact Appointment Updated.', 5000)
         self._cursor.close()
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
 
     def display_appts_bydate(self):
 
@@ -2575,6 +2611,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # query for user contact record if found build _from address
         _user_email = self._user_email
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         #self.reset_timer()
         if self._connected:
             if self._cursor.closed:
@@ -2602,6 +2639,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     'No contact info found for user.', 5000)
         self._cursor.close()
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
 
 
     def db_full_vacuum(self):
@@ -2645,6 +2683,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage(_msg,  5000)
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
         else:
             _msg = 'Please connect to the database to reindex.'
             self.contactsStatusBar.showMessage(_msg, 5000)
@@ -2660,6 +2699,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
         self._conn_main = self._pool.getconn(key=self._conn_main_key)  # Get connection from the pool
+        self._connected = True
         self._cursor = self._conn_main.cursor() # Get cursor for connection
         self._cursor.execute(query)             # Submit query for execution
         self._conn_main.commit()                # Commit the transaction
@@ -2675,8 +2715,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         
         self._cursor.close()                    # Close the cursor
-        self._pool.putconn(self._conn_main)     # Put the connection away
-        
+        self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)     # Put the connection away
+        self._connected = False
     
     def printuserscontacts(self):
         '''
@@ -2750,10 +2790,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         then turns the status bar red.
 
         '''
-        
+        self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True
         if self._connected:
             if self._cursor.close:
-                self._conn_main = self._pool.getconn(key=self._conn_main_key)
                 self._cursor = self._conn_main.cursor()
             # Log authentication
             _usr_nm = self._user
@@ -2810,6 +2850,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _grplogin = False
         try:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
             self._cursor = self._conn_main.cursor()
             self._cursor.execute("""INSERT INTO bristo_contacts_authlog
                 (bristo_contacts_authlog_uname,
@@ -2833,6 +2874,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.addWidget(_err_msg)
         self._conn_main.commit()
         self._cursor.close()
+        self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+        self._connected = False
         self._pool.closeall()
         self.contactsStatusBar.removeWidget(self.conn_msg)
         self.contactsStatusBar.setStyleSheet("background-color: \
