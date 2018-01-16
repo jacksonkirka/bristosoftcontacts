@@ -868,8 +868,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         credentials.
         '''
         #self.db_login()
-        self._conn_main = self._pool.getconn(key=self._conn_main_key)
-        self._connected = True
         _usr = self._user
         _group = self.nwgrp.newGroupLineEdit.text()
         _pwd = self.nwgrp.passwordLineEdit.text()
@@ -890,7 +888,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _confirm = 'Guest$123'
         if _group:
             # Verify group name is available
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
+
             if self._connected:
+                self._cursor = self._conn_main.cursor()
                 self._cursor.execute("""SELECT bristo_contacts_groups_group
                 FROM bristo_contacts_groups WHERE bristo_contacts_groups_group
                  = %s;""",(_group, ))
@@ -901,7 +903,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 if self._connected and _pwd_match and _complex:
                     #self.reset_timer()
                     _hashedpwd = self._secure.hashpwd(_pwd)
-                    self._cursor = self._conn_main.cursor()
                     self._cursor.execute("""INSERT INTO bristo_contacts_groups
                             (bristo_contacts_groups_owner, 
                             bristo_contacts_groups_group,
