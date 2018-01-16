@@ -737,10 +737,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
 
-        self.db_login()
+        # self.db_login()
+        self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True # Set connection
+        if self._cursor.close:
+            self._cursor = self._conn_main.cursor()
         if self._connected:
-            if self._cursor.close:
-                self._cursor = self._conn_main.cursor()
             #self.reset_timer()
             _company = self.bristo.companyLineEdit.text()
             _mrmrs = self.bristo.mrmrsLineEdit.text()
@@ -772,6 +774,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _postal = _grpinfo[self._GRPPOSTAL]
 
             # Check for duplicate phone numbers or emails
+
             self._cursor.execute("""SELECT bristo_contacts_ct_ph_office,
                     bristo_contacts_ct_email1 FROM bristo_contacts_ct WHERE
                     bristo_contacts_ct_ph_office = %s OR
@@ -796,6 +799,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _oph,_cell, _fax,_hph,_oemail,_pemail,_oweb,_pweb,_owner))
                 self._conn_main.commit()
                 self.contactsStatusBar.showMessage('New Contact Inserted.', 3000)
+                self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
             else:
