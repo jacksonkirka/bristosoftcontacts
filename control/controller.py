@@ -812,7 +812,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_copy_group_address accepts group name and returns the group address of
         a group into memory for access by any other caller.
         '''
-        self.db_login()
+        #self.db_login()
+        self._conn_main = self._pool.getconn(key=self._conn_main_key)
+        self._connected = True # Set connection
         if self._connected:
             _user = self._user
             if self._cursor.close:
@@ -827,6 +829,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             else:
                 _grpinfo = self._cursor.fetchone()
                 return _grpinfo
+        self._cursor.close()
         self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
         self._connected = False
 
