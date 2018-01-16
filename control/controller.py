@@ -897,7 +897,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             if not self._cursor.rowcount:
                 if _pwd == _confirm:
                     _pwd_match = True
-                _complex = self.mincomplex(_pwd)
+                _complex = self._secure.mincomplex(_pwd)
                 if self._connected and _pwd_match and _complex:
                     #self.reset_timer()
                     _hashedpwd = self._secure.hashpwd(_pwd)
