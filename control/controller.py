@@ -740,8 +740,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # self.db_login()
         self._conn_main = self._pool.getconn(key=self._conn_main_key)
         self._connected = True # Set connection
-        if self._cursor.close:
-            self._cursor = self._conn_main.cursor()
+        self._cursor = self._conn_main.cursor()
         if self._connected:
             #self.reset_timer()
             _company = self.bristo.companyLineEdit.text()
