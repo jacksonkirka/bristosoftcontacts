@@ -84,7 +84,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn_main_key = 192938293829395
         self._disconnected = True
         self._connected = False
-        self._conn_main_timer = 10
+        self._conn_main_timer = 900000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
@@ -329,7 +329,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # idle
         self._idle.stop()
         self._idle = QTimer()
-        self._idle.singleShot(self._conn_timer,  self.db_idle)
+        self._idle.singleShot(self._conn_main_timer,  self.db_idle)
         self._idle.start() # start idle timer
         
         
@@ -543,34 +543,35 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         it pops the top message off the stack.  This user and message
         is displayed in the status bar.
         '''
-        self._conn_mesg = self._pool.getconn(key=self._conn_mesg_key)
-        self._cursor_msg = self._conn_mesg.cursor()
-        # query needs to be updated to select only messages insert
-        # in the last 20 minutes or so.
-        self._cursor_msg.execute("""SELECT * FROM (SELECT * FROM
-            bristo_contacts_messages WHERE bristo_contacts_messages_receiver
-            = %s ORDER BY bristo_contacts_messages_stamp DESC) AS 
-            recent LIMIT 1""",
-                (self._user, ))
-        self.fetch_msg = self._cursor_msg.fetchone() # Get message
-        if not self._cursor_msg.rowcount:
-            return
-        else:
-            _msg_uuid = 1 # static
-            _sender = 3 # static
-            _msg = 5 # static
-            if not self._msg_read_uuid == self.fetch_msg[_msg_uuid]:
-                self._cursor_msg.close()
-                self._pool.putconn(self._conn_mesg, key=self._conn_mesg_key)
-                self._connected = False
-                self.contactsStatusBar.removeWidget(self.conn_msg)
-                self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(244, 160, 66);")
-                self.contactsStatusBar.showMessage(
-                    self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
-                self._msg_read_uuid = self.fetch_msg[_msg_uuid]
-                #self.contactsStatusBar.setStyleSheet("background-color: \
-                                              #rgb(230, 128, 128);")
+        if self._pool:
+            self._conn_mesg = self._pool.getconn(key=self._conn_mesg_key)
+            self._cursor_msg = self._conn_mesg.cursor()
+            # query needs to be updated to select only messages insert
+            # in the last 20 minutes or so.
+            self._cursor_msg.execute("""SELECT * FROM (SELECT * FROM
+                bristo_contacts_messages WHERE bristo_contacts_messages_receiver
+                = %s ORDER BY bristo_contacts_messages_stamp DESC) AS 
+                recent LIMIT 1""",
+                    (self._user, ))
+            self.fetch_msg = self._cursor_msg.fetchone() # Get message
+            if not self._cursor_msg.rowcount:
+                return
+            else:
+                _msg_uuid = 1 # static
+                _sender = 3 # static
+                _msg = 5 # static
+                if not self._msg_read_uuid == self.fetch_msg[_msg_uuid]:
+                    self._cursor_msg.close()
+                    self._pool.putconn(self._conn_mesg, key=self._conn_mesg_key)
+                    self._connected = False
+                    self.contactsStatusBar.removeWidget(self.conn_msg)
+                    self.contactsStatusBar.setStyleSheet("background-color: \
+                                                  rgb(244, 160, 66);")
+                    self.contactsStatusBar.showMessage(
+                        self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
+                    self._msg_read_uuid = self.fetch_msg[_msg_uuid]
+                    #self.contactsStatusBar.setStyleSheet("background-color: \
+                                                  #rgb(230, 128, 128);")
                 
                 
 
