@@ -393,6 +393,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._user and self._passwd:
             
             # Step 1 Setup connection pool
+            # Note: by using the ThreadedConnectionPool class instead of 
+            # the PersistentConnectionPool class it is possible to have
+            # more than one db connection per thread.
             self._pool = psycopg2.pool.ThreadedConnectionPool(
                 self._min_con,  self._max_con,  con)
             
@@ -2832,6 +2835,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
             self._connected = False
             self._pool.closeall()
+            self._pool = None
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
             self.contactsStatusBar.removeWidget(self.conn_msg)
