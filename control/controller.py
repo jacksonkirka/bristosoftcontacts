@@ -2813,16 +2813,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.addWidget(self.conn_msg)
                 self._disconnected = True
                 
-        def restore_status_bar(self):
-            '''
-            restore_status_bar restores the status bar to red with 
-            '''
-            self.contactsStatusBar.setStyleSheet("background-color: \
-                                                  rgb(230, 128, 128);")
-            # self.contactsStatusBar.removeWidget(self.conn_msg)
-            # self.conn_msg = QLabel(self._user+'@'+self._host+
-            #  '/'+ self._db+' logged out due to inactivity.')
-            self.contactsStatusBar.addWidget(self.conn_msg)
+    def restore_status_bar(self):
+        '''
+        restore_status_bar restores the status bar to red with 
+        '''
+        self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+        # self.contactsStatusBar.removeWidget(self.conn_msg)
+        # self.conn_msg = QLabel(self._user+'@'+self._host+
+        #  '/'+ self._db+' logged out due to inactivity.')
+        self.contactsStatusBar.addWidget(self.conn_msg)
 
     def db_idle(self):
         '''
