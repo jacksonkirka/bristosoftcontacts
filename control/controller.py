@@ -2815,7 +2815,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 
     def restore_status_bar(self):
         '''
-        restore_status_bar restores the status bar to red with 
+        restore_status_bar restores the status bar to red. 
         '''
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
