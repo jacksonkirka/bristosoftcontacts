@@ -233,7 +233,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.fetch_msg = None
         self._msg_read_uuid = None
         self._conn_mesg_key = 192938293829335
-
+        
+        # Query Progress Bar
+        self._query_progressbar = QProgressBar()
+        self._query_progressbar.setGeometry(30, 40, 200, 25)
+        # self.contactsStatusBar.addPermanentWidget(self._query_progressbar)
+        
 
         #Date and Time
         self._DATE = datetime.datetime.now()
