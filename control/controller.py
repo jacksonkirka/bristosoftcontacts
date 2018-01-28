@@ -1056,6 +1056,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         self.reset_timer()
+        _msg = 'Please wait.  Contacts you own are being fetched....'
+        self.contactsStatusBar.showMessage(_msg, 7000)        
         self._groups = False
         self.bristo_search = bristoContactsSearchDialog()
 
