@@ -228,6 +228,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_sender = 3
         self._msg_receiver = 4
         self._msg_text = 5
+        self._poll_msg_display_time = 60000
         self._poll_msg_time = 300000
         self._poll_msg_qtimer = QTimer()
         self.fetch_msg = None
@@ -574,19 +575,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(244, 160, 66);")
                     self.contactsStatusBar.showMessage(
-                        self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
+                        self.fetch_msg[_sender]+': '+self.fetch_msg[_msg],
+                               self._poll_msg_display_time)
                     self._msg_read_uuid = self.fetch_msg[_msg_uuid]
                     restore_status_bar = QTimer()
-                    restore_status_bar.singleShot(40000,
+                    restore_status_bar.singleShot(self._poll_msg_display_time,
                                 self.restore_status_bar)
-                    restore_status_bar.start() # start idle timer
- 
-                    
-                    #self.contactsStatusBar.setStyleSheet("background-color: \
-                                                  #rgb(230, 128, 128);")
+                    restore_status_bar.start()
                 
-                
-
     def msg_poll_timer(self):
         '''
         msg_poll_timer starts the polling messages in messages table.
