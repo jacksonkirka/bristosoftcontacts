@@ -576,6 +576,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self.contactsStatusBar.showMessage(
                         self.fetch_msg[_sender]+': '+self.fetch_msg[_msg], 40000)
                     self._msg_read_uuid = self.fetch_msg[_msg_uuid]
+                    restore_status_bar = QTimer()
+                    restore_status_bar.singleShot(40000,
+                                self.restore_status_bar)
+                    restore_status_bar.start() # start idle timer
+ 
+                    
                     #self.contactsStatusBar.setStyleSheet("background-color: \
                                                   #rgb(230, 128, 128);")
                 
@@ -2827,8 +2833,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
         # self.contactsStatusBar.removeWidget(self.conn_msg)
-        # self.conn_msg = QLabel(self._user+'@'+self._host+
-        #  '/'+ self._db+' logged out due to inactivity.')
+        self.conn_msg = QLabel(self._user+'@'+self._host+'/'+ self._db)
         self.contactsStatusBar.addWidget(self.conn_msg)
 
     def db_idle(self):
