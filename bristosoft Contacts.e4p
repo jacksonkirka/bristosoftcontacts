@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2017-12-05, 22:13:02 -->
-<!-- Copyright (C) 2017 Kirk A Jackson, jacksonkirka@bristosoft.com -->
+<!-- Saved: 2018-02-09, 23:24:51 -->
+<!-- Copyright (C) 2018 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
   <Hash>29fd26a5fcd9a9fc902de441c7211e61817358a9</Hash>
@@ -15,6 +15,7 @@
   <Sources>
     <Source>control/__init__.py</Source>
     <Source>control/bristo_exceptions.py</Source>
+    <Source>control/bristocache.py</Source>
     <Source>control/bristoprint.py</Source>
     <Source>control/controller.py</Source>
     <Source>control/secure.py</Source>
