@@ -102,9 +102,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Security
         self._secure = Security()
 
-        # Dialogs
-        self.bristo_search = None
-        self.bristo = None
+        # Stack and Dialogs
+        self.bristo_stack = QStackedWidget()
+        self.bristo_stack.hide()
+        self.search_groups = bristoSearchGroupDlg()
+        self.bristo_search = bristoContactsSearchDialog()
+        self.nwgrp = bristoNewGroupDlg()
+        self.bristo = bristoContactsDialog()
+        self.bristo_stack.addWidget(self.bristo_search)
+        self.bristo_stack.addWidget(self.search_groups)
+        self.bristo_stack.addWidget(self.bristo)
+        self.bristo_stack.addWidget(self.nwgrp)
+        self.setCentralWidget(self.bristo_stack)
 
         # Users
         self._user = None
