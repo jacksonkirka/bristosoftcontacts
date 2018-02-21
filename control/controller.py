@@ -741,11 +741,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         self.reset_timer()
+        self.bristo = bristoContactsDialog()
         # set contactsDialog in cetralWidget
         self.bristo_stack.addWidget(self.bristo)
         self.bristo_stack.setCurrentWidget(self.bristo)
         self.bristo_stack.show()
-        self.setCentralWidget(self.bristo)
         self.bristo.accepted.connect(self.db_insert)
 
 
@@ -886,7 +886,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         restaurants, factories, distribution centers and much more.
         '''
         self.nwgrp = bristoNewGroupDlg()
-        self.setCentralWidget(self.nwgrp)
+        self.bristo_stack.addWidget(self.nwgrp)
+        self.bristo_stack.setCurrentWidget(self.nwgrp)
+        self.bristo_stack.show()
         self.nwgrp.accepted.connect(self.db_insert_group)
 
     def db_insert_group(self):
