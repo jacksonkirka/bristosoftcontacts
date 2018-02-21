@@ -107,12 +107,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_stack.hide()
         self.search_groups = bristoSearchGroupDlg()
         self.bristo_search = bristoContactsSearchDialog()
-        self.nwgrp = bristoNewGroupDlg()
-        self.bristo = bristoContactsDialog()
         self.bristo_stack.addWidget(self.bristo_search)
         self.bristo_stack.addWidget(self.search_groups)
-        self.bristo_stack.addWidget(self.bristo)
-        self.bristo_stack.addWidget(self.nwgrp)
         self.setCentralWidget(self.bristo_stack)
 
         # Users
@@ -746,7 +742,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         self.reset_timer()
         # set contactsDialog in cetralWidget
-        self.bristo = bristoContactsDialog()
+        self.bristo_stack.addWidget(self.bristo)
+        self.bristo_stack.setCurrentWidget(self.bristo)
+        self.bristo_stack.show()
         self.setCentralWidget(self.bristo)
         self.bristo.accepted.connect(self.db_insert)
 
