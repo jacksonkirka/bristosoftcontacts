@@ -1048,7 +1048,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         button on toolbar is clicked.  It is needed to distinguish between a
         click and a program method call namely display_goup_contacts.
         '''
-        self.search_groups = None
+        # self.search_groups = None
         self._groupqry = False
         self._grprpt = None
         self.db_contacts_fetch()
@@ -1062,12 +1062,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         The list is then traversed in memory on the list python object.
 
         '''
-        self.reset_timer()
         _msg = 'Please wait.  Contacts you own are being fetched....'
-        self.contactsStatusBar.showMessage(_msg, 7000)        
+        self.contactsStatusBar.showMessage(_msg, 7000)  
+        self.reset_timer()      
         self._groups = False
-        self.bristo_search = bristoContactsSearchDialog()
-
 
         # Hide columns on calls, appointments and messages
         self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
@@ -1105,7 +1103,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             ['Id','Time Stamp', 'File Name'])
 
         self.active_dlg = 'search'
-        self.setCentralWidget(self.bristo_search)
+        self.bristo_stack.setCurrentWidget(self.bristo_search)
 
         # Phone Calls
         self.bristo_search.callsTableWidget.setHorizontalHeaderLabels(
@@ -1213,6 +1211,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
+                self.bristo_stack.show()
             
 
     def update_fetch_results(self):
