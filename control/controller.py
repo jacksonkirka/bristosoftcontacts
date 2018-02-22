@@ -173,7 +173,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._search_groups_dlg = False
         self._groupqry = False
         self._groupnm = None
-        self.search_groups = None
         self._update_groups = False
         self._grpnm_addr = None
 
@@ -966,15 +965,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         search_groups_dlg opens the search groups dialog to get users
         groups to view and edit.
         '''
-        self.bristo_search = None
-        self.db_login()
-        self.search_groups = bristoSearchGroupDlg()
-        self.setCentralWidget(self.search_groups)
+        self.bristo_stack.setCurrentWidget(self.search_groups)
+        self.bristo_stack.show()
         self._search_groups_dlg = True
         self._groupqry = False
         self._update_groups = True
         self.get_groups_owned()
-        # self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
 
     def db_fetch_groups(self):
         '''
