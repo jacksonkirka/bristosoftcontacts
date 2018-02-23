@@ -175,6 +175,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._groupnm = None
         self._update_groups = False
         self._grpnm_addr = None
+        self.fetch_groups = None
 
         # Table Rows
         self._table_rows_count = 2000
@@ -533,7 +534,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.msg_poll_timer()
                     self._connected = False
                     self.contactsStatusBar.showMessage(
-                        self._user+'@'+self._host+'/'+ self._db+' logged in.',
+                        self._user+'@'+self._host+'/'+ self._db+'      logged in.',
                             40000)
                     self.contactsStatusBar.setStyleSheet("background-color: \
                                                           rgb(230, 128, 128);")
@@ -978,7 +979,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         queried by via group name and password or where the user has
         appointment for a contact in a group.
         '''
-
         self.reset_timer()
         _user = self._user
         _grp = self._groupnm
@@ -1020,6 +1020,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         get_groups_owned returns only the groups user created and currently
         owns.
         '''
+        # --------------- Performance Tuning Enhancement --------------
+        # Note: Tuple out of range with Performance turning test
+        # at line 1727.  Need to fix.
+        #
+        #if self.fetch_groups:
+        #    self._LASTITEM = len(self.fetch_groups) - 1
+        #    self._groups = True
+        #    self._ITEM = self._FIRSTITEM
+        #    self.bristo_stack.setCurrentWidget(self.search_groups)
+        #    return
+        # --------------------------------------------------------------
         if self._pool:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
@@ -1062,6 +1073,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         The list is then traversed in memory on the list python object.
 
         '''
+        # --------------- Performance Tuning Enhancement --------------
+        if self.fetch_results:
+            self._groups = False
+            self._LASTITEM = len(self.fetch_results) - 1
+            self.bristo_stack.setCurrentWidget(self.bristo_search)
+            return
+        # --------------------------------------------------------------
         _msg = 'Please wait.  Contacts you own are being fetched....'
         self.contactsStatusBar.showMessage(_msg, 7000)  
         self.reset_timer()      
@@ -1734,7 +1752,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         display_group_contacts authenticates a group login and then returns
         all contacts within a group base on group name without spaces.
         '''
-        self.db_login()
+        if self._pool:
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
         # Authenticate group
         _grp_nm = self.bristo_search.groupNameLineEdit.text()
         _pwd = self.bristo_search.groupPwdLineEdit.text()
