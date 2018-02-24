@@ -695,42 +695,44 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         informing them they have not successfully logged into the group.
         '''
         # Log incorrect group authentication
-        self.db_login()
-        _usr_nm = self._user
-        _usr_ip = self._usr_ip
-        _usr_city = self._usr_city
-        _usr_reg = self._usr_region
-        _usr_ctry = self._usr_ctry
-        _usr_zip = self._usr_zip
-        _in = True
-        _grplogin = True
-        _grp_nm = self._groupnm
-        if self._cursor.close:
-            self._cursor = self._conn_main.cursor()
-        self._cursor.execute("""INSERT INTO bristo_contacts_authlog
-                (bristo_contacts_authlog_uname,
-                bristo_contacts_authlog_in,
-                bristo_contacts_authlog_group,
-                bristo_contacts_authlog_grpname,
-                bristo_contacts_authlog_inet,
-                bristo_contacts_authlog_city,
-                bristo_contacts_authlog_region,
-                bristo_contacts_authlog_ctry,
-                bristo_contacts_authlog_postal)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
-                (_usr_nm,_in, _grplogin, _grp_nm, _usr_ip, _usr_city, 
-                _usr_reg, _usr_ctry, _usr_zip))
-        self._conn_main.commit()
-        self._cursor.close()
-        self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-        self._connected = False
-        self._disconnected = True
-        self.contactsStatusBar.setStyleSheet("background-color: \
-                                              rgb(230, 128, 128);")
-        if self._disconnected:
-            self.contactsStatusBar.removeWidget(self.conn_msg)
-        self.conn_msg = QLabel('Group login incorrect, please try again.')
-        self.contactsStatusBar.addWidget(self.conn_msg)
+        if self._pool:
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True # Set connection to True
+            _usr_nm = self._user
+            _usr_ip = self._usr_ip
+            _usr_city = self._usr_city
+            _usr_reg = self._usr_region
+            _usr_ctry = self._usr_ctry
+            _usr_zip = self._usr_zip
+            _in = True
+            _grplogin = True
+            _grp_nm = self._groupnm
+            if self._cursor.close:
+                self._cursor = self._conn_main.cursor()
+            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                    (bristo_contacts_authlog_uname,
+                    bristo_contacts_authlog_in,
+                    bristo_contacts_authlog_group,
+                    bristo_contacts_authlog_grpname,
+                    bristo_contacts_authlog_inet,
+                    bristo_contacts_authlog_city,
+                    bristo_contacts_authlog_region,
+                    bristo_contacts_authlog_ctry,
+                    bristo_contacts_authlog_postal)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, _grp_nm, _usr_ip, _usr_city, 
+                    _usr_reg, _usr_ctry, _usr_zip))
+            self._conn_main.commit()
+            self._cursor.close()
+            self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
+            self._disconnected = True
+            self.contactsStatusBar.setStyleSheet("background-color: \
+                                                  rgb(230, 128, 128);")
+            if self._disconnected:
+                self.contactsStatusBar.removeWidget(self.conn_msg)
+            self.conn_msg = QLabel('Group login incorrect, please try again.')
+            self.contactsStatusBar.addWidget(self.conn_msg)
 
     def db_contact_new(self):
 
@@ -1074,7 +1076,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         # --------------- Performance Tuning Enhancement --------------
-        if self.fetch_results:
+        if self.fetch_results and not self._groupqry:
             self._groups = False
             self._LASTITEM = len(self.fetch_results) - 1
             self.bristo_stack.setCurrentWidget(self.bristo_search)
@@ -1822,9 +1824,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._conn_main.commit()
                 self._cursor.close()
                 self._groupqry = True  # Key variable.
-                self.db_contacts_fetch()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-                self._connected = False
+                self._connected = False                
+                self.db_contacts_fetch()
+
             self.incorrectgrouplogin()
 
     def display_notes(self):
