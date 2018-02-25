@@ -15,7 +15,7 @@
 # The trade name bristoSOFT is a registered trade name with the State of Ohio
 # document No. 201607803210. 
 #
-# Note: Testing can be done using perhaps unitest and other test that do not
+# Note: Testing can be done using perhaps unittest and other test that do not
 # require database connection.
 
 '''
