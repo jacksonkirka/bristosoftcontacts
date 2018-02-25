@@ -91,7 +91,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._firstlogin = True
         self.conn_msg = None
         
+        
         # Connection Pooling
+        self._pool = None
         self._min_con = 2
         self._max_con = 10
         
