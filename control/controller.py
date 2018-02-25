@@ -178,6 +178,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._update_groups = False
         self._grpnm_addr = None
         self.fetch_groups = None
+        self.fetch_groups_owned = None
 
         # Table Rows
         self._table_rows_count = 2000
@@ -1012,12 +1013,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct.bristo_contacts_ct_group = 
                 bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
                 (_user, _user, _user, self._limit))
+                self.fetch_groups = self._cursor.fetchall()
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s 
                     ORDER by bristo_contacts_groups_group LIMIT %s;""",
                 (_grp, self._limit))                
-            self.fetch_groups = self._cursor.fetchall() # Gets user owned groups
+                self.fetch_groups_owned = self._cursor.fetchall() # Gets owned groups
 
     def get_groups_owned(self):
         '''
@@ -1028,12 +1030,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Note: Tuple out of range with Performance turning test
         # at line 1727.  Need to fix.
         #
-        #if self.fetch_groups:
-        #    self._LASTITEM = len(self.fetch_groups) - 1
-        #    self._groups = True
-        #    self._ITEM = self._FIRSTITEM
-        #    self.bristo_stack.setCurrentWidget(self.search_groups)
-        #    return
+        if self.fetch_groups_owned:
+            self._LASTITEM = len(self.fetch_groups_owned) - 1
+            self._groups = True
+            self.bristo_stack.setCurrentWidget(self.search_groups)
+            return
         # --------------------------------------------------------------
         if self._pool:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
@@ -1046,8 +1047,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             WHERE bristo_contacts_groups_owner = %s
                             ORDER by bristo_contacts_groups_group LIMIT %s;""",
                         (_user, self._limit ))
-                self.fetch_groups = self._cursor.fetchall() # Gets user owned groups  
-                self._LASTITEM = len(self.fetch_groups) - 1
+                self.fetch_groups_owned = self._cursor.fetchall() # Gets user owned groups  
+                self._LASTITEM = len(self.fetch_groups_owned) - 1
                 self._groups = True
                 self._ITEM = self._FIRSTITEM
                 self.display_data()
@@ -1724,31 +1725,31 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         display_group displays group information.
         '''
-        if self.fetch_groups:
+        if self.fetch_groups_owned:
             self.search_groups.descTextEdit.clear()
             self.search_groups.searchGroupLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPNAME])
+                self.fetch_groups_owned[self._ITEM][self._GRPNAME])
             self.search_groups.descTextEdit.insertPlainText(
-                self.fetch_groups[self._ITEM][self._GRPDESC])
+                self.fetch_groups_owned[self._ITEM][self._GRPDESC])
             self.search_groups.groupAddressLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPADDR1])
+                self.fetch_groups_owned[self._ITEM][self._GRPADDR1])
             self.search_groups.groupSuiteLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPADDR2])
+                self.fetch_groups_owned[self._ITEM][self._GRPADDR2])
             self.search_groups.groupCityLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPCITY])
+                self.fetch_groups_owned[self._ITEM][self._GRPCITY])
             self.search_groups.groupStateLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPSTATE])
+                self.fetch_groups_owned[self._ITEM][self._GRPSTATE])
             self.search_groups.groupPostalLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPPOSTAL])
+                self.fetch_groups_owned[self._ITEM][self._GRPPOSTAL])
             self.search_groups.groupOfficeWebLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPWEB1])
+                self.fetch_groups_owned[self._ITEM][self._GRPWEB1])
             self.search_groups.groupOtherWebLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPWEB2])
+                self.fetch_groups_owned[self._ITEM][self._GRPWEB2])
             self.search_groups.groupOfficePhoneLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPPHONE])
+                self.fetch_groups_owned[self._ITEM][self._GRPPHONE])
             self.search_groups.groupOfficeFaxLineEdit.setText(
-                self.fetch_groups[self._ITEM][self._GRPFAX])
-            self._image_bytea = self.fetch_groups[self._ITEM][self._GRPPIC]
+                self.fetch_groups_owned[self._ITEM][self._GRPFAX])
+            self._image_bytea = self.fetch_groups_owned[self._ITEM][self._GRPPIC]
             self.display_pic(self.search_groups.newGroupLabel, self._image_bytea)
 
     def display_group_contacts(self):
