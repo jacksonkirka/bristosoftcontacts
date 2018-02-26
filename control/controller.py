@@ -2932,43 +2932,44 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _suc = True
         _in = False
         _grplogin = False
-        try:
-            self._conn_main = self._pool.getconn(key=self._conn_main_key)
-            self._connected = True
-            self._cursor = self._conn_main.cursor()
-            self._cursor.execute("""INSERT INTO bristo_contacts_authlog
-                (bristo_contacts_authlog_uname,
-                bristo_contacts_authlog_in,
-                bristo_contacts_authlog_group,
-                bristo_contacts_authlog_inet,
-                bristo_contacts_authlog_city,
-                bristo_contacts_authlog_region,
-                bristo_contacts_authlog_ctry,
-                bristo_contacts_authlog_postal,
-                bristo_contacts_authlog_success)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
-                (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
-                _usr_reg, _usr_ctry, _usr_zip, _suc))
-        except psycopg2.DatabaseError, dberror:
-            self._conn_main.rollback()
+        if self._pool:
+            try:
+                self._conn_main = self._pool.getconn(key=self._conn_main_key)
+                self._connected = True
+                self._cursor = self._conn_main.cursor()
+                self._cursor.execute("""INSERT INTO bristo_contacts_authlog
+                    (bristo_contacts_authlog_uname,
+                    bristo_contacts_authlog_in,
+                    bristo_contacts_authlog_group,
+                    bristo_contacts_authlog_inet,
+                    bristo_contacts_authlog_city,
+                    bristo_contacts_authlog_region,
+                    bristo_contacts_authlog_ctry,
+                    bristo_contacts_authlog_postal,
+                    bristo_contacts_authlog_success)
+                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""", 
+                    (_usr_nm,_in, _grplogin, _usr_ip, _usr_city, 
+                    _usr_reg, _usr_ctry, _usr_zip, _suc))
+            except psycopg2.DatabaseError, dberror:
+                self._conn_main.rollback()
+                self.contactsStatusBar.removeWidget(self.conn_msg)
+                self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(230, 128, 128);")
+                _err_msg =QLabel(str(dberror))
+                self.contactsStatusBar.addWidget(_err_msg)
+            self._conn_main.commit()
+            self._cursor.close()
+            self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+            self._connected = False
+            self._pool.closeall()
+            self._pool = None
             self.contactsStatusBar.removeWidget(self.conn_msg)
             self.contactsStatusBar.setStyleSheet("background-color: \
-                                          rgb(230, 128, 128);")
-            _err_msg =QLabel(str(dberror))
-            self.contactsStatusBar.addWidget(_err_msg)
-        self._conn_main.commit()
-        self._cursor.close()
-        self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-        self._connected = False
-        self._pool.closeall()
-        self._pool = None
-        self.contactsStatusBar.removeWidget(self.conn_msg)
-        self.contactsStatusBar.setStyleSheet("background-color: \
-                                          rgb(230, 128, 128);")
-        
-        self.conn_msg = QLabel(self._host+
-                              '/'+ self._db+'.')
-        self.contactsStatusBar.addWidget(self.conn_msg)
+                                              rgb(230, 128, 128);")
+            
+            self.conn_msg = QLabel(self._host+
+                                  '/'+ self._db+'.')
+            self.contactsStatusBar.addWidget(self.conn_msg)
 
         self.close()
 
