@@ -102,6 +102,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Reports
         #self.fetch_results = None
         self.fetch_results = [0]
+        self.fetch_notes = [0]
+        self.fetch_files = [0]
+        self.fetch_calls = [0]
+        self.fetch_appts = [0]
+
         self._grprpt = None
 
         # Security
@@ -1216,24 +1221,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_notes_owner = %s  ORDER by 
                     bristo_contacts_notes_ct,
                     bristo_contacts_notes_stamp LIMIT %s""", (_user, self._limit))
-                self.fetch_notes = self._cursor.fetchall() # Get all notes
+                self.fetch_notes[self._query] = self._cursor.fetchall() # Get all notes
                 self._cursor.execute("""SELECT bristo_contacts_files_id,
                     bristo_contacts_files_stamp, bristo_contacts_files_ct,
                     bristo_contacts_files_name FROM
                     bristo_contacts_files WHERE bristo_contacts_files_owner = %s
                     ORDER by bristo_contacts_files_ct,
                     bristo_contacts_files_stamp LIMIT %s""", (_user, self._limit))
-                self.fetch_files = self._cursor.fetchall() # Get all files
+                self.fetch_files[self._query] = self._cursor.fetchall() # Get all files
                 self._cursor.execute("""SELECT * FROM bristo_contacts_calls WHERE
                     bristo_contacts_calls_owner = %s ORDER by 
                     bristo_contacts_calls_ct_id,
                     bristo_contacts_calls_stamp LIMIT %s""",  (_user, self._limit))
-                self.fetch_calls = self._cursor.fetchall() # Get all calls
+                self.fetch_calls[self._query] = self._cursor.fetchall() # Get all calls
                 self._cursor.execute("""SELECT * FROM bristo_contacts_appt WHERE
                      bristo_contacts_appt_owner = %s ORDER by 
                         bristo_contacts_appt_ct_id,
                         bristo_contacts_appt_stamp LIMIT %s """, (_user,self._limit ))
-                self.fetch_appts = self._cursor.fetchall() # Get all appointments
+                self.fetch_appts[self._query] = self._cursor.fetchall() # Get all appointments
                 self.update_fetch_results()
                 _msg = 'All data fetched from database.'
                 self.contactsStatusBar.showMessage(_msg, 7000)
@@ -1848,15 +1853,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_row = 0  # Changes each record
         _tblwgt_date = 0 # static
         _tblwgt_note_col = 1 # static
-        for _contact_note in range(len(self.fetch_notes)):
-            if self.fetch_notes[_contact_note][self._notes_ct] ==\
+        for _contact_note in range(len(self.fetch_notes[self._query])):
+            if self.fetch_notes[self._query][_contact_note][self._notes_ct] ==\
                     self.fetch_results[self._query][self._ITEM][self._OPHONE]:
-                _date_row = self.fetch_notes[_contact_note][self._stamp].strftime(
+                _date_row = self.fetch_notes[self._query][_contact_note][self._stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
                 self.bristo_search.notesTableWidget.setItem(_tblwgt_row, 
                     _tblwgt_date, _qwitem)
-                _notes_row = self.fetch_notes[_contact_note][self._note]
+                _notes_row = self.fetch_notes[self._query][_contact_note][self._note]
                 _qwitem = QTableWidgetItem(_notes_row)
                 self.bristo_search.notesTableWidget.setItem(_tblwgt_row,
                     _tblwgt_note_col, _qwitem)
@@ -1872,19 +1877,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_file_id = 0
         _tblwgt_date = 1 # static
         _tblwgt_filename_col = 2 # static
-        for _contact_file in range(len(self.fetch_files)):
-            if self.fetch_files[_contact_file][self._file_ct] ==\
+        for _contact_file in range(len(self.fetch_files[self._query])):
+            if self.fetch_files[self._query][_contact_file][self._file_ct] ==\
                 self.fetch_results[self._query][self._ITEM][self._OPHONE]:
-                _id_row = str(self.fetch_files[_contact_file][self._file_id])
+                _id_row = str(self.fetch_files[self._query][_contact_file][self._file_id])
                 _qwitem = QTableWidgetItem(_id_row)
                 self.bristo_search.fileTableWidget.setItem(_tblwgt_file_row,
                     _tblwgt_file_id, _qwitem)
-                _date_row = self.fetch_files[_contact_file][self._file_stamp].strftime(
+                _date_row = self.fetch_files[self._query][_contact_file][self._file_stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
                 self.bristo_search.fileTableWidget.setItem(_tblwgt_file_row, 
                     _tblwgt_date, _qwitem)
-                _file_row = self.fetch_files[_contact_file][self._file_name]
+                _file_row = self.fetch_files[self._query][_contact_file][self._file_name]
                 _qwitem = QTableWidgetItem(_file_row)
                 self.bristo_search.fileTableWidget.setItem(_tblwgt_file_row,
                     _tblwgt_filename_col, _qwitem)
@@ -1902,19 +1907,19 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_in_col = 4 # static
         _tblwgt_results_col = 5 # static
 
-        for _contact_call in range(len(self.fetch_calls)):
-            if self.fetch_calls[_contact_call][self._calls_ct_id] ==\
+        for _contact_call in range(len(self.fetch_calls[self._query])):
+            if self.fetch_calls[self._query][_contact_call][self._calls_ct_id] ==\
                 self.fetch_results[self._query][self._ITEM][self._ID]:
-                _date_row = self.fetch_calls[_contact_call][self._calls_stamp].strftime(
+                _date_row = self.fetch_calls[self._query][_contact_call][self._calls_stamp].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
                 self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row, 
                     _tblwgt_calls_date, _qwitem)
-                _phone_row = self.fetch_calls[_contact_call][self._calls_phone]
+                _phone_row = self.fetch_calls[self._query][_contact_call][self._calls_phone]
                 _qwitem = QTableWidgetItem(_phone_row)
                 self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
                     _tblwgt_phone_col, _qwitem)
-                _in_row = self.fetch_calls[_contact_call][self._calls_in]
+                _in_row = self.fetch_calls[self._query][_contact_call][self._calls_in]
                 if _in_row:
                     _in_row = 'I'
                 else:
@@ -1922,7 +1927,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _qwitem = QTableWidgetItem(_in_row)
                 self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
                     _tblwgt_in_col, _qwitem)
-                _results_row = self.fetch_calls[_contact_call][self._calls_results]
+                _results_row = self.fetch_calls[self._query][_contact_call][self._calls_results]
                 _qwitem = QTableWidgetItem(_results_row)
                 self.bristo_search.callsTableWidget.setItem(_tblwgt_calls_row,
                     _tblwgt_results_col, _qwitem)
@@ -1940,24 +1945,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_complete_col = 4 #static
         _tblwgt_purpose_col = 5 # static
         self.bristo_search.apptTableWidget.clearContents()
-        for _contact_appt in range(len(self.fetch_appts)):
+        for _contact_appt in range(len(self.fetch_appts[self._query])):
             if (self._calendar_activated and\
-                self.fetch_appts[_contact_appt][self._appt_time].date().isoformat()\
+                self.fetch_appts[self._query][_contact_appt][self._appt_time].date().isoformat()\
                  == self._qcal_date.toPyDate().isoformat()):
-                _id_row = str(self.fetch_appts[_contact_appt][self._appt_id])
+                _id_row = str(self.fetch_appts[self._query][_contact_appt][self._appt_id])
                 _qwitem = QTableWidgetItem(_id_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_id_col, _qwitem)
-                _ct_id_row = str(self.fetch_appts[_contact_appt][self._appt_ct_id])
+                _ct_id_row = str(self.fetch_appts[self._query][_contact_appt][self._appt_ct_id])
                 _qwitem = QTableWidgetItem(_ct_id_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_ct_id,  _qwitem)
-                _date_row = self.fetch_appts[_contact_appt][self._appt_time].strftime(
+                _date_row = self.fetch_appts[self._query][_contact_appt][self._appt_time].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row, 
                     _tblwgt_appt_date, _qwitem)
-                _complete_row = self.fetch_appts[_contact_appt][self._appt_complete]
+                _complete_row = self.fetch_appts[self._query][_contact_appt][self._appt_complete]
                 if _complete_row:
                     _complete_row = 'C'
                 else:
@@ -1965,7 +1970,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _qwitem = QTableWidgetItem(_complete_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_complete_col, _qwitem)
-                _purpose_row = self.fetch_appts[_contact_appt][self._appt_purpose]
+                _purpose_row = self.fetch_appts[self._query][_contact_appt][self._appt_purpose]
                 _qwitem = QTableWidgetItem(_purpose_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_purpose_col, _qwitem)
@@ -1985,23 +1990,23 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _tblwgt_complete_col = 4 #static
         _tblwgt_purpose_col = 5 # static
         self.bristo_search.apptTableWidget.clearContents()
-        for _contact_appt in range(len(self.fetch_appts)):
-            if self.fetch_appts[_contact_appt][self._appt_ct_id] ==\
+        for _contact_appt in range(len(self.fetch_appts[self._query])):
+            if self.fetch_appts[self._query][_contact_appt][self._appt_ct_id] ==\
                 self.fetch_results[self._query][self._ITEM][self._ID]:
-                _id_row = str(self.fetch_appts[_contact_appt][self._appt_id])
+                _id_row = str(self.fetch_appts[self._query][_contact_appt][self._appt_id])
                 _qwitem = QTableWidgetItem(_id_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_id_col, _qwitem)
-                _ct_id_row = str(self.fetch_appts[_contact_appt][self._appt_ct_id])
+                _ct_id_row = str(self.fetch_appts[self._query][_contact_appt][self._appt_ct_id])
                 _qwitem = QTableWidgetItem(_ct_id_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_ct_id,  _qwitem)
-                _date_row = self.fetch_appts[_contact_appt][self._appt_time].strftime(
+                _date_row = self.fetch_appts[self._query][_contact_appt][self._appt_time].strftime(
                 "%m/%d/%y %I:%M%p")
                 _qwitem = QTableWidgetItem(_date_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row, 
                     _tblwgt_appt_date, _qwitem)
-                _complete_row = self.fetch_appts[_contact_appt][self._appt_complete]
+                _complete_row = self.fetch_appts[self._query][_contact_appt][self._appt_complete]
                 if _complete_row:
                     _complete_row = 'C'
                 else:
@@ -2009,7 +2014,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _qwitem = QTableWidgetItem(_complete_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_complete_col, _qwitem)
-                _purpose_row = self.fetch_appts[_contact_appt][self._appt_purpose]
+                _purpose_row = self.fetch_appts[self._query][_contact_appt][self._appt_purpose]
                 _qwitem = QTableWidgetItem(_purpose_row)
                 self.bristo_search.apptTableWidget.setItem(_tblwgt_appt_row,
                     _tblwgt_purpose_col, _qwitem)
