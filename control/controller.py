@@ -99,14 +99,14 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         
         
-        # Reports
+        # MulitQuery and Reports
         #self.fetch_results = None
-        self.fetch_results = [0]
-        self.fetch_notes = [0]
-        self.fetch_files = [0]
-        self.fetch_calls = [0]
-        self.fetch_appts = [0]
-
+        self._query = 0
+        self.fetch_results = [self._query]
+        self.fetch_notes = [self._query]
+        self.fetch_files = [self._query]
+        self.fetch_calls = [self._query]
+        self.fetch_appts = [self._query]
         self._grprpt = None
 
         # Security
@@ -255,10 +255,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._query_progressbar = QProgressBar()
         self._query_progressbar.setGeometry(30, 40, 200, 25)
         # self.contactsStatusBar.addPermanentWidget(self._query_progressbar)
-        
-        # MultiQuery
-        self._query = 0
-        
 
         #Date and Time
         self._DATE = datetime.datetime.now()
