@@ -105,6 +105,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.fetch_files = [self._query]
         self.fetch_calls = [self._query]
         self.fetch_appts = [self._query]
+        self._MYCONTACTS = 0
+        self._LASTGROUP = 0
         
         # Reports
         self._grprpt = None
@@ -1335,6 +1337,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         if not self._ITEM >= self._LASTITEM:
             self._ITEM += 1
+            self.display_data()
+    
+    def db_group_next(self):
+        '''
+        db_group_next fetches the next group by incrementing self._query
+        index to point to the next nested in the 3d list matrix.
+        '''
+        if not self._query >= self._LASTGROUP:
+            self._query += 1
+            self.display_data()
+    
+    def db_group_prev(self):
+        '''
+        db_group_next fetches the previous group by incrementing self._query
+        index to point to the next nested in the 3d list matrix.
+        '''
+        if not self._query <= self._MYCONTACTS:
+            self._query -= 1
             self.display_data()
 
     def db_fetch_contact(self):
