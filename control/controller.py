@@ -97,9 +97,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._min_con = 2
         self._max_con = 10
         
-        
-        
-        # MulitQuery and Reports
+        # Multi-Query 
         #self.fetch_results = None
         self._query = 0
         self.fetch_results = [self._query]
@@ -107,6 +105,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.fetch_files = [self._query]
         self.fetch_calls = [self._query]
         self.fetch_appts = [self._query]
+        
+        # Reports
         self._grprpt = None
 
         # Security
