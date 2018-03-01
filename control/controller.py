@@ -1088,7 +1088,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         # --------------- Performance Tuning Enhancement --------------
-        if self.fetch_results[self._query] and not self._groupqry:
+        if self.fetch_results[self._query]:
             self._groups = False
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.bristo_stack.setCurrentWidget(self.bristo_search)
@@ -1214,7 +1214,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         ORDER by bristo_contacts_ct.bristo_contacts_ct_co,
                         bristo_contacts_ct.bristo_contacts_ct_lname LIMIT %s;""",
                         (_user, _email, _user, self._limit ))
-                self.fetch_results[self._query] = self._cursor.fetchall() # Gets all contacts from db
+                self.fetch_results[self._query] = self._cursor.fetchall()
+                
+                # Note: When requesting group contacts there s/b no notes,
+                # files, calls or appointments.
+                
                 self._cursor.execute("""SELECT * FROM bristo_contacts_notes WHERE
                     bristo_contacts_notes_owner = %s  ORDER by 
                     bristo_contacts_notes_ct,
@@ -1855,7 +1859,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-                self._connected = False                
+                self._connected = False 
+                self._query += 1
                 self.db_contacts_fetch()
 
             self.incorrectgrouplogin()
