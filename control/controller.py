@@ -1860,7 +1860,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False 
+                # Create new set
                 self._query += 1
+                self.fetch_results.append(self._query)
+                self.fetch_notes.append(self._query)
+                self.fetch_files.append(self._query)
+                self.fetch_calls.append(self._query)
+                self.fetch_appts.append(self._query)
                 self.db_contacts_fetch()
 
             self.incorrectgrouplogin()
