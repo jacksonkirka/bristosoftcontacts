@@ -98,13 +98,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._max_con = 10
         
         # Multi-Query 
-        #self.fetch_results = None
         self._query = 0
-        self.fetch_results = [self._query]
-        self.fetch_notes = [self._query]
-        self.fetch_files = [self._query]
-        self.fetch_calls = [self._query]
-        self.fetch_appts = [self._query]
+        self.fetch_results = []
+        self.fetch_notes = []
+        self.fetch_files = []
+        self.fetch_calls = []
+        self.fetch_appts = []
         self._MYCONTACTS = 0
         self._LASTGROUP = 0
         
@@ -1088,7 +1087,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         # --------------- Performance Tuning Enhancement --------------
-        if self.fetch_results[self._query]:
+        if self.fetch_results and not self._groupqry:
             self._groups = False
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.bristo_stack.setCurrentWidget(self.bristo_search)
@@ -1214,7 +1213,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         ORDER by bristo_contacts_ct.bristo_contacts_ct_co,
                         bristo_contacts_ct.bristo_contacts_ct_lname LIMIT %s;""",
                         (_user, _email, _user, self._limit ))
-                self.fetch_results[self._query] = self._cursor.fetchall()
+                self.fetch_results.append(self._cursor.fetchall())
                 
                 # Note: When requesting group contacts there s/b no notes,
                 # files, calls or appointments.
@@ -1223,24 +1222,24 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_notes_owner = %s  ORDER by 
                     bristo_contacts_notes_ct,
                     bristo_contacts_notes_stamp LIMIT %s""", (_user, self._limit))
-                self.fetch_notes[self._query] = self._cursor.fetchall() # Get all notes
+                self.fetch_notes.append(self._cursor.fetchall()) # Get all notes
                 self._cursor.execute("""SELECT bristo_contacts_files_id,
                     bristo_contacts_files_stamp, bristo_contacts_files_ct,
                     bristo_contacts_files_name FROM
                     bristo_contacts_files WHERE bristo_contacts_files_owner = %s
                     ORDER by bristo_contacts_files_ct,
                     bristo_contacts_files_stamp LIMIT %s""", (_user, self._limit))
-                self.fetch_files[self._query] = self._cursor.fetchall() # Get all files
+                self.fetch_files.append(self._cursor.fetchall()) # Get all files
                 self._cursor.execute("""SELECT * FROM bristo_contacts_calls WHERE
                     bristo_contacts_calls_owner = %s ORDER by 
                     bristo_contacts_calls_ct_id,
                     bristo_contacts_calls_stamp LIMIT %s""",  (_user, self._limit))
-                self.fetch_calls[self._query] = self._cursor.fetchall() # Get all calls
+                self.fetch_calls.append(self._cursor.fetchall()) # Get all calls
                 self._cursor.execute("""SELECT * FROM bristo_contacts_appt WHERE
                      bristo_contacts_appt_owner = %s ORDER by 
                         bristo_contacts_appt_ct_id,
                         bristo_contacts_appt_stamp LIMIT %s """, (_user,self._limit ))
-                self.fetch_appts[self._query] = self._cursor.fetchall() # Get all appointments
+                self.fetch_appts.append(self._cursor.fetchall()) # Get all appointments
                 self.update_fetch_results()
                 _msg = 'All data fetched from database.'
                 self.contactsStatusBar.showMessage(_msg, 7000)
@@ -1859,14 +1858,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-                self._connected = False 
-                # Create new set
-                self._query += 1
-                self.fetch_results.append(self._query)
-                self.fetch_notes.append(self._query)
-                self.fetch_files.append(self._query)
-                self.fetch_calls.append(self._query)
-                self.fetch_appts.append(self._query)
+                self._connected = False
+                # After adding the below line shared variable problem.
+                self._query = len(self.fetch_results)
                 self.db_contacts_fetch()
 
             self.incorrectgrouplogin()
