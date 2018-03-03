@@ -104,6 +104,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.fetch_files = []
         self.fetch_calls = []
         self.fetch_appts = []
+        self.fetch_groups = []
         self._MYCONTACTS = 0
         self._LASTGROUP = 0
         
@@ -186,7 +187,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._groupnm = None
         self._update_groups = False
         self._grpnm_addr = None
-        self.fetch_groups = None
         self.fetch_groups_owned = None
 
         # Table Rows
@@ -1021,13 +1021,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct.bristo_contacts_ct_group = 
                 bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
                 (_user, _user, _user, self._limit))
-                self.fetch_groups = self._cursor.fetchall()
+                self.fetch_groups.append(self._cursor.fetchall())
             if self._groupqry:    
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups 
                     WHERE bristo_contacts_groups_group = %s 
                     ORDER by bristo_contacts_groups_group LIMIT %s;""",
                 (_grp, self._limit))                
-                self.fetch_groups_owned = self._cursor.fetchall() # Gets owned groups
+                self.fetch_groups.append(self._cursor.fetchall())
 
     def get_groups_owned(self):
         '''
@@ -1419,8 +1419,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _grp_qry = self.search_groups.searchGroupLineEdit.text()
 
             if _grp_qry:
-                for _grp_idx in range(len(self.fetch_groups)):
-                    _grps = self.fetch_groups[_grp_idx][self._GRPNAME]
+                for _grp_idx in range(len(self.fetch_groups[self._query])):
+                    _grps = self.fetch_groups[self._query][_grp_idx][self._GRPNAME]
                     if _grp_qry in _grps:
                         self._ITEM = _grp_idx
                         self.display_data()
@@ -1566,7 +1566,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _oph = self.search_groups.groupOfficePhoneLineEdit.text()
         _fax = self.search_groups.groupOfficeFaxLineEdit.text()
         if _pwd and _confirm:
-            _id = self.fetch_groups[self._ITEM][self._GROUPID]
+            _id = self.fetch_groups[self._query][self._ITEM][self._GROUPID]
             if _pwd == _confirm:
                 _pwd_match = True
             _complex = self.mincomplex(_pwd)
@@ -1860,7 +1860,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
                 # After adding the below line shared variable problem.
-                self._query = len(self.fetch_results)
+                self._query += 1
                 self.db_contacts_fetch()
 
             self.incorrectgrouplogin()
@@ -2054,18 +2054,18 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.bristo_search.groupCtLogoLabel.clear()
         _idx = 0
         if _grp_nm:
-            for _idx in range(len(self.fetch_groups)):
-                if _grp_nm == self.fetch_groups[_idx][self._GRPNAME]:
+            for _idx in range(len(self.fetch_groups[self._query])):
+                if _grp_nm == self.fetch_groups[self._query][_idx][self._GRPNAME]:
                     break
 
-            if self.fetch_groups:
+            if self.fetch_groups[self._query]:
                 self.bristo_search.plainTextEdit.insertPlainText(
-                self.fetch_groups[_idx][self._GRPDESC])
+                self.fetch_groups[self._query][_idx][self._GRPDESC])
                 # Get logo
-                self._image_bytea1 = self.fetch_groups[_idx][self._GRPPIC]
+                self._image_bytea1 = self.fetch_groups[self._query][_idx][self._GRPPIC]
                 self.display_pic(self.bristo_search.groupLogoLabel,
                     self._image_bytea1)
-                self._image_bytea2 = self.fetch_groups[_idx][self._GRPPIC]
+                self._image_bytea2 = self.fetch_groups[self._query][_idx][self._GRPPIC]
                 self.display_pic(self.bristo_search.groupCtLogoLabel, self._image_bytea2)
                 _idx = 0
 
@@ -2472,7 +2472,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._image_bin = open(fname, 'rb').read()          # Read > pointer
             self.search_groups.newGroupLabel.setPixmap(self._image)
             if self._connected:
-                _id = self.fetch_groups[self._ITEM][self._ID]
+                _id = self.fetch_groups[self._query][self._ITEM][self._ID]
                 self._cursor = self._conn_main.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_groups SET 
                 (bristo_contacts_groups_pic) = (%s) 
