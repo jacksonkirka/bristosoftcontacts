@@ -290,6 +290,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.actionLast_Item.triggered.connect(self.db_item_fetch_last)
         self.actionSearch.triggered.connect(self.db_fetch_contact)
         self.actionUpdate.triggered.connect(self.db_update_contact)
+        
+        # Next and Previous Group
+        self.menuGroups.addSeparator()
+        self.menuGroups.addAction('Next Group', self.db_group_next)
+        self.menuGroups.addAction('Prev Group', self.db_group_prev)
 
         # Set contactsStatusBar to red
         self.conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
@@ -1347,8 +1352,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_group_next fetches the next group by incrementing self._query
         index to point to the next nested in the 3d list matrix.
         '''
+
         if not self._query >= self._LASTGROUP:
             self._query += 1
+            self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
     
     def db_group_prev(self):
@@ -1358,6 +1365,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         if not self._query <= self._MYCONTACTS:
             self._query -= 1
+            self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
 
     def db_fetch_contact(self):
@@ -1859,8 +1867,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
-                # After adding the below line shared variable problem.
                 self._query = len(self.fetch_results)
+                self._LASTGROUP += 1
+                # Add group menu item for this group query
                 self.db_contacts_fetch()
 
             self.incorrectgrouplogin()
