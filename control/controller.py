@@ -1860,7 +1860,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
                 # After adding the below line shared variable problem.
-                self._query += 1 # May need to move due to signals by user
+                self._query = len(self.fetch_results)
                 self.db_contacts_fetch()
 
             self.incorrectgrouplogin()
