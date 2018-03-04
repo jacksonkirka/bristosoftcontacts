@@ -293,8 +293,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Next and Previous Group
         self.menuGroups.addSeparator()
-        self.menuGroups.addAction('Next Group', self.db_group_next)
-        self.menuGroups.addAction('Prev Group', self.db_group_prev)
+        self.menuGroups.addAction('Next Group', self.db_group_next,
+            QKeySequence('Ctrl+Shift+Down'))
+        self.menuGroups.addAction('Prev Group', self.db_group_prev,
+            QKeySequence('Ctrl+Shift+Up'))
 
         # Set contactsStatusBar to red
         self.conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
