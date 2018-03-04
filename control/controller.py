@@ -1357,6 +1357,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         if not self._query >= self._LASTGROUP:
             self._query += 1
+            self._ITEM = 0
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
     
@@ -1366,6 +1367,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         index to point to the next nested in the 3d list matrix.
         '''
         if not self._query <= self._MYCONTACTS:
+            self._ITEM = 0
             self._query -= 1
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
@@ -1869,8 +1871,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
-                self._query = len(self.fetch_results)
                 self._LASTGROUP += 1
+                self._query = self._LASTGROUP
                 # Add group menu item for this group query
                 self.db_contacts_fetch()
 
