@@ -114,14 +114,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # Security
         self._secure = Security()
 
-        # Stack and Dialogs
-        self.bristo_stack = QStackedWidget()
-        self.bristo_stack.hide()
-        self.search_groups = bristoSearchGroupDlg()
-        self.bristo_search = bristoContactsSearchDialog()
-        self.bristo_stack.addWidget(self.bristo_search)
-        self.bristo_stack.addWidget(self.search_groups)
-        self.setCentralWidget(self.bristo_stack)
 
         # Users
         self._user = None
@@ -252,6 +244,81 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._msg_read_uuid = None
         self._conn_mesg_key = 192938293829335
         
+        # Stack and Dialogs
+        self.bristo_stack = QStackedWidget()
+        self.bristo_stack.hide()
+        self.search_groups = bristoSearchGroupDlg()
+        self.bristo_search = bristoContactsSearchDialog()
+        
+        # Hide columns on calls, appointments and messages
+        self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
+        self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
+        self.bristo_search.callsTableWidget.setColumnHidden(self._calls_ct_id,
+            True)
+        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_id,  True)
+        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_ct_id,  True)
+        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_stamp,  True)
+        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_id,  True)
+        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_receiver, True)
+        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_uuid, True)
+        self._live_set = False # Prevents Duplicate Live Widgets
+        self._calendar_activated = False # User double clicked date on calendar
+        self._displayed_apptsbydate = False # Appointments by date display once
+
+        # set bristoMapper class
+        self.google_com = bristoMapper()
+        layout = QHBoxLayout()
+        layout.addWidget(self.google_com)
+        self.bristo_search.mapTabFrame.setLayout(layout)
+
+        # set bristoMailFrame
+        self.google_mail_com = bristoMailView()
+        mail_layout = QHBoxLayout()
+        mail_layout.addWidget(self.google_mail_com)
+        self.bristo_search.emailFrame.setLayout(mail_layout)
+
+        # Notes
+        self.bristo_search.notesTableWidget.setHorizontalHeaderLabels(
+            ['Time Stamp', 'Notes'])
+
+        # Documents
+        self.bristo_search.fileTableWidget.setHorizontalHeaderLabels(
+            ['Id','Time Stamp', 'File Name'])
+
+        self.active_dlg = 'search'
+
+        # Phone Calls
+        self.bristo_search.callsTableWidget.setHorizontalHeaderLabels(
+            ['ID', 'CTID', 'Time Stamp', 'Phone/CID', 'IO', 'Results'])
+
+        self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
+            self._calls_stamp, 140)
+        self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
+            self._calls_phone, 140)
+        self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
+            self._calls_in, 22)
+
+        # Appointments
+        self.bristo_search.apptTableWidget.setHorizontalHeaderLabels(
+            ['ID', 'CTID', 'Time Stamp', 'Date/Time', 'CO', 'Purpose'])
+        self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
+            self._appt_time, 150)
+        self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
+            self._appt_complete, 28)
+        
+        # Messages
+        self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
+            ['ID','UUID','Stamp','Sender','Receiver','Contact Messages'])
+        self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
+            self._msg_stamp, 70)
+        self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
+            self._msg_sender, 75)
+            
+        # Add dialogues to the stack and stack to central widget
+        self.bristo_stack.addWidget(self.bristo_search)
+        self.bristo_stack.addWidget(self.search_groups)
+        self.setCentralWidget(self.bristo_stack)
+        
         # Query Progress Bar
         self._query_progressbar = QProgressBar()
         self._query_progressbar.setGeometry(30, 40, 200, 25)
@@ -293,10 +360,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # Next and Previous Group
         self.menuGroups.addSeparator()
+        self.menuGroups.addAction('My Contacts', self.db_my_contacts,
+            QKeySequence('Home'))
+        self.menuGroups.addSeparator()
         self.menuGroups.addAction('Next Group', self.db_group_next,
             QKeySequence('Ctrl+Shift+Down'))
         self.menuGroups.addAction('Prev Group', self.db_group_prev,
             QKeySequence('Ctrl+Shift+Up'))
+        self.menuGroups.addSeparator()
+
 
         # Set contactsStatusBar to red
         self.conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
@@ -1104,72 +1176,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.contactsStatusBar.showMessage(_msg, 7000)  
         self.reset_timer()      
         self._groups = False
-
-        # Hide columns on calls, appointments and messages
-        self.bristo_search.fileTableWidget.setColumnHidden(self._file_id,True)
-        self.bristo_search.callsTableWidget.setColumnHidden(self._calls_id,  True)
-        self.bristo_search.callsTableWidget.setColumnHidden(self._calls_ct_id,
-            True)
-        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_id,  True)
-        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_ct_id,  True)
-        self.bristo_search.apptTableWidget.setColumnHidden(self._appt_stamp,  True)
-        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_id,  True)
-        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_receiver, True)
-        self.bristo_search.msgTableWidget.setColumnHidden(self._msg_uuid, True)
-        self._live_set = False # Prevents Duplicate Live Widgets
-        self._calendar_activated = False # User double clicked date on calendar
-        self._displayed_apptsbydate = False # Appointments by date display once
-
-        # set bristoMapper class
-        self.google_com = bristoMapper()
-        layout = QHBoxLayout()
-        layout.addWidget(self.google_com)
-        self.bristo_search.mapTabFrame.setLayout(layout)
-
-        # set bristoMailFrame
-        self.google_mail_com = bristoMailView()
-        mail_layout = QHBoxLayout()
-        mail_layout.addWidget(self.google_mail_com)
-        self.bristo_search.emailFrame.setLayout(mail_layout)
-
-        # Notes
-        self.bristo_search.notesTableWidget.setHorizontalHeaderLabels(
-            ['Time Stamp', 'Notes'])
-
-        # Documents
-        self.bristo_search.fileTableWidget.setHorizontalHeaderLabels(
-            ['Id','Time Stamp', 'File Name'])
-
-        self.active_dlg = 'search'
-        self.bristo_stack.setCurrentWidget(self.bristo_search)
-
-        # Phone Calls
-        self.bristo_search.callsTableWidget.setHorizontalHeaderLabels(
-            ['ID', 'CTID', 'Time Stamp', 'Phone/CID', 'IO', 'Results'])
-
-        self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
-            self._calls_stamp, 140)
-        self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
-            self._calls_phone, 140)
-        self.bristo_search.callsTableWidget.horizontalHeader().resizeSection(
-            self._calls_in, 22)
-
-        # Appointments
-        self.bristo_search.apptTableWidget.setHorizontalHeaderLabels(
-            ['ID', 'CTID', 'Time Stamp', 'Date/Time', 'CO', 'Purpose'])
-        self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
-            self._appt_time, 150)
-        self.bristo_search.apptTableWidget.horizontalHeader().resizeSection(
-            self._appt_complete, 28)
-        
-        # Messages
-        self.bristo_search.msgTableWidget.setHorizontalHeaderLabels(
-            ['ID','UUID','Stamp','Sender','Receiver','Contact Messages'])
-        self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
-            self._msg_stamp, 70)
-        self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
-            self._msg_sender, 75)
-            
         # Fetch Data from tables --> Python lists
         _user = self._user
         _email = self._user_email
@@ -1253,6 +1259,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
+                self.bristo_stack.setCurrentWidget(self.bristo_search)
                 self.bristo_stack.show()
             
 
@@ -1349,6 +1356,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._ITEM += 1
             self.display_data()
     
+    def db_my_contacts(self):
+        '''
+        db_my_contacts changes the value of self._query to zero for the
+        users own contacts retrieved without a group query.
+        '''
+        self._query = self._MYCONTACTS
+        self._ITEM = self._FIRSTITEM
+        self._LASTITEM = len(self.fetch_results[self._query]) - 1
+        self.display_data()
+    
     def db_group_next(self):
         '''
         db_group_next fetches the next group by incrementing self._query
@@ -1356,8 +1373,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
 
         if not self._query >= self._LASTGROUP:
+            self._ITEM = self._FIRSTITEM
             self._query += 1
-            self._ITEM = 0
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
     
@@ -1367,7 +1384,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         index to point to the next nested in the 3d list matrix.
         '''
         if not self._query <= self._MYCONTACTS:
-            self._ITEM = 0
+            self._ITEM = self._FIRSTITEM
             self._query -= 1
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
