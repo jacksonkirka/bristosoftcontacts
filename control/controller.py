@@ -1895,6 +1895,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         _grp_nm, _usr_reg, _usr_ctry, _usr_zip, _suc))
                 self._conn_main.commit()
                 self._cursor.close()
+                self.bristo_search.groupNameLineEdit.clear()
+                self.bristo_search.groupPwdLineEdit.clear()
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
