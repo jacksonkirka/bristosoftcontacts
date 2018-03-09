@@ -91,7 +91,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._firstlogin = True
         self.conn_msg = None
         
-        
         # Connection Pooling
         self._pool = None
         self._min_con = 2
@@ -107,6 +106,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.fetch_groups = []
         self._MYCONTACTS = 0
         self._LASTGROUP = 0
+        self._groups_dict = {}
         
         # Reports
         self._grprpt = None
@@ -1389,6 +1389,16 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.display_data()
 
+    def db_group_select(self):
+        '''
+        db_group_select sets self_query to group selected on group menu then
+        runs self.display_data().
+        '''
+        self._query = self._groups_dict[self.menuGroups.sender().text()]
+        self._ITEM = self._FIRSTITEM
+        self._LASTITEM = len(self.fetch_results[self._query]) - 1
+        self.display_data()
+    
     def db_fetch_contact(self):
         '''
 
@@ -1890,6 +1900,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._connected = False
                 self._LASTGROUP += 1
                 self._query = self._LASTGROUP
+                self._groups_dict[_db_grpnm] = self._query
+                self.menuGroups.addAction(_db_grpnm, self.db_group_select)
                 # Add group menu item for this group query
                 self.db_contacts_fetch()
 
