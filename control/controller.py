@@ -2878,10 +2878,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def printuserscontacts(self):
         '''
         printuserscontacts prints contacts in the current python contacts list in memory
-        to the printer.
+        to the printer.  Note: In future will have boolean for print authorized yes/no on
+        groups.
         '''
-        self._prt.print_users_contacts(
-            self.fetch_results[self._query],self._grprpt)
+        if self.fetch_results:
+            self._prt.print_users_contacts(
+                self.fetch_results[self._query],self._grprpt)
 
     def db_close(self):
         '''
@@ -3003,17 +3005,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
                 
         # Log authentication
-        _usr_nm = self._user
-        _usr_ip = self._usr_ip
-        _usr_city = self._usr_city
-        _usr_reg = self._usr_region
-        _usr_ctry = self._usr_ctry
-        _usr_zip = self._usr_zip
-        _suc = True
-        _in = False
-        _grplogin = False
         if self._pool:
             try:
+                _usr_nm = self._user
+                _usr_ip = self._usr_ip
+                _usr_city = self._usr_city
+                _usr_reg = self._usr_region
+                _usr_ctry = self._usr_ctry
+                _usr_zip = self._usr_zip
+                _suc = True
+                _in = False
+                _grplogin = False
                 self._conn_main = self._pool.getconn(key=self._conn_main_key)
                 self._connected = True
                 self._cursor = self._conn_main.cursor()
