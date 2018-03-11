@@ -1172,8 +1172,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.bristo_stack.setCurrentWidget(self.bristo_search)
             return
         # --------------------------------------------------------------
-        _msg = 'Please wait.  Contacts you own are being fetched....'
-        self.contactsStatusBar.showMessage(_msg, 7000)  
+        if self._pool:
+            _msg = 'Please wait.  Contacts you own are being fetched....'
+            self.contactsStatusBar.showMessage(_msg, 7000)  
         self.reset_timer()      
         self._groups = False
         # Fetch Data from tables --> Python lists
@@ -1259,8 +1260,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
-                self.bristo_stack.setCurrentWidget(self.bristo_search)
-                self.bristo_stack.show()
+        self.bristo_stack.setCurrentWidget(self.bristo_search)
+        self.bristo_stack.show()
             
 
     def update_fetch_results(self):
@@ -1496,43 +1497,76 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         the database.
 
         '''
-
-        if self._update_groups:
-            self.db_update_group()
-            return
-        self.db_login()
-        if self._connected:
-            if self._cursor.close:
-                self._cursor = self._conn_main.cursor()
-            self.reset_timer()
-            _usr = self._user
-            _usr_email = self._user_email
-            _current_id = str(self.fetch_results[self._query][self._ITEM][self._ID])
-            _company = self.bristo_search.companyLineEdit.text()
-            _mrmrs = self.bristo_search.mrmrsLineEdit.text()
-            _fname = self.bristo_search.firstNameLineEdit.text()
-            _middle = self.bristo_search.middleNameLineEdit.text()
-            _lname = self.bristo_search.lastNameLineEdit.text()
-            _cred = self.bristo_search.credLineEdit.text()
-            _addr = self.bristo_search.addressLineEdit.text()
-            _suite = self.bristo_search.suiteLineEdit.text()
-            _city = self.bristo_search.cityLineEdit.text()
-            _st = self.bristo_search.stateLineEdit.text()
-            _postal = self.bristo_search.postalLineEdit.text()
-            _oph = self.bristo_search.officePhoneLineEdit.text()
-            _cell = self.bristo_search.cellPhoneLineEdit.text()
-            _fax = self.bristo_search.officeFaxLineEdit.text()
-            _hph = self.bristo_search.homePhoneLineEdit.text()
-            _oemail = self.bristo_search.officeEmailLineEdit.text()
-            _pemail = self.bristo_search.personalEmailLineEdit.text()
-            _oweb = self.bristo_search.officeWebLineEdit.text()
-            _pweb = self.bristo_search.personalWebLineEdit.text()
-            _gname = self.bristo_search.groupNameLineEdit.text()
-
-            # Check if group name enter and user authorized
-            if _gname:
-                _owner = self.db_user_owns_group(_gname)
-                if _owner:
+        if self._pool:
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
+            if self._update_groups:
+                self.db_update_group()
+                return
+            if self._connected:
+                if self._cursor.close:
+                    self._cursor = self._conn_main.cursor()
+                self.reset_timer()
+                _usr = self._user
+                _usr_email = self._user_email
+                _current_id = str(self.fetch_results[self._query][self._ITEM][self._ID])
+                _company = self.bristo_search.companyLineEdit.text()
+                _mrmrs = self.bristo_search.mrmrsLineEdit.text()
+                _fname = self.bristo_search.firstNameLineEdit.text()
+                _middle = self.bristo_search.middleNameLineEdit.text()
+                _lname = self.bristo_search.lastNameLineEdit.text()
+                _cred = self.bristo_search.credLineEdit.text()
+                _addr = self.bristo_search.addressLineEdit.text()
+                _suite = self.bristo_search.suiteLineEdit.text()
+                _city = self.bristo_search.cityLineEdit.text()
+                _st = self.bristo_search.stateLineEdit.text()
+                _postal = self.bristo_search.postalLineEdit.text()
+                _oph = self.bristo_search.officePhoneLineEdit.text()
+                _cell = self.bristo_search.cellPhoneLineEdit.text()
+                _fax = self.bristo_search.officeFaxLineEdit.text()
+                _hph = self.bristo_search.homePhoneLineEdit.text()
+                _oemail = self.bristo_search.officeEmailLineEdit.text()
+                _pemail = self.bristo_search.personalEmailLineEdit.text()
+                _oweb = self.bristo_search.officeWebLineEdit.text()
+                _pweb = self.bristo_search.personalWebLineEdit.text()
+                _gname = self.bristo_search.groupNameLineEdit.text()
+    
+                # Check if group name enter and user authorized
+                if _gname:
+                    _owner = self.db_user_owns_group(_gname)
+                    if _owner:
+                        self._cursor.execute("""UPDATE bristo_contacts_ct SET
+                            (bristo_contacts_ct_co, bristo_contacts_ct_title,
+                            bristo_contacts_ct_fname, bristo_contacts_ct_middle,
+                            bristo_contacts_ct_lname, bristo_contacts_ct_cred,
+                            bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
+                            bristo_contacts_ct_city, bristo_contacts_ct_state,
+                            bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
+                            bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
+                            bristo_contacts_ct_home, bristo_contacts_ct_email1,
+                            bristo_contacts_ct_email2, bristo_contacts_ct_web,
+                            bristo_contacts_ct_web2, bristo_contacts_ct_group)
+                            = (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
+                            %s, %s,%s,%s) WHERE bristo_contacts_ct_id = %s AND 
+                            bristo_contacts_ct_owner = %s OR
+                            bristo_contacts_ct_id = %s AND
+                            bristo_contacts_ct_email1 = %s;""",
+                            (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
+                            _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
+                            _pemail,_oweb,_pweb,_gname, _current_id, _usr,
+                            _current_id, _usr_email))
+                        self._conn_main.commit()
+                        self.contactsStatusBar.showMessage('Contact Updated.', 3000)
+                        self._pool.putconn(
+                            conn=self._conn_main, key=self._conn_main_key)
+                        self._connected = False
+                    elif not _owner:
+                        self.contactsStatusBar.showMessage(
+                        'Group nonexistent or user unauthorized. Please Retry.', 5000)
+                        self._pool.putconn(
+                            conn=self._conn_main, key=self._conn_main_key)
+                        self._connected = False
+                else:
                     self._cursor.execute("""UPDATE bristo_contacts_ct SET
                         (bristo_contacts_ct_co, bristo_contacts_ct_title,
                         bristo_contacts_ct_fname, bristo_contacts_ct_middle,
@@ -1543,51 +1577,22 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
                         bristo_contacts_ct_home, bristo_contacts_ct_email1,
                         bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                        bristo_contacts_ct_web2, bristo_contacts_ct_group)
-                        = (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,
-                        %s, %s,%s,%s) WHERE bristo_contacts_ct_id = %s AND 
+                        bristo_contacts_ct_web2) = (%s,%s,%s,%s,%s,%s,%s,%s,
+                        %s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s) WHERE
+                        bristo_contacts_ct_id = %s AND 
                         bristo_contacts_ct_owner = %s OR
                         bristo_contacts_ct_id = %s AND
                         bristo_contacts_ct_email1 = %s;""",
                         (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
                         _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
-                        _pemail,_oweb,_pweb,_gname, _current_id, _usr, _current_id, 
+                        _pemail,_oweb,_pweb, _current_id,  _usr, _current_id, 
                         _usr_email))
+    
                     self._conn_main.commit()
                     self.contactsStatusBar.showMessage('Contact Updated.', 3000)
-                    self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                    self._pool.putconn(
+                        conn=self._conn_main, key=self._conn_main_key)
                     self._connected = False
-                elif not _owner:
-                    self.contactsStatusBar.showMessage(
-                    'Group nonexistent or user unauthorized. Please Retry.', 5000)
-                    self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-                    self._connected = False
-            else:
-                self._cursor.execute("""UPDATE bristo_contacts_ct SET
-                    (bristo_contacts_ct_co, bristo_contacts_ct_title,
-                    bristo_contacts_ct_fname, bristo_contacts_ct_middle,
-                    bristo_contacts_ct_lname, bristo_contacts_ct_cred,
-                    bristo_contacts_ct_addr1, bristo_contacts_ct_addr2,
-                    bristo_contacts_ct_city, bristo_contacts_ct_state,
-                    bristo_contacts_ct_postal, bristo_contacts_ct_ph_office,
-                    bristo_contacts_ct_ph_cell, bristo_contacts_ct_fax,
-                    bristo_contacts_ct_home, bristo_contacts_ct_email1,
-                    bristo_contacts_ct_email2, bristo_contacts_ct_web,
-                    bristo_contacts_ct_web2) = (%s,%s,%s,%s,%s,%s,%s,%s,
-                    %s,%s,%s,%s,%s,%s,%s,%s, %s,%s,%s) WHERE
-                    bristo_contacts_ct_id = %s AND 
-                    bristo_contacts_ct_owner = %s OR
-                    bristo_contacts_ct_id = %s AND
-                    bristo_contacts_ct_email1 = %s;""",
-                    (_company,_mrmrs,_fname,_middle,_lname,_cred, _addr,
-                    _suite,_city,_st,_postal,_oph,_cell,_fax, _hph,_oemail,
-                    _pemail,_oweb,_pweb, _current_id,  _usr, _current_id, 
-                    _usr_email))
-
-                self._conn_main.commit()
-                self.contactsStatusBar.showMessage('Contact Updated.', 3000)
-                self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-                self._connected = False
 
     def db_update_group(self):
         '''
