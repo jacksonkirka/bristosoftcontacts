@@ -720,7 +720,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._user = _usrnm
         self._passwd = _oldpwd
         self._chgpwd = True
-        self.db_login()
+        if self._pool:
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
         if self._connected and _newpwd == _reenter and _complex:
             _newpwdhash = self._secure.hashpwd(_newpwd) # Hash new password
             self._cursor = self._conn_main.cursor()
@@ -732,6 +734,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.contactsStatusBar.showMessage(
             "Successful.  Log out and log back in with new password.", 10000)
             self._chgpwd = False
+            self._cursor.close()
+            self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
         else:
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
