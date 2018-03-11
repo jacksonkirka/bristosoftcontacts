@@ -1325,8 +1325,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_fetch_first fetches the first item in the results set.
 
         '''
-        self._ITEM = self._FIRSTITEM
-        self.display_data()
+        if self.fetch_results:
+            self._ITEM = self._FIRSTITEM
+            self.display_data()
 
     def db_item_fetch_last(self):
         '''
@@ -1334,8 +1335,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_fetch_last fetches the last item in the result set.
 
         '''
-        self._ITEM = self._LASTITEM
-        self.display_data()
+        if self.fetch_results:
+            self._ITEM = self._LASTITEM
+            self.display_data()
 
 
     def db_item_prev(self):
@@ -1343,7 +1345,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_prev fetches the previous item before the current item based on
         index in the python list result set.
         '''
-        if not self._ITEM <= self._FIRSTITEM:
+        if not self._ITEM <= self._FIRSTITEM and self.fetch_results:
             self._ITEM -= 1
             self.display_data()
 
@@ -1352,7 +1354,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_next fetches the next item after the current item based on
         index in the python list results set.
         '''
-        if not self._ITEM >= self._LASTITEM:
+        if not self._ITEM >= self._LASTITEM and self.fetch_results:
             self._ITEM += 1
             self.display_data()
     
@@ -1361,10 +1363,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_my_contacts changes the value of self._query to zero for the
         users own contacts retrieved without a group query.
         '''
-        self._query = self._MYCONTACTS
-        self._ITEM = self._FIRSTITEM
-        self._LASTITEM = len(self.fetch_results[self._query]) - 1
-        self.display_data()
+        if self.fetch_results:
+            self._query = self._MYCONTACTS
+            self._ITEM = self._FIRSTITEM
+            self._LASTITEM = len(self.fetch_results[self._query]) - 1
+            self.display_data()
     
     def db_group_next(self):
         '''
@@ -1372,7 +1375,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         index to point to the next nested in the 3d list matrix.
         '''
 
-        if not self._query >= self._LASTGROUP:
+        if not self._query >= self._LASTGROUP and self.fetch_results:
             self._ITEM = self._FIRSTITEM
             self._query += 1
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
@@ -1383,7 +1386,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_group_next fetches the previous group by incrementing self._query
         index to point to the next nested in the 3d list matrix.
         '''
-        if not self._query <= self._MYCONTACTS:
+        if not self._query <= self._MYCONTACTS and self.fetch_results:
             self._ITEM = self._FIRSTITEM
             self._query -= 1
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
@@ -1392,7 +1395,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_group_select(self):
         '''
         db_group_select sets self_query to group selected on group menu then
-        runs self.display_data().
+        runs self.display_data(). Note: menu does not exist until after query
+        so no test for self.fetch_results need.
         '''
         self._query = self._groups_dict[self.menuGroups.sender().text()]
         self._ITEM = self._FIRSTITEM
