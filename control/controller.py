@@ -577,10 +577,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
 
                     if self._disconnected:
-                        self.contactsStatusBar.removeWidget(self.conn_msg)
-                    self.conn_msg = QLabel("ssl:"+self._user + "@"+
-                                            self._host+
-                                          '/'+ self._db +'.')
+                        pass
+                        #self.contactsStatusBar.removeWidget(self.conn_msg)
+                    #self.conn_msg = QLabel("ssl:"+self._user + "@"+
+                                            #self._host+
+                                          #'/'+ self._db +'.')
+                    # self.conn_msg = QLabel("")
                     if not self._account_expired:
                         self.contactsStatusBar.setStyleSheet("background-color: \
                                                          rgb(179, 255, 188);")
@@ -588,7 +590,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(255, 165, );")
                     if not self._chgpwd:
-                        self.contactsStatusBar.addWidget(self.conn_msg)
+                        pass
+                        # self.contactsStatusBar.addWidget(self.conn_msg)
 
                     # Log authentication
                     _usr_ip = self._usr_ip
@@ -624,7 +627,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self.msg_poll_timer()
                     self._connected = False
                     self.contactsStatusBar.showMessage(
-                        self._user+'@'+self._host+'/'+ self._db+'      logged in.',
+                        self._user+'@'+self._host+'/'+ self._db+' logged in.',
                             40000)
                     self.contactsStatusBar.setStyleSheet("background-color: \
                                                           rgb(230, 128, 128);")
