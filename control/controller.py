@@ -2938,6 +2938,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._conn_main.commit()
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._pool.closeall()
+                self._pool = None
                 self._connected = False
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                                       rgb(230, 128, 128);")
