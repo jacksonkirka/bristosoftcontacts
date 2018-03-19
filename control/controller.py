@@ -1665,7 +1665,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         udate_usercontact_availability updates the users contact
         availability status if user matches the current contact.
         '''
-        self.db_login()
+        if self._pool:
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
         _current_id = str(self.fetch_results[self._query][self._ITEM][self._ID])
         if self._connected and self._user_email == \
         self.fetch_results[self._query][self._ITEM][self._OEMAIL]:
