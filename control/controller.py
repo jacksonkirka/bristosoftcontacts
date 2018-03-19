@@ -2212,7 +2212,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         bristo_contacts_ct lookup value and notice itself need be entered.
 
         '''
-        self.db_login()
+        if self._pool:
+            self._conn_main = self._pool.getconn(key=self._conn_main_key)
+            self._connected = True
+        else:
+            return
         if self._connected:
             self.reset_timer()
             _owner = self._user
