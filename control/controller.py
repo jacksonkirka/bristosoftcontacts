@@ -313,6 +313,46 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._msg_stamp, 70)
         self.bristo_search.msgTableWidget.horizontalHeader().resizeSection(
             self._msg_sender, 75)
+        
+        # Search and update Signals
+        self.bristo_search.picPushButton.clicked.connect(self.update_pic)
+        self.bristo_search.availabilityPushButton.clicked.connect(
+            self.update_usercontact_availablity)
+        self.bristo_search.notesTableWidget.cellChanged.connect(
+            self.db_insert_contact_note)
+        self.bristo_search.callsTableWidget.cellChanged.connect(
+            self.db_insert_contact_call)
+        self.bristo_search.apptTableWidget.cellChanged.connect(
+            self.db_insert_update_appt)
+        self.bristo_search.msgTableWidget.cellChanged.connect(
+            self.db_insert_contact_msg)
+        self.bristo_search.notesDetailPushButton.clicked.connect(
+            self.resize_notes)
+        self.bristo_search.callsDetailPushButton.clicked.connect(
+            self.resize_calls)
+        self.bristo_search.apptDetailPushButton.clicked.connect(
+            self.resize_appts)
+        self.bristo_search.msgDetailPushButton.clicked.connect(
+            self.resize_msg)
+        self.bristo_search.chkmsgPushButton.clicked.connect(
+            self.check_messages)
+        self.bristo_search.filePushButton.clicked.connect(
+            self.db_insert_contact_file)
+        self.bristo_search.fileTableWidget.doubleClicked.connect(
+            self.get_contact_file)
+        self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
+        self.bristo_search.browserMapPushButton.clicked.connect(self.open_url_map)
+        self.bristo_search.directionsPushButton.clicked.connect(
+            self.open_url_directions)
+        self.bristo_search.accessGroupPushButton.clicked.connect(
+            self.display_group_contacts)
+        self.bristo_search.emailRefreshPushButton.clicked.connect(
+            self.refresh_email)
+        self.bristo_search.callsTableWidget.clicked.connect(
+            self.live_call_widgets)
+        self.bristo_search.apptTableWidget.clicked.connect(self.live_appt_widgets)
+        self.bristo_search.calendarWidget.activated.connect(
+            self.display_appts_bydate)
             
         # Add dialogues to the stack and stack to central widget
         self.bristo_stack.addWidget(self.bristo_search)
@@ -1282,47 +1322,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._LASTITEM = len(self.fetch_results[self._query]) - 1
         self.bristo_search_dlg = False
         self._update_groups = False
-
-        # Seach and update Signals
-        self.bristo_search.picPushButton.clicked.connect(self.update_pic)
-        self.bristo_search.availabilityPushButton.clicked.connect(
-            self.update_usercontact_availablity)
-        self.bristo_search.notesTableWidget.cellChanged.connect(
-            self.db_insert_contact_note)
-        self.bristo_search.callsTableWidget.cellChanged.connect(
-            self.db_insert_contact_call)
-        self.bristo_search.apptTableWidget.cellChanged.connect(
-            self.db_insert_update_appt)
-        self.bristo_search.msgTableWidget.cellChanged.connect(
-            self.db_insert_contact_msg)
-        self.bristo_search.notesDetailPushButton.clicked.connect(
-            self.resize_notes)
-        self.bristo_search.callsDetailPushButton.clicked.connect(
-            self.resize_calls)
-        self.bristo_search.apptDetailPushButton.clicked.connect(
-            self.resize_appts)
-        self.bristo_search.msgDetailPushButton.clicked.connect(
-            self.resize_msg)
-        self.bristo_search.chkmsgPushButton.clicked.connect(
-            self.check_messages)
-        self.bristo_search.filePushButton.clicked.connect(
-            self.db_insert_contact_file)
-        self.bristo_search.fileTableWidget.doubleClicked.connect(
-            self.get_contact_file)
-        self.bristo_search.refreshMapPushButton.clicked.connect(self.refresh_map)
-        self.bristo_search.browserMapPushButton.clicked.connect(self.open_url_map)
-        self.bristo_search.directionsPushButton.clicked.connect(
-            self.open_url_directions)
-        self.bristo_search.accessGroupPushButton.clicked.connect(
-            self.display_group_contacts)
-        self.bristo_search.emailRefreshPushButton.clicked.connect(
-            self.refresh_email)
-        self.bristo_search.callsTableWidget.clicked.connect(
-            self.live_call_widgets)
-        self.bristo_search.apptTableWidget.clicked.connect(self.live_appt_widgets)
-        self.bristo_search.calendarWidget.activated.connect(
-            self.display_appts_bydate)
-
         self._ITEM = self._FIRSTITEM
         self.display_data()
 
