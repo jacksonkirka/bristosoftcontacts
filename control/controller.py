@@ -964,6 +964,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     'Duplicate email or office phone. Please Retry.', 5000)
                     self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                     self._connected = False
+        else:
+            self.connection_closed_msg()
 
     def db_copy_group_address(self, _group):
         '''
@@ -1221,13 +1223,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # --------------------------------------------------------------
         if self._pool:
             _msg = 'Please wait.  Contacts you own are being fetched....'
-            self.contactsStatusBar.showMessage(_msg, 7000)  
-        self.reset_timer()      
-        self._groups = False
-        # Fetch Data from tables --> Python lists
-        _user = self._user
-        _email = self._user_email
-        if self._pool:
+            self.contactsStatusBar.showMessage(_msg, 7000)
+            self.reset_timer()      
+            self._groups = False
+            _user = self._user
+            _email = self._user_email
+           # Fetch Data from tables --> Python lists
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
             if self._connected:
@@ -1307,8 +1308,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
+        else:
+            self.connection_closed_msg()
         self.bristo_stack.setCurrentWidget(self.bristo_search)
         self.bristo_stack.show()
+        
             
 
     def update_fetch_results(self):
@@ -1599,6 +1603,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._pool.putconn(
                         conn=self._conn_main, key=self._conn_main_key)
                     self._connected = False
+        else:
+            self.connection_closed_msg()
+            
 
     def db_update_group(self):
         '''
@@ -1658,6 +1665,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             else:
                 self.contactsStatusBar.showMessage('Please enter group password.',
                     3000)
+        else:
+            self.connection_closed_msg()
 
     def update_usercontact_availablity(self):
         '''
@@ -2216,6 +2225,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
         else:
+            self.connection_closed_msg()
             return
         if self._connected:
             self.reset_timer()
@@ -2274,6 +2284,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self.contactsStatusBar.showMessage('No Message to send...', 4000)
                     self._pool.putconn(conn=self._conn_main,  key=self._conn_main_key)
                     self._connected = False
+        else:
+            self.connection_closed_msg()
     
     def check_messages(self):
         '''
@@ -2281,37 +2293,38 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         database table that were sent by the current user to the current contact
         and that were sent by the current contact to the current user.
         '''
-        
-        self.block_signals()
-        self.reset_timer()
-        # Query the database to create list of messages returned by psycopg2
-        # driver from the PostgreSQL database.
-        _user = self._user
-        _contct_email = self.fetch_results[self._query][self._ITEM][self._OEMAIL]
-        _contct_usrnm = self.get_contact_username(_contct_email)
-        if _contct_usrnm and self._pool:
-            self._conn_main = self._pool.getconn(key=self._conn_main_key)
-            self._connected = True
-            self._cursor = self._conn_main.cursor()
-            self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
-                    bristo_contacts_messages_sender = %s AND 
-                    bristo_contacts_messages_receiver = %s OR
-                    bristo_contacts_messages_sender = %s AND 
-                    bristo_contacts_messages_receiver = %s
-                    ORDER by bristo_contacts_messages_stamp 
-                    LIMIT %s;""",
-                    (_user, _contct_usrnm, _contct_usrnm, _user, self._limit))
-            self.fetch_msg = self._cursor.fetchall() # Get messages
-            self.display_messages(self.fetch_msg) # Display messages
-            self.contactsStatusBar.showMessage('Messages updated .......', 4000)
-            self._cursor.close()
-            self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
-            self._connected = False
-            self.unblock_signals()
+        if self._pool:
+            self.block_signals()
+            self.reset_timer()
+            # Query the database to create list of messages returned by psycopg2
+            # driver from the PostgreSQL database.
+            _user = self._user
+            _contct_email = self.fetch_results[self._query][self._ITEM][self._OEMAIL]
+            _contct_usrnm = self.get_contact_username(_contct_email)
+            if _contct_usrnm and self._pool:
+                self._conn_main = self._pool.getconn(key=self._conn_main_key)
+                self._connected = True
+                self._cursor = self._conn_main.cursor()
+                self._cursor.execute("""SELECT * FROM bristo_contacts_messages WHERE
+                        bristo_contacts_messages_sender = %s AND 
+                        bristo_contacts_messages_receiver = %s OR
+                        bristo_contacts_messages_sender = %s AND 
+                        bristo_contacts_messages_receiver = %s
+                        ORDER by bristo_contacts_messages_stamp 
+                        LIMIT %s;""",
+                        (_user, _contct_usrnm, _contct_usrnm, _user, self._limit))
+                self.fetch_msg = self._cursor.fetchall() # Get messages
+                self.display_messages(self.fetch_msg) # Display messages
+                self.contactsStatusBar.showMessage('Messages updated .......', 4000)
+                self._cursor.close()
+                self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
+                self._connected = False
+                self.unblock_signals()
+            else:
+                self.bristo_search.msgTableWidget.clearContents()
+                self.contactsStatusBar.showMessage('User not found.....', 4000)
         else:
-            self.bristo_search.msgTableWidget.clearContents()
-            self.contactsStatusBar.showMessage('User not found.....', 4000)
-            
+            self.connection_closed_msg()
 
     def get_contact_username(self,  _contact_email):
         '''
