@@ -1848,6 +1848,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
         else:
+            self.connection_closed_msg()
             return
         # Authenticate group
         _grp_nm = self.bristo_search.groupNameLineEdit.text()
@@ -3016,6 +3017,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 '/'+ self._db+' logged out due to inactivity.')
                 self.contactsStatusBar.addWidget(self.conn_msg)
                 self._disconnected = True
+    
+    def connection_closed_msg(self):
+        '''
+        connection_closed_msg displays a message in the status bar that
+        informs they are not logged in and to login to complete their
+        query.
+        '''
+        self.contactsStatusBar.showMessage(
+                'Connection closed.  Please login.', 5000)
             
 
     def close_contacts(self):
