@@ -409,13 +409,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             QKeySequence('Ctrl+Shift+Up'))
         self.menuGroups.addSeparator()
 
-
-        # Set contactsStatusBar to red
-        self.conn_msg = QLabel('Welcome to bristoSOFT Contacts v. 0.1')
-        self.contactsStatusBar.addWidget(self.conn_msg)
-        self.contactsStatusBar.setStyleSheet("background-color: \
-        rgb(230, 128, 128);")
-
         # Settings
         settings = QSettings()
         size = settings.value("MainWindow/Size",
@@ -428,6 +421,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         # Set Main Window Icon
         self.setWindowIcon(QIcon(":icons/family.ico"))
+        
+        # Set contactsStatusBar to red
+        self.conn_msg = 'Welcome to bristoSOFT Contacts v. 0.1'
+        self.contactsStatusBar.showMessage(self.conn_msg, 5000)
+        self.contactsStatusBar.setStyleSheet("background-color: \
+        rgb(230, 128, 128);")
 
     # About class methods
     def aboutqt(self):
@@ -822,8 +821,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(230, 128, 128);")
         if self._disconnected:
             self.contactsStatusBar.removeWidget(self.conn_msg)
-        self.conn_msg = QLabel('Login incorrect, please try again.')
-        self.contactsStatusBar.addWidget(self.conn_msg)
+        _msg = 'Login incorrect, please try again.'
+        self.contactsStatusBar.showMessage(_msg,  3000)
 
     def incorrectgrouplogin(self):
 
@@ -868,8 +867,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                                   rgb(230, 128, 128);")
             if self._disconnected:
                 self.contactsStatusBar.removeWidget(self.conn_msg)
-            self.conn_msg = QLabel('Group login incorrect, please try again.')
-            self.contactsStatusBar.addWidget(self.conn_msg)
+            _msg = 'Group login incorrect, please try again.'
+            self.contactsStatusBar.showMessage(_msg,  3000)
 
     def db_contact_new(self):
 
