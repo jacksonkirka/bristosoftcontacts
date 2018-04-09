@@ -3078,23 +3078,22 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     _usr_reg, _usr_ctry, _usr_zip, _suc))
             except psycopg2.DatabaseError, dberror:
                 self._conn_main.rollback()
-                self.contactsStatusBar.removeWidget(self.conn_msg)
+                # self.contactsStatusBar.removeWidget(self.conn_msg)
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
                 _err_msg =QLabel(str(dberror))
-                self.contactsStatusBar.addWidget(_err_msg)
+                self.contactsStatusBar.showMessage(_err_msg)
             self._conn_main.commit()
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
             self._connected = False
             self._pool.closeall()
             self._pool = None
-            self.contactsStatusBar.removeWidget(self.conn_msg)
+            # self.contactsStatusBar.removeWidget(self.conn_msg)
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
             
-            self.conn_msg = QLabel(self._host+
-                                  '/'+ self._db+'.')
+            self.conn_msg = self._host+ '/' + self._db+'.'
             self.contactsStatusBar.addWidget(self.conn_msg)
 
         self.close()
