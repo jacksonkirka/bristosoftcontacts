@@ -708,7 +708,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._cursor_msg.close()
                     self._pool.putconn(self._conn_mesg, key=self._conn_mesg_key)
                     self._connected = False
-                    self.contactsStatusBar.removeWidget(self.conn_msg)
+                    # self.contactsStatusBar.removeWidget(self.conn_msg)
                     self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(244, 160, 66);")
                     self.contactsStatusBar.showMessage(
@@ -819,8 +819,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._disconnected = True
         self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-        if self._disconnected:
-            self.contactsStatusBar.removeWidget(self.conn_msg)
+        #if self._disconnected:
+            #self.contactsStatusBar.removeWidget(self.conn_msg)
         _msg = 'Login incorrect, please try again.'
         self.contactsStatusBar.showMessage(_msg,  3000)
 
@@ -865,8 +865,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._disconnected = True
             self.contactsStatusBar.setStyleSheet("background-color: \
                                                   rgb(230, 128, 128);")
-            if self._disconnected:
-                self.contactsStatusBar.removeWidget(self.conn_msg)
+            # if self._disconnected:
+                #self.contactsStatusBar.removeWidget(self.conn_msg)
             _msg = 'Group login incorrect, please try again.'
             self.contactsStatusBar.showMessage(_msg,  3000)
 
