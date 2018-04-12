@@ -2551,9 +2551,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                        "Image files (*.jpg *.gif *.png)")       # Get Filename
             self._image = QPixmap(fname)                        # Get Pixmap
             self._image_bin = open(fname, 'rb').read()          # Read > pointer
-            self.search_groups.newGroupLabel.setPixmap(self._image)
+            self.search_groups.newGroupLabel.setPixmap(self._image) # Show image
             if self._connected:
-                _id = self.fetch_groups[self._query][self._ITEM][self._ID]
+                _id = self.fetch_groups_owned[self._ITEM][self._ID]
                 self._cursor = self._conn_main.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_groups SET 
                 (bristo_contacts_groups_pic) = (%s) 
