@@ -2977,7 +2977,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(230, 128, 128);")
         # self.contactsStatusBar.removeWidget(self.conn_msg)
         self.conn_msg = self._user+'@'+self._host+'/'+ self._db
-        self.contactsStatusBar.addWidget(self.conn_msg)
+        self.contactsStatusBar.showMessage(self.conn_msg)
 
     def db_idle(self):
         '''
