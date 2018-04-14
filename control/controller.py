@@ -1335,7 +1335,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_fetch_first fetches the first item in the results set.
 
         '''
-        if self.fetch_results:
+        if self.fetch_results or self.fetch_groups_owned:
             self._ITEM = self._FIRSTITEM
             self.display_data()
 
@@ -1345,7 +1345,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_fetch_last fetches the last item in the result set.
 
         '''
-        if self.fetch_results:
+        if self.fetch_results or self.fetch_groups_owned:
             self._ITEM = self._LASTITEM
             self.display_data()
 
@@ -1355,7 +1355,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_prev fetches the previous item before the current item based on
         index in the python list result set.
         '''
-        if not self._ITEM <= self._FIRSTITEM and self.fetch_results:
+        if not self._ITEM <= self._FIRSTITEM \
+            and (self.fetch_results 
+            or self.fetch_groups_owned):
             self._ITEM -= 1
             self.display_data()
 
@@ -1364,7 +1366,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         db_item_next fetches the next item after the current item based on
         index in the python list results set.
         '''
-        if not self._ITEM >= self._LASTITEM and self.fetch_results:
+        if not self._ITEM >= self._LASTITEM \
+            and (self.fetch_results
+            or self.fetch_groups_owned):
             self._ITEM += 1
             self.display_data()
     
