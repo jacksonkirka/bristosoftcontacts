@@ -2964,9 +2964,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                                       rgb(230, 128, 128);")
                 self.contactsStatusBar.removeWidget(self.conn_msg)
-                self.conn_msg = QLabel(self._host+
-                                          '/'+ self._db+'.')
-                self.contactsStatusBar.addWidget(self.conn_msg)
+                self.conn_msg = self._host+'/'+ self._db+'.'
+                self.contactsStatusBar.showMessage(self.conn_msg)
                 self._disconnected = True
                 
     def restore_status_bar(self):
