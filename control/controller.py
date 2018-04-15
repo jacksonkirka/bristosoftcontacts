@@ -1476,8 +1476,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _grp_qry = self.search_groups.searchGroupLineEdit.text()
 
             if _grp_qry:
-                for _grp_idx in range(len(self.fetch_groups[self._query])):
-                    _grps = self.fetch_groups[self._query][_grp_idx][self._GRPNAME]
+                for _grp_idx in range(len(self.fetch_groups_owned)):
+                    _grps = self.fetch_groups_owned[_grp_idx][self._GRPNAME]
                     if _grp_qry in _grps:
                         self._ITEM = _grp_idx
                         self.display_data()
