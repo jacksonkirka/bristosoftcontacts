@@ -1429,7 +1429,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._clear is False:
             self.clear_search_fields()
             self._clear = True
-        elif self.bristo_search:
+        elif self.bristo_stack.currentWidget() == self.bristo_search:
             _company_qry = self.bristo_search.companyLineEdit.text()
             _lname_qry = self.bristo_search.lastNameLineEdit.text()
             _fname_qry = self.bristo_search.firstNameLineEdit.text()
@@ -1472,7 +1472,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.showMessage(_msg, 3000)
                 self._clear = False
 
-        elif self.search_groups:
+        elif self.bristo_stack.currentWidget() == self.search_groups:
             _grp_qry = self.search_groups.searchGroupLineEdit.text()
 
             if _grp_qry:
