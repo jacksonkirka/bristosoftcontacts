@@ -92,7 +92,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.conn_msg = None
         
         # Connection Pooling
-        self._pool = None
+        self._pool = False
         self._min_con = 2
         self._max_con = 10
         
@@ -2963,7 +2963,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._pool.closeall()
-                self._pool = None
+                self._pool = False
                 self._connected = False
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                                       rgb(230, 128, 128);")
@@ -3024,7 +3024,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
                 self._pool.closeall()
-                self._pool = None
+                self._pool = False
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                                       rgb(230, 128, 128);")
                 # self.contactsStatusBar.removeWidget(self.conn_msg)
@@ -3091,7 +3091,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
             self._connected = False
             self._pool.closeall()
-            self._pool = None
+            self._pool = False
             # self.contactsStatusBar.removeWidget(self.conn_msg)
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
