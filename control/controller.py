@@ -2981,7 +2981,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         else:
             self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-        self.contactsStatusBar.showMessage(self.conn_msg) 
+        #self.contactsStatusBar.showMessage(self.conn_msg) 
 
     def db_idle(self):
         '''
