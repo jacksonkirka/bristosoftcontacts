@@ -84,7 +84,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn_main_key = 192938293829395
         self._disconnected = True
         self._connected = False
-        self._conn_main_timer = 900000
+        self._conn_main_timer = 300000
         self._idle = QTimer()
         self._chgpwd = False
         self._cursor = None
