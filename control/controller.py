@@ -1513,7 +1513,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._pool:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
-            if self._update_groups:
+            if self.bristo_stack.currentWidget() == self.search_groups:
                 self.db_update_group()
                 return
             if self._connected:
