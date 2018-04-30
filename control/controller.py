@@ -2489,7 +2489,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
-                self._conn_main_timer = 10000
+                self._conn_main_timer = 300000
 
     def get_path_filename(self,  _path):
 
