@@ -669,7 +669,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         self._user+'@'+self._host+'/'+ self._db+' logged in.',
                             5000)
                     self.contactsStatusBar.setStyleSheet("background-color: \
-                                                          rgb(230, 128, 128);")
+                                                          rgb(152,251,152);")
                     #self.contactsStatusBar.removeWidget(self.conn_msg)
                     #self.conn_msg = QLabel(self._user+'@'+self._host+
                                               #'/'+ self._db+'logged in.')
@@ -2967,7 +2967,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._connected = False
                 self.contactsStatusBar.setStyleSheet("background-color: \
                                                       rgb(230, 128, 128);")
-                self.conn_msg = self._host+'/'+ self._db+'.'
+                self.conn_msg = self._user + ' logged out.'
                 self.contactsStatusBar.showMessage(self.conn_msg)
                 self._disconnected = True
                 
@@ -2975,11 +2975,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         restore_status_bar restores the status bar to red. 
         '''
-        self.contactsStatusBar.setStyleSheet("background-color: \
+        if self._pool:
+            self.contactsStatusBar.setStyleSheet("background-color: \
+                                              rgb(152,251,152);")
+        else:
+            self.contactsStatusBar.setStyleSheet("background-color: \
                                               rgb(230, 128, 128);")
-        # self.contactsStatusBar.removeWidget(self.conn_msg)
-        self.conn_msg = self._user+'@'+self._host+'/'+ self._db
-        self.contactsStatusBar.showMessage(self.conn_msg)
+        self.contactsStatusBar.showMessage(self.conn_msg) 
 
     def db_idle(self):
         '''
