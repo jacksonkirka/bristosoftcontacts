@@ -471,7 +471,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         
         # idle
         self._idle.stop()
-        self._idle = QTimer()
+        self._idle = QTimer() # do we need this -- Already defined
         self._idle.singleShot(self._conn_main_timer,  self.db_idle)
         self._idle.start() # start idle timer
         
@@ -3047,6 +3047,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.conn_msg = self._user+'@'+self._host+\
                 '/'+ self._db+' logged out due to inactivity.'
                 self.contactsStatusBar.showMessage(self.conn_msg)
+                
+                # Stop the timers
+                self._idle.stop()
+                self._poll_msg_qtimer.stop()
+                
                 self._disconnected = True
     
     def connection_closed_msg(self):
