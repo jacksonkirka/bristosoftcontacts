@@ -35,6 +35,7 @@ import os
 from secure import Security
 from bristoprint import PrintServices
 import webbrowser
+import requests
 from requests import get # Error on ordered_dict changed in compat.py
 import platform
 
@@ -503,12 +504,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def db_login(self):
         ''' 
 
-        db_login establishes a connection to a PostgreSQL database on 
+        db_login establishes a connection to a PostgreSQL database 
         with the standard connection string.
 
         '''
         # Authentication
-        self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
+        try:
+            self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
+        except requests.exceptions.ConnectionError:
+            self.contactsStatusBar.showMessage(
+            "Connection Error! Connect to internet. Try again.", 20000)
+            return
         self._usr_city = self._usr_loc['city']
         self._usr_ip = self._usr_loc['ip']
         self._usr_region = self._usr_loc['region']
