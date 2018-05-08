@@ -2243,10 +2243,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._pool:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
+
         else:
             self.connection_closed_msg()
             return
+
         if self._connected:
+            self._cursor = self._conn_main.cursor()
             self.reset_timer()
             _owner = self._user
             _crow = self.bristo_search.notesTableWidget.currentRow()
