@@ -3058,8 +3058,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.contactsStatusBar.showMessage(self.conn_msg)
                 
                 # Stop the timers
-                self._idle.stop()
-                self._poll_msg_qtimer.stop()
+                self._idle.stop()               # Stop main query timer
+                self._poll_msg_qtimer.stop()    # Stop query message timer
                 
                 self._disconnected = True
     
