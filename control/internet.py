@@ -20,17 +20,30 @@ performance of an internet connection.
 '''
 
 import urllib2
+import socket
 
 class InternetConnection:
 
-    def internet_request(_url):
+    def inet_request(_url):
         '''
-        internet_request accepts a url and returns true or false booleans.
+        inet_request accepts a url and returns true or false booleans.
         '''
         try:
             urllib2.urlopen(_url,timeout=30)
             return True
         except urllib2.URLError:
+            return False
+    
+
+    def inet_socket_request(hostname):
+        '''
+        inet_socket_reuqest accepts a url and returns true or false booleans.
+        '''
+        try:
+            host = socket.gethostbyname(hostname) # resolve hostname
+            socket.create_connection((host, 80), 2) # connect
+            return True
+        except:
             return False
 
 class InternetReliability:
