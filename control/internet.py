@@ -22,8 +22,9 @@ performance of an internet connection.
 class InternetConnection:
     pass
 
+class InternetReliability:
+    pass
+    
 class InternetPerformance:
     pass
 
-class InternetReliability:
-    pass
