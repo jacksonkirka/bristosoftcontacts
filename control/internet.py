@@ -19,8 +19,19 @@ This internet.py module provides testing of the existence, reliability and
 performance of an internet connection.
 '''
 
+import urllib2
+
 class InternetConnection:
-    pass
+
+    def internet_request(_url):
+        '''
+        internet_request accepts a url and returns true or false booleans.
+        '''
+        try:
+            urllib2.urlopen(_url,timeout=30)
+            return True
+        except urllib2.URLError:
+            return False
 
 class InternetReliability:
     pass
