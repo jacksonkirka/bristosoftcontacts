@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
-<!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2018-05-16, 01:07:37 -->
+<!-- eric project file for project internet -->
+<!-- Saved: 2018-05-16, 01:06:00 -->
 <!-- Copyright (C) 2018 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -18,7 +18,6 @@
     <Source>control/bristocache.py</Source>
     <Source>control/bristoprint.py</Source>
     <Source>control/controller.py</Source>
-    <Source>control/internet.py</Source>
     <Source>control/secure.py</Source>
     <Source>control/view.py</Source>
     <Source>family.ico</Source>
@@ -31,6 +30,7 @@
     <Source>interface/resources_rc.py</Source>
     <Source>interface/search.py</Source>
     <Source>interface/searchgroup.py</Source>
+    <Source>internet.py</Source>
     <Source>main.py</Source>
     <Source>testing/__init__.py</Source>
     <Source>testing/test_controller.py</Source>
