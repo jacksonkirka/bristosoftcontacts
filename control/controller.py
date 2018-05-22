@@ -30,7 +30,8 @@ import sip  # Needed for conversion to Python types
 sip.setapi('QString', 2)
 import datetime
 import ntpath
-import ast
+# import ast
+import json
 import os
 from secure import Security
 from bristoprint import PrintServices
@@ -510,7 +511,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         # Authentication
         try:
-            self._usr_loc = ast.literal_eval(str(get('https://ipapi.co/json').text))
+            _loc_json = get('https://ipapi.co/json')
+            self._usr_loc = json.loads(_loc_json._content)
         except requests.exceptions.ConnectionError:
             self.contactsStatusBar.showMessage(
             "Connection Error! Connect to internet. Try again.", 20000)
