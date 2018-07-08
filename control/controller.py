@@ -45,7 +45,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtWebKit import *
 # from PyQt4.uic import *
 import psycopg2
-import psycopg2.pool # import polling extension
+import psycopg2.pool # import pooling extension
 
 from bristo_exceptions import *
 from view import *
