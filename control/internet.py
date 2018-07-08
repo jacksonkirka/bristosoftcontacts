@@ -27,7 +27,7 @@ class InternetConnection:
     InternetConnection is a class of resources used to
     verify that an internet connection has been established.
     '''
-
+    @staticmethod
     def inet_request(_url):
         '''
         inet_request accepts a url and returns true or false booleans.
@@ -38,7 +38,7 @@ class InternetConnection:
         except urllib2.URLError:
             return False
     
-
+    @staticmethod
     def inet_socket_request(hostname):
         '''
         inet_socket_reuqest accepts a url and returns true or false booleans.
