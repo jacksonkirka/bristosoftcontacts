@@ -31,7 +31,8 @@ class Security:
     The Security class provides resources to maintain secure communication
     and authentication in contacts.
     '''
-    def mincomplex(self, _pwd):
+    @staticmethod
+    def mincomplex(_pwd):
         r'''
         mincomplex evaluates a plain text password and returns true if the
         password evaluated contains 1) uppercase letter, 2) lowercase letter,
@@ -78,7 +79,8 @@ class Security:
             return True
         else:
             return False
-
+            
+    @staticmethod
     def hashpwd(self, _pwd):
 
         '''
@@ -104,6 +106,7 @@ class Security:
         return hashlib.sha256(salt.encode() +
             _pwd.encode()).hexdigest() + ':' + salt
             
+    @staticmethod
     def authenticatepwd(self, _dbhashpwd, _usrpwd):
 
         '''
