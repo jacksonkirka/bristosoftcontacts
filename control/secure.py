@@ -81,7 +81,7 @@ class Security:
             return False
             
     @staticmethod
-    def hashpwd(self, _pwd):
+    def hashpwd(_pwd):
 
         '''
         hashpwd hashes a password by NSA Secure Hash Algorithm 2 
@@ -107,7 +107,7 @@ class Security:
             _pwd.encode()).hexdigest() + ':' + salt
             
     @staticmethod
-    def authenticatepwd(self, _dbhashpwd, _usrpwd):
+    def authenticatepwd(_dbhashpwd, _usrpwd):
 
         '''
         authenticatepwd authenticates the password entered by the user by
