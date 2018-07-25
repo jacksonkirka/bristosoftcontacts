@@ -31,6 +31,17 @@ class InternetConnection:
     def inet_request(_url):
         '''
         inet_request accepts a url and returns true or false booleans.
+        
+        
+        >>> iconnect = InternetConnection()
+        >>> _address = 'google.com'
+        >>> conn = iconnect.inet_request(_address)
+        >>> conn
+        True
+        >>> _address = 'googlee.com'
+        >>> conn = iconnect.inet_request(_address)
+        >>> conn
+        False
         '''
         try:
             urllib2.urlopen(_url,timeout=30)
@@ -42,12 +53,14 @@ class InternetConnection:
     def inet_socket_request(hostname):
         '''
         inet_socket_reuqest accepts a url and returns true or false booleans.
+        
+        gaierror(get address info), herror(host), timeout inheret from error.
         '''
         try:
             host = socket.gethostbyname(hostname) # resolve hostname
             socket.create_connection((host, 80), 2) # connect
             return True
-        except:
+        except socket.error:
             return False
 
 class InternetReliability:
