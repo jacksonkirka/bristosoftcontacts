@@ -15,24 +15,27 @@
 # document No. 201607803210.
 #
 '''
-This internet.py module provides testing of the existence, reliability and 
+This internet.py module provides testing of the existence, reliability and
 performance of an internet connection.
 '''
 
 import urllib2
 import socket
 
-class InternetConnection:
+class InternetConnection(object):
     '''
     InternetConnection is a class of resources used to
     verify that an internet connection has been established.
     '''
+    def __init__(self):
+        pass
+
     @staticmethod
     def inet_request(_url):
         '''
         inet_request accepts a url and returns true or false booleans.
-        
-        
+
+
         >>> iconnect = InternetConnection()
         >>> _address = 'google.com'
         >>> conn = iconnect.inet_request(_address)
@@ -44,16 +47,16 @@ class InternetConnection:
         False
         '''
         try:
-            urllib2.urlopen(_url,timeout=30)
+            urllib2.urlopen(_url, timeout=30)
             return True
         except urllib2.URLError:
             return False
-    
+
     @staticmethod
     def inet_socket_request(hostname):
         '''
         inet_socket_reuqest accepts a url and returns true or false booleans.
-        
+
         gaierror(get address info), herror(host), timeout inheret from error.
         '''
         try:
@@ -63,10 +66,32 @@ class InternetConnection:
         except socket.error:
             return False
 
-class InternetReliability:
-    pass
-    
-class InternetPerformance:
+class InternetReliability(object):
+    '''
+    This intenet reliability class provides tools to evaluate the reliability
+    of an internet connection.
+    '''
+    def __init__(self):
+        '''
+        Initialize InternetReliability class.
+        '''
+        pass
+
+    def inet_stable_connect(self, connection):
+        '''
+        inet_stable_connect accepts a connection object and returns a boolean
+        value True of False about the stability of the connection itself.
+        '''
+        pass
+
+    def inet_stable_speed(self, connection):
+        '''
+        inet_stable_speed accepts a connection object and returns a boolean
+        value of True or False about the connections speed stability.
+        '''
+        pass
+
+class InternetPerformance(object):
     '''
     Internet "speed" actually consists of multiple factors, including bandwidth,
     latency, and packet loss. What exactly are you trying to measure? If it's
@@ -96,7 +121,7 @@ class InternetPerformance:
         headers could add another kilobyte or so. All of this is significant
         when the payload is only ~10 kB short.
     DNS overhead:
-        Resolving the google.com hostname to an IP address might involve a DNS 
+        Resolving the google.com hostname to an IP address might involve a DNS
         lookup, which would add a few milliseconds. The time for that DNS lookup
         is accounted for in your benchmark, but not the traffic.
     Proximity:
@@ -104,5 +129,22 @@ class InternetPerformance:
         Internet will have different performance characteristics.
 
     '''
-    pass
+    def __init__(self):
+        '''
+        Initialized the InternetPerformance class.
+        '''
+        pass
 
+    def inet_download_speed(self, connection):
+        '''
+        inet_download_speed accepts a connection object and returns a boolean
+        value of True or False if the connection speed exceeds 5Mbps.
+        '''
+        pass
+
+    def inet_upload_speed(self, connection):
+        '''
+        inet_upload_speed accepts a connection object and returns a boolean
+        value of True or false if the speed exceeds 1Mbps.
+        '''
+        pass
