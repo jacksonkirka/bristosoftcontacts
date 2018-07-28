@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2018-05-16, 01:07:37 -->
+<!-- Saved: 2018-07-28, 10:20:38 -->
 <!-- Copyright (C) 2018 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -34,6 +34,7 @@
     <Source>main.py</Source>
     <Source>testing/__init__.py</Source>
     <Source>testing/test_controller.py</Source>
+    <Source>testing/test_internet.py</Source>
     <Source>testing/test_secure.py</Source>
   </Sources>
   <Others>
