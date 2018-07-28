@@ -42,13 +42,13 @@ import doctest
 # from PyQt4.QtGui import *
 # from PyQt4.QtWebKit import *
 
-from control import controller
+from control import internet
 
 def load_tests(loader, tests, ignore):
     '''
     load tests loads docstrings testing from original module and runs the tests.
     '''
-    tests.addTests(doctest.DocTestSuite(controller))
+    tests.addTests(doctest.DocTestSuite(internet))
     return tests
 
 
