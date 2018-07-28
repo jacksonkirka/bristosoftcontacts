@@ -37,11 +37,11 @@ class InternetConnection(object):
 
 
         >>> iconnect = InternetConnection()
-        >>> _address = 'google.com'
+        >>> _address = 'http://www.google.com'
         >>> conn = iconnect.inet_request(_address)
         >>> conn
         True
-        >>> _address = 'googlee.com'
+        >>> _address = 'http://www.googlee.com'
         >>> conn = iconnect.inet_request(_address)
         >>> conn
         False
