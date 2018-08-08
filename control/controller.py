@@ -1649,10 +1649,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             _oph = self.search_groups.groupOfficePhoneLineEdit.text()
             _fax = self.search_groups.groupOfficeFaxLineEdit.text()
             if _pwd and _confirm:
-                _id = self.fetch_groups[self._query][self._ITEM][self._GROUPID]
+                _id = self.fetch_groups_owned[self._ITEM][self._GROUPID]
                 if _pwd == _confirm:
                     _pwd_match = True
-                _complex = self.mincomplex(_pwd)
+                _complex = self._secure.mincomplex(_pwd)
                 if self._connected and _pwd_match and _complex:
                     self.reset_timer()
                     _hashedpwd = self._secure.hashpwd(_pwd)
