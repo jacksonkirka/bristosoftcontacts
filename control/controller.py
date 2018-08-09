@@ -1184,7 +1184,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._LASTITEM = len(self.fetch_groups_owned) - 1
             self._groups = True
             self._ITEM_CONTACTS_CACHED = self._ITEM
-            self._ITEM = self._ITEM_GROUPS_CACHED
+            self._ITEM = self._ITEM_GROUPS_CACHED - 1
             self.bristo_stack.setCurrentWidget(self.search_groups)
             return
         # --------------------------------------------------------------
@@ -1235,7 +1235,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self.fetch_results and not self._groupqry and not self._db_update:
             self._groups = False
             self._ITEM_GROUPS_CACHED = self._ITEM
-            self._ITEM = self._ITEM_CONTACTS_CACHED
+            self._ITEM = self._ITEM_CONTACTS_CACHED - 1
             self._LASTITEM = len(self.fetch_results[self._query]) - 1
             self.bristo_stack.setCurrentWidget(self.bristo_search)
             return
