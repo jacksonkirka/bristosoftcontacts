@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2018-07-28, 10:20:38 -->
+<!-- Saved: 2018-08-15, 22:25:57 -->
 <!-- Copyright (C) 2018 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -20,6 +20,7 @@
     <Source>control/controller.py</Source>
     <Source>control/internet.py</Source>
     <Source>control/secure.py</Source>
+    <Source>control/speedtest.py</Source>
     <Source>control/view.py</Source>
     <Source>family.ico</Source>
     <Source>interface/__init__.py</Source>
