@@ -2866,6 +2866,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor.close()
             self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
             self._connected = False
+        else:
+            self.connection_closed_msg()
 
 
     def db_full_vacuum(self):
