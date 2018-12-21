@@ -1963,6 +1963,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self.menuGroups.addAction(_db_grpnm, self.db_group_select)
                 # Add group menu item for this group query
                 self.db_contacts_fetch()
+                self.reset_timer()
             else:
                 self.incorrectgrouplogin()
 
