@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
 # techniques, algorithms are confidential trade secrets under Ohio and U.S.
@@ -19,7 +19,7 @@ This internet.py module provides testing of the existence, reliability and
 performance of an internet connection.
 '''
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import socket
 
 class InternetConnection(object):
@@ -47,9 +47,9 @@ class InternetConnection(object):
         False
         '''
         try:
-            urllib2.urlopen(_url, timeout=30)
+            urllib.request.urlopen(_url, timeout=30)
             return True
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return False
 
     @staticmethod

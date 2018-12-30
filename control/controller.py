@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 #
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
@@ -33,8 +33,8 @@ import ntpath
 # import ast
 import json
 import os
-from secure import Security
-from bristoprint import PrintServices
+from .secure import Security
+from .bristoprint import PrintServices
 import webbrowser
 import requests
 from requests import get # Error on ordered_dict changed in compat.py
@@ -48,8 +48,8 @@ from PyQt5.QtWebKit import *
 import psycopg2
 import psycopg2.pool # import pooling extension
 
-from bristo_exceptions import *
-from view import *
+from .bristo_exceptions import *
+from .view import *
 from interface import contactsmain
 # import threading
 # import time
@@ -3128,7 +3128,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""",
                     (_usr_nm,_in, _grplogin, _usr_ip, _usr_city,
                     _usr_reg, _usr_ctry, _usr_zip, _suc))
-            except psycopg2.DatabaseError, dberror:
+            except psycopg2.DatabaseError as dberror:
                 self._conn_main.rollback()
                 # self.contactsStatusBar.removeWidget(self.conn_msg)
                 self.contactsStatusBar.setStyleSheet("background-color: \

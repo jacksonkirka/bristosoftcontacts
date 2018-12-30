@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
 # techniques, algorithms are confidential trade secrets under Ohio and U.S.

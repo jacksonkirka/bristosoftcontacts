@@ -120,7 +120,7 @@ class Ui_changepwdDialog(object):
         self.changepwdTabWidget.setTabText(self.changepwdTabWidget.indexOf(self.passwordTab), _translate("changepwdDialog", "Password"))
         self.changePasswordLabel.setText(_translate("changepwdDialog", "Change Password:"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys

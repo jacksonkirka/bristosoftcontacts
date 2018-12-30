@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Copyright 2012-2018 Matt Martz
 # All Rights Reserved.
@@ -85,12 +85,12 @@ except ImportError:
                                 HTTPErrorProcessor, OpenerDirector)
 
 try:
-    from httplib import HTTPConnection, BadStatusLine
+    from http.client import HTTPConnection, BadStatusLine
 except ImportError:
     from http.client import HTTPConnection, BadStatusLine
 
 try:
-    from httplib import HTTPSConnection
+    from http.client import HTTPSConnection
 except ImportError:
     try:
         from http.client import HTTPSConnection
@@ -98,17 +98,17 @@ except ImportError:
         HTTPSConnection = None
 
 try:
-    from Queue import Queue
+    from queue import Queue
 except ImportError:
     from queue import Queue
 
 try:
-    from urlparse import urlparse
+    from urllib.parse import urlparse
 except ImportError:
     from urllib.parse import urlparse
 
 try:
-    from urlparse import parse_qs
+    from urllib.parse import parse_qs
 except ImportError:
     try:
         from urllib.parse import parse_qs
@@ -134,17 +134,17 @@ except ImportError:
     PARSER_TYPE_FLOAT = 'float'
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
     BytesIO = None
 except ImportError:
     try:
-        from StringIO import StringIO
+        from io import StringIO
         BytesIO = None
     except ImportError:
         from io import StringIO, BytesIO
 
 try:
-    import __builtin__
+    import builtins
 except ImportError:
     import builtins
     from io import TextIOWrapper, FileIO
@@ -208,12 +208,12 @@ else:
             return
 
         def write(data):
-            if not isinstance(data, basestring):
+            if not isinstance(data, str):
                 data = str(data)
             # If the file has an encoding, encode unicode with it.
             encoding = 'utf8'  # Always trust UTF-8 for output
             if (isinstance(fp, file) and
-                    isinstance(data, unicode) and
+                    isinstance(data, str) and
                     encoding is not None):
                 errors = getattr(fp, "errors", None)
                 if errors is None:
@@ -224,13 +224,13 @@ else:
         want_unicode = False
         sep = kwargs.pop("sep", None)
         if sep is not None:
-            if isinstance(sep, unicode):
+            if isinstance(sep, str):
                 want_unicode = True
             elif not isinstance(sep, str):
                 raise TypeError("sep must be None or a string")
         end = kwargs.pop("end", None)
         if end is not None:
-            if isinstance(end, unicode):
+            if isinstance(end, str):
                 want_unicode = True
             elif not isinstance(end, str):
                 raise TypeError("end must be None or a string")
@@ -238,12 +238,12 @@ else:
             raise TypeError("invalid keyword arguments to print()")
         if not want_unicode:
             for arg in args:
-                if isinstance(arg, unicode):
+                if isinstance(arg, str):
                     want_unicode = True
                     break
         if want_unicode:
-            newline = unicode("\n")
-            space = unicode(" ")
+            newline = str("\n")
+            space = str(" ")
         else:
             newline = "\n"
             space = " "
@@ -1697,7 +1697,7 @@ def validate_optional_args(args):
         'secure': ('SSL support', HTTPSConnection),
     }
 
-    for arg, info in optional_args.items():
+    for arg, info in list(optional_args.items()):
         if getattr(args, arg, False) and info[1] is None:
             raise SystemExit('%s is not installed. --%s is '
                              'unavailable' % (info[0], arg))

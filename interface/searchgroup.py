@@ -244,7 +244,7 @@ class Ui_searchGroupDialog(object):
         self.groupOfficePhoneLabel_2.setText(_translate("searchGroupDialog", "Office Phone:"))
         self.newGroupTabWidget.setTabText(self.newGroupTabWidget.indexOf(self.groupContactTab), _translate("searchGroupDialog", "Contact"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys

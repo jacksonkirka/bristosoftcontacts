@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 #
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
-# techniques, algorithms are confidential trade secrets under Ohio and U.S. 
+# techniques, algorithms are confidential trade secrets under Ohio and U.S.
 # Federal law owned by bristoSOFT.
 #
 # Kirk A Jackson dba bristoSOFT
@@ -11,9 +11,9 @@
 # Cincinnati, OH  45241
 # Phone (513) 401-9114
 # email jacksonkirka@bristosoft.com
-# 
+#
 # The trade name bristoSOFT is a registered trade name with the State of Ohio
-# document No. 201607803210. 
+# document No. 201607803210.
 
 '''
 This bristoprint module enables contacts to print to printers, plotters and
@@ -27,7 +27,7 @@ import datetime
 
 
 class PrintServices:
-    
+
     '''
     The PrintServices class in contacts provides all the resources required
     for print information in contacts.
@@ -40,15 +40,15 @@ class PrintServices:
         #Date and Time
         self._DATE = datetime.datetime.now()
         self._TODAY = self._DATE.strftime("%m/%d/%y %I:%M%p")
-        
 
-        
+
+
     def print_users_contacts(self,  _contacts, _grprpt):
-        
+
         '''
         print_users_contacts prints all the contacts in memory within
         the query limit.
-        
+
         _contacts - python list of contacts to print queried from db
         _grprpt - group name is group query or if null then skipped.
         '''
@@ -65,7 +65,7 @@ class PrintServices:
         _OEMAIL = 15
 
         if len(_contacts) > 0:
-            
+
             # Setup printer
             doc = ''
             bristoprint = QPrintDialog()

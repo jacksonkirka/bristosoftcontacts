@@ -254,7 +254,7 @@ class Ui_newGroupDialog(object):
         self.savePushButton.setText(_translate("newGroupDialog", "Save"))
         self.cancelPushButton.setText(_translate("newGroupDialog", "Cancel"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys

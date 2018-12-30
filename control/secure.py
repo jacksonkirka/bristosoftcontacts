@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 #
 # Copyright 2016 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
-# techniques, algorithms are confidential trade secrets under Ohio and U.S. 
+# techniques, algorithms are confidential trade secrets under Ohio and U.S.
 # Federal law owned by bristoSOFT.
 #
 # Kirk A Jackson dba bristoSOFT
@@ -11,9 +11,9 @@
 # Cincinnati, OH  45241
 # Phone (513) 401-9114
 # email jacksonkirka@bristosoft.com
-# 
+#
 # The trade name bristoSOFT is a registered trade name with the State of Ohio
-# document No. 201607803210. 
+# document No. 201607803210.
 
 '''
 This secure module provides security for bristoSOFT Contacts v. 0.1.
@@ -26,7 +26,7 @@ import uuid
 import re
 
 class Security:
-    
+
     '''
     The Security class provides resources to maintain secure communication
     and authentication in contacts.
@@ -37,7 +37,7 @@ class Security:
         mincomplex evaluates a plain text password and returns true if the
         password evaluated contains 1) uppercase letter, 2) lowercase letter,
         3) a digit 0 - 9, 4) a special character and 5) is at least 8 characters.
-        
+
         >>> sec = Security()
         >>> test_digit = sec.mincomplex('Bmw$4839')
         >>> test_digit
@@ -79,14 +79,14 @@ class Security:
             return True
         else:
             return False
-            
+
     @staticmethod
     def hashpwd(_pwd):
 
         '''
-        hashpwd hashes a password by NSA Secure Hash Algorithm 2 
+        hashpwd hashes a password by NSA Secure Hash Algorithm 2
         sha256 algorithm and adds a uuid prefix salt.
-        
+
         >>> sec = Security()
         >>> hashed_password = sec.hashpwd('Bmw$535is')
         >>> _pwd = 'Bmw$535is'
@@ -100,12 +100,12 @@ class Security:
         ... _pwd.encode()).hexdigest() + ':' + salt_prefix
         >>> hashed_password == manual_hash_pwd
         False
-        
+
         '''
         salt = uuid.uuid4().hex
         return hashlib.sha256(salt.encode() +
             _pwd.encode()).hexdigest() + ':' + salt
-            
+
     @staticmethod
     def authenticatepwd(_dbhashpwd, _usrpwd):
 
@@ -113,7 +113,7 @@ class Security:
         authenticatepwd authenticates the password entered by the user by
         comparing the database hash with a hash of the user entered
         password.
-        
+
         >>> sec = Security()
         >>> salt = uuid.uuid4().hex
         >>> _dbhashpwd = hashlib.sha256(salt.encode() +
@@ -147,4 +147,4 @@ if __name__ == '__main__':
     import doctest
     doctest.testmod(verbose=True)
 
-        
+

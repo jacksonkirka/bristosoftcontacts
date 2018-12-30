@@ -380,7 +380,7 @@ class Ui_contactsDialog(object):
         self.savePushButton.setText(_translate("contactsDialog", "Save"))
         self.cancelPushButton.setText(_translate("contactsDialog", "Cancel"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2018-12-29, 22:30:58 -->
+<!-- Saved: 2018-12-30, 18:27:31 -->
 <!-- Copyright (C) 2018 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
   <Hash>29fd26a5fcd9a9fc902de441c7211e61817358a9</Hash>
-  <ProgLanguage mixed="0">Python2</ProgLanguage>
+  <ProgLanguage mixed="0">Python3</ProgLanguage>
   <ProjectType>PyQt5</ProjectType>
   <Description>bristoSOFT Contacts management</Description>
   <Version>0.1</Version>

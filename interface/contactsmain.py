@@ -241,7 +241,7 @@ class Ui_bristosoftContacts(object):
         self.action_Print.setText(_translate("bristosoftContacts", "&Print"))
         self.action_Print.setShortcut(_translate("bristosoftContacts", "Alt+P"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys

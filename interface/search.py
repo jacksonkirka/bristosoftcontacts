@@ -794,7 +794,7 @@ class Ui_contactsSearchDialog(object):
         self.accessGroupPushButton.setText(_translate("contactsSearchDialog", "Group Login"))
         self.contactTabWidget.setTabText(self.contactTabWidget.indexOf(self.group), _translate("contactsSearchDialog", "Group"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys

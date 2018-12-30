@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 
 class QueryException(Exception):
@@ -6,7 +6,7 @@ class QueryException(Exception):
 
 class ConnectionException(Exception):
     pass
-    
+
 
 if __name__ == '__main__':
     pass

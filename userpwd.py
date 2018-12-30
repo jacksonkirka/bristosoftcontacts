@@ -13,7 +13,7 @@ def hashpwd(_pwd):
     return hashlib.sha256(salt.encode() +\
         _pwd.encode()).hexdigest() + ':' + salt
 
-passwd = raw_input('Please enter password to hash: ')
+passwd = input('Please enter password to hash: ')
 
-print passwd
-print hashpwd(passwd)
+print(passwd)
+print(hashpwd(passwd))

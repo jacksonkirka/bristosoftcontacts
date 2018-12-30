@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #
 # Copyright 2018 Kirk A Jackson DBA bristoSOFT all rights reserved.  All methods,
 # techniques, algorithms are confidential trade secrets under Ohio and U.S.
@@ -29,18 +29,18 @@ __status__ = "Development"
 import datetime
 
 class bristoCache(dict, object):
-    
+
     def __init__(self, _size,  parent=None):
         '''
         Constructor for class.
         '''
         self.max_cache_size = _size
 
-    
+
     def update(self, key):
         '''
         update adds a Python object to the cache using a key identifier.
         '''
-        pass        
-    
-    
+        pass
+
+

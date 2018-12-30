@@ -97,7 +97,7 @@ class Ui_loginDialog(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.passwordTab), _translate("loginDialog", "Password"))
         self.label_2.setText(_translate("loginDialog", "Login:"))
 
-import resources_rc
+from . import resources_rc
 
 if __name__ == "__main__":
     import sys
