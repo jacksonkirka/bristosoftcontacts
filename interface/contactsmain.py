@@ -28,7 +28,7 @@ class Ui_bristosoftContacts(object):
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(10, 620, 161, 21))
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/icons/bristo_logo.png"))
+        self.label.setPixmap(QtGui.QPixmap(":/icons/icons/bristo_logo.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         bristosoftContacts.setCentralWidget(self.centralwidget)

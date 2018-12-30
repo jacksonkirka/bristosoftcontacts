@@ -301,7 +301,7 @@ class Ui_contactsDialog(object):
         self.label = QtWidgets.QLabel(contactsDialog)
         self.label.setGeometry(QtCore.QRect(10, 590, 161, 21))
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/icons/bristo_logo.png"))
+        self.label.setPixmap(QtGui.QPixmap(":/icons/icons/bristo_logo.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.credLabel.setBuddy(self.credLineEdit)

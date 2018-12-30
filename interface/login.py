@@ -23,7 +23,7 @@ class Ui_loginDialog(object):
         self.label = QtWidgets.QLabel(loginDialog)
         self.label.setGeometry(QtCore.QRect(220, 20, 221, 31))
         self.label.setText("")
-        self.label.setPixmap(QtGui.QPixmap(":/icons/bristo_logo.png"))
+        self.label.setPixmap(QtGui.QPixmap(":/icons/icons/bristo_logo.png"))
         self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.tabWidget = QtWidgets.QTabWidget(loginDialog)
