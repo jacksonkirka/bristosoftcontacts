@@ -41,7 +41,7 @@ def main():
     '''
     app = QApplication(sys.argv)
     contacts = Controller()
-    contacts.setWindowIcon(QIcon(":icons/family.ico"))
+    contacts.setWindowIcon(QIcon(":/icons/icons/family.ico"))
     contacts.show()
     app.exec_()
 
