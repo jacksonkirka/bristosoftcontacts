@@ -421,17 +421,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         # screen came up for the first time.
 
         # Settings
-       #settings = QSettings()
-        #size = settings.value("MainWindow/Size",
-                              #QVariant(QSize(630, 735)).toSize())
-        #self.resize(size)
-        #position = settings.value("MainWindow/Position",
-                                  #QVariant(QPoint(320, 140))).toPoint()
-        #self.move(position)
-        #self.restoreState(settings.value("MainWindow/State").toByteArray())
+        settings = QSettings()
+        size = settings.value("MainWindow/Size",
+                              QVariant(QSize(630, 735)))
+        self.resize(size)
+        position = settings.value("MainWindow/Position",
+                                  QVariant(QPoint(320, 140)))
+        self.move(position)
+       # self.restoreState(settings.value("MainWindow/State").toByteArray())
 
         # Set Main Window Icon
-        self.setWindowIcon(QIcon(":icons/family.ico"))
+        self.setWindowIcon(QIcon(":/icons/icons/family.ico"))
 
         # Set contactsStatusBar to red
         self.conn_msg = 'Welcome to bristoSOFT Contacts v. 0.1'
