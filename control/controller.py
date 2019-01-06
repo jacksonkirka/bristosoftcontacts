@@ -1774,10 +1774,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         zero.  There after they may be reset by clicking the resize buttons.
         '''
 
-        #self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(0)
-        #self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(0)
-        #self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(0)
-        #self.bristo_search.msgTableWidget.verticalHeader().setResizeMode(0)
+        self.bristo_search.notesTableWidget.verticalHeader().setSectionResizeMode(0)
+        self.bristo_search.callsTableWidget.verticalHeader().setSectionResizeMode(0)
+        self.bristo_search.apptTableWidget.verticalHeader().setSectionResizeMode(0)
+        self.bristo_search.msgTableWidget.verticalHeader().setSectionResizeMode(0)
 
     def block_signals(self):
         '''
@@ -2432,7 +2432,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         resize_notes resets the table widget resize mode to resize to contents.
         '''
 
-        self.bristo_search.notesTableWidget.verticalHeader().setResizeMode(3)
+        self.bristo_search.notesTableWidget.verticalHeader().setSectionResizeMode(3)
+        self.bristo_search.callsTableWidget.horizontalHeader().setSectionResizeMode(3)
+        
 
     def resize_calls(self):
 
@@ -2440,7 +2442,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         resize_calls resets the table widget resize mode to resize to contents.
         '''
 
-        self.bristo_search.callsTableWidget.verticalHeader().setResizeMode(3)
+        self.bristo_search.callsTableWidget.verticalHeader().setSectionResizeMode(3)
+        self.bristo_search.callsTableWidget.horizontalHeader().setSectionResizeMode(3)
 
     def resize_appts(self):
 
@@ -2448,13 +2451,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         resize_appts resets the table widget resize mode to resize to contents.
         '''
 
-        self.bristo_search.apptTableWidget.verticalHeader().setResizeMode(3)
+        self.bristo_search.apptTableWidget.verticalHeader().setSectionResizeMode(3)
+        self.bristo_search.apptTableWidget.horizontalHeader().setSectionResizeMode(3)
 
     def resize_msg(self):
         '''
         resiize_msg resets the table widget resize mode to resize to contents.
         '''
-        self.bristo_search.msgTableWidget.verticalHeader().setResizeMode(3)
+        self.bristo_search.msgTableWidget.verticalHeader().setSectionResizeMode(3)
+        self.bristo_search.msgTableWidget.horizontalHeader().setSectionResizeMode(3)
 
     def db_insert_contact_file(self):
 
