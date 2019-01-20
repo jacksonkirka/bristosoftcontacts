@@ -2556,8 +2556,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._conn_main_timer = 600000
         self.reset_timer()
         fdlg = QFileDialog()
-        fname = fdlg.getOpenFileName(self, 'Open file',
-                   "Image files (*.jpg *.gif *.png)")       # Get Filename
+        fnametup = fdlg.getOpenFileName(self, 'Open file',
+                   "Image files (*.jpg *.gif *.png)")       # get file tuple
+        fname = fnametup[0]                                 # get fname 
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.picLabel.setPixmap(self._image)  # Display
