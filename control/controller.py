@@ -51,6 +51,7 @@ import psycopg2.pool # import pooling extension
 from .bristo_exceptions import *
 from .view import *
 from interface import contactsmain
+from .connect import con
 # import threading
 # import time
 
@@ -531,18 +532,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._usr_lat = self._usr_loc['latitude']
         self._usr_tz = self._usr_loc['timezone']
         self._usr_zip = self._usr_loc['postal']
-
-         # Step 1 owner authentication security string
-        #con = "host='ec2-54-221-225-43.compute-1.amazonaws.com' \
-        #dbname='dtg1rerulrimn' user='atvefqxquovzsq' \
-        #password='IJuYKnkKd6qwE08WSTpi5-RMEk' sslmode='require'"
-
-        con = "host='aws-us-east-1-portal.31.dblayer.com' \
-        dbname='bristocontacts' user='bristousers'\
-        password=\
-        '9FaFA[q#Vyp69lbF+SQq?pbahNLQTFDRhdvSvuvJVv6+?%h)N6wkFF>U7zB@Q)Y&{/^:<'\
-         sslmode='require' port='28139'"
-
 
         self._host = 'bristosoftcontacts'
         self._db = 'bristocontacts'
