@@ -23,6 +23,8 @@ other devices via QPrintDialog.
 # Imports
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from PyQt5.QtPrintSupport import *
+from PyQt5.QtWidgets import *
 import datetime
 
 
@@ -69,7 +71,7 @@ class PrintServices:
             # Setup printer
             doc = ''
             bristoprint = QPrintDialog()
-            if bristoprint.exec_() == QDialog.Accepted:
+            if bristoprint.exec_() == QPrintDialog.Accepted:
                 # begin printing to printer line by line
                 qtxtedit = QTextEdit()
                 qtxtedit.setFontPointSize(12.0)
