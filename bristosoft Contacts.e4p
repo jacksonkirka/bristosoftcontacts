@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2019-09-12, 12:09:19 -->
+<!-- Saved: 2019-09-12, 12:22:49 -->
 <!-- Copyright (C) 2019 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -41,6 +41,7 @@
   </Sources>
   <Others>
     <Other>.gitignore</Other>
+    <Other>LICENSE</Other>
     <Other>family.ico</Other>
   </Others>
   <MainScript>main.py</MainScript>
