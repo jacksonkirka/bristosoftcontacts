@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE Project SYSTEM "Project-5.1.dtd">
 <!-- eric project file for project bristosoft Contacts -->
-<!-- Saved: 2019-08-06, 23:23:09 -->
+<!-- Saved: 2019-09-12, 12:09:19 -->
 <!-- Copyright (C) 2019 Kirk A Jackson, jacksonkirka@bristosoft.com -->
 <Project version="5.1">
   <Language>en_US</Language>
@@ -33,6 +33,7 @@
     <Source>interface/search.py</Source>
     <Source>interface/searchgroup.py</Source>
     <Source>main.py</Source>
+    <Source>setup.py</Source>
     <Source>testing/__init__.py</Source>
     <Source>testing/test_controller.py</Source>
     <Source>testing/test_internet.py</Source>
