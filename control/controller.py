@@ -51,7 +51,6 @@ import psycopg2.pool # import pooling extension
 from .bristo_exceptions import *
 from .view import *
 from interface import contactsmain
-from .connect import con
 # import threading
 # import time
 
@@ -542,6 +541,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # Note: by using the ThreadedConnectionPool class instead of
             # the PersistentConnectionPool class it is possible to have
             # more than one db connection per thread.
+            
+            #build connection string
+            _host = "host='aws-us-east-1-portal.31.dblayer.com' "
+            _dbname = "dbname='bristocontacts' "
+            _mode_port = "sslmode='require' port='28139'"
+            _usr = "user="+"'"+self._user+"'"+" "
+            _pswd = "password="+"'"+self._passwd+"'"+" "
+            con = _host+_dbname+_usr+_pswd+_mode_port
+            
             self._pool = psycopg2.pool.ThreadedConnectionPool(
                 self._min_con,  self._max_con,  con)
 
