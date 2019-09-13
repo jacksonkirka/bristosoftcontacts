@@ -787,6 +787,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             (bristo_contacts_users_pwd) = (%s) WHERE
             bristo_contacts_users_name = %s;""", (_newpwdhash, _username))
             self._conn_main.commit()
+            _usrquery = " ".join(['ALTER','USER', _username, 'WITH', 'PASSWORD ',])
+            _pwdquery = "".join(['\'', _newpwd, '\'', ';']) 
+            _query = "".join([_usrquery, _pwdquery])
+            self._cursor.execute(_query)
+            self._conn_main.commit()
             self.contactsStatusBar.showMessage(
             "Successful.  Log out and log back in with new password.", 10000)
             self._chgpwd = False
