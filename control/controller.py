@@ -543,13 +543,13 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # more than one db connection per thread.
             
             #build connection string
-            _host = "host='aws-us-east-1-portal.31.dblayer.com' "
-            _dbname = "dbname='bristocontacts' "
-            _mode_port = "sslmode='require' port='28139'"
-            _usr = "user="+"'"+self._user+"'"+" "
-            _pswd = "password="+"'"+self._passwd+"'"+" "
-            con = _host+_dbname+_usr+_pswd+_mode_port
+            _server = " ".join(["host='aws-us-east-1-portal.31.dblayer.com'", 
+                "dbname='bristocontacts'", "sslmode='require' port='28139'" ])
+            _usr = "".join(["user=", "'", self._user, "'"])
+            _pswd = "".join(['password=', "'", self._passwd, "'" ])
+            con = " ".join([_server, _usr, _pswd])
             
+            # Setup a threaded connection pool
             self._pool = psycopg2.pool.ThreadedConnectionPool(
                 self._min_con,  self._max_con,  con)
 
