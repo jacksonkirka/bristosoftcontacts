@@ -23,7 +23,7 @@ distribution.
 from setuptools import setup, find_packages
 setup(
     name="bristoSOFTContacts",
-    version="0.1",
+    version="0.10",
     author="Kirk A Jackson",
     author_email="jacksonirka@bristosoft.org",
     url="https://bitbucket.org/bristolians/bristosoftcontacts/src/master/", 
