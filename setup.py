@@ -28,7 +28,7 @@ setup(
     author_email="jacksonirka@bristosoft.org",
     url="https://bitbucket.org/bristolians/bristosoftcontacts/src/master/", 
     packages=find_packages(),
-    classifiers=["Programming Language:: Python :: 3", 
+    classifiers=["Programming Language :: Python :: 3", 
                         "License :: OSI Approved :: MIT License", 
                         "Operating System :: OS Independent", 
                         ], 
