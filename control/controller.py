@@ -550,8 +550,12 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             con = " ".join([_server, _usr, _pswd])
             
             # Setup a threaded connection pool
-            self._pool = psycopg2.pool.ThreadedConnectionPool(
+            try:
+                self._pool = psycopg2.pool.ThreadedConnectionPool(
                 self._min_con,  self._max_con,  con)
+            except psycopg2.OperationalError:
+                self.incorrectcredentials()
+                return
 
             # Step 2 Get a connection from the pool and setup main conn
             if self._pool:
@@ -802,15 +806,17 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(230, 128, 128);")
             self.contactsStatusBar.showMessage(
             "Disconnected, New Password didn't match or password uncomplex.", 10000)
-
-
-
+    
     def incorrectlogin(self):
 
         '''
         incorrectlogin displays a message in the status bar to the user informing
-        them they have not successfully logged on.
+        them they have not successfully logged on.  This method remains here due
+        to future potential usage and is redundant with incorrectcredentials.
         '''
+        # Note with new direct db login for users no connection pool is
+        # availble so the attempted login cannot be logged in authlog.
+        
         # Log incorrect authentication
         _usr_nm = self._user
         _usr_ip = self._usr_ip
@@ -841,6 +847,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         #if self._disconnected:
             #self.contactsStatusBar.removeWidget(self.conn_msg)
         _msg = 'Login incorrect, please try again.'
+        self.contactsStatusBar.showMessage(_msg,  3000)
+
+
+
+    def incorrectcredentials(self):
+
+        '''
+        incorrectcredentials displays a message in the status bar to the user informing
+        them they have not successfully logged on.
+        '''
+        # Note with new direct db login for users no connection pool is
+        # availble so the attempted login cannot be logged in authlog.
+        
+        _msg = 'Login credentials incorrect, please try again.'
         self.contactsStatusBar.showMessage(_msg,  3000)
 
     def incorrectgrouplogin(self):
