@@ -1,6 +1,10 @@
 # README #
 
-To run bristoSOFT contacts run python main.py.
+bristoSOFT Contacts is a group oriented contacts management system featuring a Qt GUI, python control and PostgreSQL backend database.  It runs on Linux, Windows and MacIntosh among others.  
+
+To install just pip install bristosoftcontacts.  To run bristoSOFT contacts run main.py.  The file main.py is the entry point. 
+
+ 
 
 ### What is this repository for? ###
 
