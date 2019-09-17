@@ -35,7 +35,8 @@ setup(
     classifiers=["Programming Language :: Python :: 3", 
                         "License :: OSI Approved :: MIT License", 
                         "Operating System :: OS Independent", 
-                        ], 
+                        ],
+    keywords='contacts people sales cms friends groups', 
     python_requires='>=3.6', 
     scripts=['main.py'],
 )
