@@ -24,8 +24,7 @@ from setuptools import setup, find_packages
 setup(
     name="bristoSOFTContacts",
     version="0.10a",
-    description='bristoSOFT Contacts(tm) is a group oriented contact managment \
-    system.',
+    description='bristoSOFT Contacts(tm) is a group oriented contacts managment system.',
     long_description='bristoSOFT Contacts is a group oreinted contact management \
     system.  Its stack is based MVC and includes Qt, Python and PostgreSQL. \
     Users can query groups of contacts by username and password.', 
