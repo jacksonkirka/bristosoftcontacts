@@ -2616,6 +2616,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn_main.cursor()
             self.reset_timer()
             fdlg = QFileDialog()
+            options = fdlg.Options()
+            options |= fdlg.DontUseNativeDialog    
             fname = fdlg.getOpenFileName(self, 'Open file',
                        "Image files (*.jpg *.gif *.png)")       # Get Filename
             self._image = QPixmap(fname)                        # Get Pixmap
