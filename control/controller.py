@@ -2643,10 +2643,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         and addons this may have to be an instance method requiring (self,..) and
         no @staticmethod.
         '''
-    picture = bytes(_buffer)    # Unpack to bytes
-    p = QPixmap()               # Create QPixmap
-    p.loadFromData(picture)     # Load picture from data
-    _qobject.setPixmap(p)       # Display picture on object
+        picture = bytes(_buffer)    # Unpack to bytes
+        p = QPixmap()               # Create QPixmap
+        p.loadFromData(picture)     # Load picture from data
+        _qobject.setPixmap(p)       # Display picture on object
 
 
     def live_call_widgets(self):
