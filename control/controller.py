@@ -2498,8 +2498,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         fdlg = QFileDialog()
         options = fdlg.Options()
         options |= fdlg.DontUseNativeDialog     
-        filename = fdlg.getOpenFileName(self, 'Open file',
+        filenametup = fdlg.getOpenFileName(self, 'Open file',
                    "Image files (*.jpg *.gif *.png)",  options=optins)
+        filename = filenametup[0]                                 # get fname 
         _fnm = self.get_path_filename(filename)             # Get name to write
         self._file_bin = open(filename, 'rb').read()        # Read > pointer
         # self._conn_main_timer = 120000                          # Need large files
@@ -2620,8 +2621,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             fdlg = QFileDialog()
             options = fdlg.Options()
             options |= fdlg.DontUseNativeDialog    
-            fname = fdlg.getOpenFileName(self, 'Open file',
+            fnametup = fdlg.getOpenFileName(self, 'Open file',
                        "Image files (*.jpg *.gif *.png)",  options=options)       # Get Filename
+            fname = fnametup[0]                                 # get fname 
             self._image = QPixmap(fname)                        # Get Pixmap
             self._image_bin = open(fname, 'rb').read()          # Read > pointer
             self.search_groups.newGroupLabel.setPixmap(self._image) # Show image
