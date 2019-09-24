@@ -2638,16 +2638,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
 
     @staticmethod
-    def display_pic(_qobject, _buffer):
+    def display_pic(_qobject, _picture):
         '''
         display_pic accepts a qobject and a buffer returned by psycopg2 database
         driver then displays pixmap on the qobject.  For future enhancements
         and addons this may have to be an instance method requiring (self,..) and
         no @staticmethod.
         '''
-        picture = bytes(_buffer)    # Unpack to bytes
         p = QPixmap()               # Create QPixmap
-        p.loadFromData(picture)     # Load picture from data
+        p.loadFromData(_picture)     # Load picture from data
         _qobject.setPixmap(p)       # Display picture on object
 
 
