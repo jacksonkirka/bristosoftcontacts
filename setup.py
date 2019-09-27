@@ -31,6 +31,13 @@ setup(
     author="Kirk A Jackson",
     author_email="jacksonirka@bristosoft.org",
     url="https://bitbucket.org/bristolians/bristosoftcontacts/src/master/", 
+    install_requires=[
+                                'PyQt5', 
+                                'psycopg2', 
+                                'PyQt5-sip', 
+                                'requests', 
+                                'platform', 
+                                ], 
     packages=find_packages(),
     classifiers=["Programming Language :: Python :: 3", 
                         "License :: OSI Approved :: MIT License", 
