@@ -791,7 +791,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             (bristo_contacts_users_pwd) = (%s) WHERE
             bristo_contacts_users_name = %s;""", (_newpwdhash, _username))
             self._conn_main.commit()
-            _usrquery = " ".join(['ALTER','USER', _username, 'ENCRYPTED','WITH',
+            _usrquery = " ".join(['ALTER','USER', _username,'WITH','ENCRYPTED', 
                 'PASSWORD ',])
             _pwdquery = "".join(['\'', _newpwd, '\'', ';']) 
             _query = "".join([_usrquery, _pwdquery])
