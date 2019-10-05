@@ -36,7 +36,6 @@ setup(
                                 'psycopg2', 
                                 'PyQt5-sip', 
                                 'requests', 
-                                'platform', 
                                 ], 
     packages=find_packages(),
     classifiers=["Programming Language :: Python :: 3", 
