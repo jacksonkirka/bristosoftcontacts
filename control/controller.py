@@ -543,8 +543,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # more than one db connection per thread.
             
             #build connection string
-            _server = " ".join(["host='aws-us-east-1-portal.31.dblayer.com'", 
-                "dbname='bristocontacts'", "sslmode='require' port='28139'" ])
+            _server = " ".join(
+            ["host='bristocontacts.cmuctcwvgjxh.us-east-2.rds.amazonaws.com'", 
+                "dbname='bristocontacts'","sslmode='require'","port='5432'" ])
             _usr = "".join(["user=", "'", self._user, "'"])
             _pswd = "".join(['password=', "'", self._passwd, "'" ])
             con = " ".join([_server, _usr, _pswd])
