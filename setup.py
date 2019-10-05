@@ -23,7 +23,7 @@ distribution.
 from setuptools import setup, find_packages
 setup(
     name="bristoSOFTContacts",
-    version="0.13",
+    version="0.14",
     description='bristoSOFT Contacts(tm) is a group oriented contacts managment system.',
     long_description='bristoSOFT Contacts is a group oreinted contact management \
     system.  Its stack is based MVC and includes Qt, Python and PostgreSQL. \
