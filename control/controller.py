@@ -789,7 +789,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self._cursor = self._conn_main.cursor()
             _username = self._user
             self._cursor.execute("""UPDATE bristo_contacts_users SET
-            (bristo_contacts_users_pwd) = (%s) WHERE
+            bristo_contacts_users_pwd = %s WHERE
             bristo_contacts_users_name = %s;""", (_newpwdhash, _username))
             self._conn_main.commit()
             _usrquery = " ".join(['ALTER','USER', _username,'WITH','ENCRYPTED', 
