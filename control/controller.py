@@ -659,7 +659,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         bristo_contacts_session_grplogin (
                            bristo_contacts_session_grplogin_id integer not NULL,
                            bristo_contacts_session_grplogin_grpname text not NULL,
-                           bristo_contacts_session_grppwd text not NULL);"""
+                           bristo_contacts_session_grplogin_pwd text not NULL);"""
                            )
                     
                     # Insert one record
@@ -667,7 +667,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         bristo_contacts_session_grplogin
                         (bristo_contacts_session_grplogin_id,
                          bristo_contacts_session_grplogin_grpname,
-                         bristo_contacts_session_grppwd)
+                         bristo_contacts_session_grplogin_pwd)
                         VALUES (%s,%s,%s);""",
                         (_id,_grpname,_grp_pwd))
                     
@@ -1939,12 +1939,20 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _pwd = self.bristo_search.groupPwdLineEdit.text()
         self._grprpt = _grp_nm
         if _grp_nm and _pwd:
+            self._cursor = self._conn_main.cursor()
+            
+            # Update bristo_contacts_session_grplogin
+            self._cursor.execute("""UPDATE bristo_contacts_session_grplogin SET
+            (bristo_contacts_session_grplogin_grpname, bristo_contacts_session_grplogin_pwd)
+            = (%s,%s) WHERE bristo_contacts_session_grplogin_id = 1;""",
+            (_grp_nm,_pwd))
+            
+            # Set matches to False
             _grp_nm_match = False
             _grp_pwd_match = False
 
             # Verify group name
             # If user enters incorrect group name this is not yet resolved.
-            self._cursor = self._conn_main.cursor()
             self._cursor.execute("SELECT * FROM bristo_contacts_groups WHERE \
             bristo_contacts_groups_group = %s LIMIT %s", (
                 _grp_nm, self._limit))
