@@ -2627,7 +2627,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _id = self.fetch_results[self._query][self._ITEM][self._ID]
                 self._cursor = self._conn_main.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_ct SET
-                (bristo_contacts_ct_picture) = (%s)
+                bristo_contacts_ct_picture = %s
                 WHERE bristo_contacts_ct_id = %s;""",
                 (psycopg2.Binary(self._image_bin),
                  _id ))
@@ -2661,7 +2661,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _id = self.fetch_groups_owned[self._ITEM][self._ID]
                 self._cursor = self._conn_main.cursor()
                 self._cursor.execute("""UPDATE bristo_contacts_groups SET
-                (bristo_contacts_groups_pic) = (%s)
+                bristo_contacts_groups_pic = %s
                 WHERE bristo_contacts_groups_id = %s;""",
                 (psycopg2.Binary(self._image_bin),_id,))
                 self._conn_main.commit()
@@ -2856,8 +2856,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 _crow, self._appt_purpose).text()
 
             self._cursor.execute("""UPDATE bristo_contacts_appt SET
-                    (bristo_contacts_appt_complete, bristo_contacts_appt_purpose)
-                    = (%s,%s) WHERE bristo_contacts_appt_id = %s;""", (_closed,
+                    bristo_contacts_appt_complete, bristo_contacts_appt_purpose
+                    = %s,%s WHERE bristo_contacts_appt_id = %s;""", (_closed,
                     _purpose, _appt_id))
             self._conn_main.commit()
             self._live_set = False
