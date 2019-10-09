@@ -650,7 +650,27 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     if not self._chgpwd:
                         pass
                         # self.contactsStatusBar.addWidget(self.conn_msg)
-
+                    
+                    # Create bristo_contacts_session_grplogin temporary table
+                    _id = 1
+                    _grpname = 'Cincinnati'
+                    _grp_pwd = 'Guest$123'
+                    self._cursor.execute("""CREATE TEMPORARY TABLE
+                        bristo_contacts_session_grplogin (
+                           bristo_contacts_session_grplogin_id integer not NULL,
+                           bristo_contacts_session_grplogin_grpname text not NULL,
+                           bristo_contacts_session_grppwd text not NULL);"""
+                           )
+                    
+                    # Insert one record
+                    self._cursor.execute("""INSERT INTO
+                        bristo_contacts_session_grplogin
+                        (bristo_contacts_session_grplogin_id,
+                         bristo_contacts_session_grplogin_grpname,
+                         bristo_contacts_session_grppwd)
+                        VALUES (%s,%s,%s);""",
+                        (_id,_grpname,_grp_pwd))
+                    
                     # Log authentication
                     _usr_ip = self._usr_ip
                     _usr_city = self._usr_city
