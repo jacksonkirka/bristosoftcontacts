@@ -649,27 +649,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(255, 165, );")
                     if not self._chgpwd:
                         pass
-                        # self.contactsStatusBar.addWidget(self.conn_msg)
-                    
-                    # Create bristo_contacts_session_grplogin temporary table
-                    _id = 1
-                    _grpname = 'Cincinnati'
-                    _grp_pwd = 'Guest$123'
-                    self._cursor.execute("""CREATE TEMPORARY TABLE
-                        bristo_contacts_session_grplogin (
-                           bristo_contacts_session_grplogin_id integer not NULL,
-                           bristo_contacts_session_grplogin_grpname text not NULL,
-                           bristo_contacts_session_grplogin_pwd text not NULL);"""
-                           )
-                    
-                    # Insert one record
-                    self._cursor.execute("""INSERT INTO
-                        bristo_contacts_session_grplogin
-                        (bristo_contacts_session_grplogin_id,
-                         bristo_contacts_session_grplogin_grpname,
-                         bristo_contacts_session_grplogin_pwd)
-                        VALUES (%s,%s,%s);""",
-                        (_id,_grpname,_grp_pwd))
+                        # self.contactsStatusBar.addWidget(self.conn_msg
                     
                     # Log authentication
                     _usr_ip = self._usr_ip
@@ -1211,6 +1191,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 bristo_contacts_ct.bristo_contacts_ct_group =
                 bristo_contacts_groups.bristo_contacts_groups_group LIMIT %s;""",
                 (_user, _user, _user, self._limit))
+                if not self._cursor.rowcount:
+                    return
                 self.fetch_groups.append(self._cursor.fetchall())
             if self._groupqry:
                 self._cursor.execute("""SELECT * FROM bristo_contacts_groups
@@ -1342,6 +1324,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         ORDER by bristo_contacts_ct.bristo_contacts_ct_co,
                         bristo_contacts_ct.bristo_contacts_ct_lname LIMIT %s;""",
                         (_user, _email, _user, self._limit ))
+                    if not self._cursor.rowcount:
+                        self.contactsStatusBar.showMessage(
+                            'No Contacts found.  Cursor over New to add one.', 5000)
+                        return
                 self.fetch_results.append(self._cursor.fetchall())
 
                 # Note: When requesting group contacts there s/b no notes,
@@ -1926,8 +1912,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
     def display_group_contacts(self):
         '''
         display_group_contacts authenticates a group login and then returns
-        all contacts within a group base on group name without spaces.
+        all contacts within a group base on group name and password without
+        spaces.
         '''
+        _usr = self._user 
         if self._pool:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
@@ -1941,11 +1929,21 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if _grp_nm and _pwd:
             self._cursor = self._conn_main.cursor()
             
-            # Update bristo_contacts_session_grplogin
-            self._cursor.execute("""UPDATE bristo_contacts_session_grplogin SET
-            (bristo_contacts_session_grplogin_grpname, bristo_contacts_session_grplogin_pwd)
-            = (%s,%s) WHERE bristo_contacts_session_grplogin_id = 1;""",
-            (_grp_nm,_pwd))
+            # Update bristo_contacts_session
+            self._cursor.execute("""SELECT bristo_contacts_session_username
+            FROM bristo_contacts_session WHERE 
+            bristo_contacts_session_username = %s;""", (_usr, ))
+            if not self._cursor.rowcount:
+                self._cursor.execute("""INSERT INTO bristo_contacts_session
+                (bristo_contacts_session_username,
+                bristo_contacts_session_grpname,
+                bristo_contacts_session_grppwd)
+                VALUES (%s,%s,%s);""", (_usr, _grp_nm,_pwd))
+            else:
+                self._cursor.execute("""UPDATE bristo_contacts_session SET
+                (bristo_contacts_session_grpname, bristo_contacts_session_grppwd)
+                = (%s,%s) WHERE bristo_contacts_session_username = %s;""",
+                (_grp_nm,_pwd, _usr))
             
             # Set matches to False
             _grp_nm_match = False
@@ -1968,7 +1966,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._groupnm = _grp_nm
                 else:
                     _grp_nm_match = False
-
 
             # Verify user password
             self._cursor = self._conn_main.cursor()
@@ -2013,7 +2010,8 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 self._groupqry = True  # Key variable.
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
                 self._connected = False
-                self._LASTGROUP += 1
+                if self.fetch_results:
+                    self._LASTGROUP += 1
                 self._query = self._LASTGROUP
                 self._groups_dict[_db_grpnm] = self._query
                 self.menuGroups.addAction(_db_grpnm, self.db_group_select)
