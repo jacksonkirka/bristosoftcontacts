@@ -33,7 +33,7 @@ setup(
     url="https://bitbucket.org/bristolians/bristosoftcontacts/src/master/", 
     install_requires=[
                                 'PyQt5', 
-                                'psycopg2', 
+                                'psycopg2-binary', 
                                 'PyQt5-sip', 
                                 'requests', 
                                 ], 
