@@ -27,6 +27,7 @@ PostgreSQL 9.4+ database).
 
 # Imports
 import sip  # For Windows 10 use from PyQt5 import sip
+#from PyQt5 import sip # For Linux use import sip
 sip.setapi('QString', 2)
 import datetime
 import ntpath
@@ -1995,11 +1996,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     self._cursor = self._conn_main.cursor()
                 # Log authentication
                 _usr_nm = self._user
-                _usr_ip = self._usr_ip
-                _usr_city = self._usr_city
-                _usr_reg = self._usr_region
-                _usr_ctry = self._usr_ctry
-                _usr_zip = self._usr_zip
                 _suc = True
                 _in = True
                 _grplogin = True
@@ -2008,15 +2004,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         bristo_contacts_authlog_in,
                         bristo_contacts_authlog_group,
                         bristo_contacts_authlog_inet,
-                        bristo_contacts_authlog_city,
                         bristo_contacts_authlog_grpname,
-                        bristo_contacts_authlog_region,
-                        bristo_contacts_authlog_ctry,
-                        bristo_contacts_authlog_postal,
                         bristo_contacts_authlog_success)
-                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);""",
-                        (_usr_nm,_in, _grplogin, _usr_ip, _usr_city,
-                        _grp_nm, _usr_reg, _usr_ctry, _usr_zip, _suc))
+                        VALUES (%s,%s,%s,inet_client_addr(),%s,%s);""",
+                        (_usr_nm,_in, _grplogin,_grp_nm, _suc))
                 self._conn_main.commit()
                 self._cursor.close()
                 self.bristo_search.groupNameLineEdit.clear()
