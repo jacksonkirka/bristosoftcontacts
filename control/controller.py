@@ -26,18 +26,15 @@ PostgreSQL 9.4+ database).
 '''
 
 # Imports
-import sip  # Needed for conversion to Python types
+import sip  # For Windows 10 use from PyQt5 import sip
 sip.setapi('QString', 2)
 import datetime
 import ntpath
 # import ast
-import json
 import os
 from .secure import Security
 from .bristoprint import PrintServices
 import webbrowser
-import requests
-from requests import get # Error on ordered_dict changed in compat.py
 import platform
 
 from PyQt5.QtCore import *
@@ -516,21 +513,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         '''
         # Authentication
-        try:
-            _loc_json = get('https://ipapi.co/json')
-            self._usr_loc = json.loads(_loc_json._content)
-        except requests.exceptions.ConnectionError:
-            self.contactsStatusBar.showMessage(
-            "Connection Error! Connect to internet. Try again.", 20000)
-            return
-        self._usr_city = self._usr_loc['city']
-        self._usr_ip = self._usr_loc['ip']
-        self._usr_region = self._usr_loc['region']
-        self._usr_lon = self._usr_loc['longitude']
-        self._usr_ctry = self._usr_loc['country']
-        self._usr_lat = self._usr_loc['latitude']
-        self._usr_tz = self._usr_loc['timezone']
-        self._usr_zip = self._usr_loc['postal']
 
         self._host = 'bristosoftcontacts'
         self._db = 'bristocontacts'
@@ -541,15 +523,15 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             # Note: by using the ThreadedConnectionPool class instead of
             # the PersistentConnectionPool class it is possible to have
             # more than one db connection per thread.
-            
+
             #build connection string
             _server = " ".join(
-            ["host='bristocontacts.cmuctcwvgjxh.us-east-2.rds.amazonaws.com'", 
+            ["host='bristocontacts.cmuctcwvgjxh.us-east-2.rds.amazonaws.com'",
                 "dbname='bristocontacts'","sslmode='require'","port='5432'" ])
             _usr = "".join(["user=", "'", self._user, "'"])
             _pswd = "".join(['password=', "'", self._passwd, "'" ])
             con = " ".join([_server, _usr, _pswd])
-            
+
             # Setup a threaded connection pool
             try:
                 self._pool = psycopg2.pool.ThreadedConnectionPool(
@@ -650,13 +632,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     if not self._chgpwd:
                         pass
                         # self.contactsStatusBar.addWidget(self.conn_msg
-                    
+
+
                     # Log authentication
-                    _usr_ip = self._usr_ip
-                    _usr_city = self._usr_city
-                    _usr_reg = self._usr_region
-                    _usr_ctry = self._usr_ctry
-                    _usr_zip = self._usr_zip
                     _suc = True
                     _in = True
                     _grplogin = False
@@ -665,16 +643,11 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             bristo_contacts_authlog_in,
                             bristo_contacts_authlog_group,
                             bristo_contacts_authlog_inet,
-                            bristo_contacts_authlog_city,
-                            bristo_contacts_authlog_region,
-                            bristo_contacts_authlog_ctry,
-                            bristo_contacts_authlog_postal,
                             bristo_contacts_authlog_success)
-                                         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""",
-                            (_usr_nm, _in, _grplogin, _usr_ip, _usr_city,
-                            _usr_reg, _usr_ctry, _usr_zip, _suc ))
+                                         VALUES (%s,%s,%s,inet_client_addr(),%s);""",
+                            (_usr_nm, _in, _grplogin, _suc ))
                     self._conn_main.commit()
-                    _tz = self._usr_tz
+                    _tz = 'utc'
                     self._cursor.execute("""SET TIME ZONE %s;""", (_tz, ))
                     self.reset_timer()
                     # Initial set after user login
@@ -792,9 +765,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             bristo_contacts_users_pwd = %s WHERE
             bristo_contacts_users_name = %s;""", (_newpwdhash, _username))
             self._conn_main.commit()
-            _usrquery = " ".join(['ALTER','USER', _username,'WITH','ENCRYPTED', 
+            _usrquery = " ".join(['ALTER','USER', _username,'WITH','ENCRYPTED',
                 'PASSWORD ',])
-            _pwdquery = "".join(['\'', _newpwd, '\'', ';']) 
+            _pwdquery = "".join(['\'', _newpwd, '\'', ';'])
             _query = "".join([_usrquery, _pwdquery])
             self._cursor.execute(_query)
             self._conn_main.commit()
@@ -808,7 +781,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                                               rgb(230, 128, 128);")
             self.contactsStatusBar.showMessage(
             "Disconnected, New Password didn't match or password uncomplex.", 10000)
-    
+
     def incorrectlogin(self):
 
         '''
@@ -818,7 +791,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         # Note with new direct db login for users no connection pool is
         # availble so the attempted login cannot be logged in authlog.
-        
+
         # Log incorrect authentication
         _usr_nm = self._user
         _usr_ip = self._usr_ip
@@ -861,7 +834,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         '''
         # Note with new direct db login for users no connection pool is
         # availble so the attempted login cannot be logged in authlog.
-        
+
         _msg = 'Login credentials incorrect, please try again.'
         self.contactsStatusBar.showMessage(_msg,  3000)
 
@@ -1366,7 +1339,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                             (_user, _email, self._limit ))
                         if not self._cursor.rowcount:
                             self.contactsStatusBar.showMessage(
-                            'No Contacts found.  Cursor over New to add one.', 
+                            'No Contacts found.  Cursor over New to add one.',
                                 5000)
                             return
                 self.fetch_results.append(self._cursor.fetchall())
@@ -1956,7 +1929,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         all contacts within a group base on group name and password without
         spaces.
         '''
-        _usr = self._user 
+        _usr = self._user
         if self._pool:
             self._conn_main = self._pool.getconn(key=self._conn_main_key)
             self._connected = True
@@ -1969,10 +1942,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self._grprpt = _grp_nm
         if _grp_nm and _pwd:
             self._cursor = self._conn_main.cursor()
-            
+
             # Update bristo_contacts_session
             self._cursor.execute("""SELECT bristo_contacts_session_username
-            FROM bristo_contacts_session WHERE 
+            FROM bristo_contacts_session WHERE
             bristo_contacts_session_username = %s;""", (_usr, ))
             if not self._cursor.rowcount:
                 self._cursor.execute("""INSERT INTO bristo_contacts_session
@@ -1985,7 +1958,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 (bristo_contacts_session_grpname, bristo_contacts_session_grppwd)
                 = (%s,%s) WHERE bristo_contacts_session_username = %s;""",
                 (_grp_nm,_pwd, _usr))
-            
+
             # Set matches to False
             _grp_nm_match = False
             _grp_pwd_match = False
@@ -2525,7 +2498,7 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
 
         self.bristo_search.notesTableWidget.verticalHeader().setSectionResizeMode(3)
         self.bristo_search.callsTableWidget.horizontalHeader().setSectionResizeMode(3)
-        
+
 
     def resize_calls(self):
 
@@ -2566,10 +2539,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         _oph = self.bristo_search.officePhoneLineEdit.text()
         fdlg = QFileDialog()
         options = fdlg.Options()
-        options |= fdlg.DontUseNativeDialog     
+        options |= fdlg.DontUseNativeDialog
         filenametup = fdlg.getOpenFileName(self, 'Open file',
                    "Image files (*.jpg *.gif *.png)",  options=optins)
-        filename = filenametup[0]                                 # get fname 
+        filename = filenametup[0]                                 # get fname
         _fnm = self.get_path_filename(filename)             # Get name to write
         self._file_bin = open(filename, 'rb').read()        # Read > pointer
         # self._conn_main_timer = 120000                          # Need large files
@@ -2651,10 +2624,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         self.reset_timer()
         fdlg = QFileDialog()
         options = fdlg.Options()
-        options |= fdlg.DontUseNativeDialog        
+        options |= fdlg.DontUseNativeDialog
         fnametup = fdlg.getOpenFileName(self, 'Open file',
                    "Image files (*.jpg *.gif *.png)", options=options)       # get file tuple
-        fname = fnametup[0]                                 # get fname 
+        fname = fnametup[0]                                 # get fname
         self._image = QPixmap(fname)                        # Get Pixmap
         self._image_bin = open(fname, 'rb').read()          # Read > pointer
         self.bristo_search.picLabel.setPixmap(self._image)  # Display
@@ -2689,10 +2662,10 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
             self.reset_timer()
             fdlg = QFileDialog()
             options = fdlg.Options()
-            options |= fdlg.DontUseNativeDialog    
+            options |= fdlg.DontUseNativeDialog
             fnametup = fdlg.getOpenFileName(self, 'Open file',
                        "Image files (*.jpg *.gif *.png)",  options=options)       # Get Filename
-            fname = fnametup[0]                                 # get fname 
+            fname = fnametup[0]                                 # get fname
             self._image = QPixmap(fname)                        # Get Pixmap
             self._image_bin = open(fname, 'rb').read()          # Read > pointer
             self.search_groups.newGroupLabel.setPixmap(self._image) # Show image
@@ -3086,11 +3059,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                 # Log authentication
                 _usr_nm = self._user
                 _grplogin = False
-                _usr_ip = self._usr_ip
-                _usr_city = self._usr_city
-                _usr_reg = self._usr_region
-                _usr_ctry = self._usr_ctry
-                _usr_zip = self._usr_zip
                 _suc = True
                 _in = False
                 _grplogin = False
@@ -3099,14 +3067,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                         bristo_contacts_authlog_in,
                         bristo_contacts_authlog_group,
                         bristo_contacts_authlog_inet,
-                        bristo_contacts_authlog_city,
-                        bristo_contacts_authlog_region,
-                        bristo_contacts_authlog_ctry,
-                        bristo_contacts_authlog_postal,
                         bristo_contacts_authlog_success)
-                        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""",
-                        (_usr_nm,_in, _grplogin, _usr_ip, _usr_city,
-                        _usr_reg, _usr_ctry, _usr_zip, _suc))
+                        VALUES (%s,%s,%s,inet_client_addr(),%s);""",
+                        (_usr_nm,_in, _grplogin, _suc))
                 self._conn_main.commit()
                 self._cursor.close()
                 self._pool.putconn(conn=self._conn_main, key=self._conn_main_key)
@@ -3208,11 +3171,6 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
         if self._pool:
             try:
                 _usr_nm = self._user
-                _usr_ip = self._usr_ip
-                _usr_city = self._usr_city
-                _usr_reg = self._usr_region
-                _usr_ctry = self._usr_ctry
-                _usr_zip = self._usr_zip
                 _suc = True
                 _in = False
                 _grplogin = False
@@ -3224,14 +3182,9 @@ class Controller(QMainWindow, contactsmain.Ui_bristosoftContacts):
                     bristo_contacts_authlog_in,
                     bristo_contacts_authlog_group,
                     bristo_contacts_authlog_inet,
-                    bristo_contacts_authlog_city,
-                    bristo_contacts_authlog_region,
-                    bristo_contacts_authlog_ctry,
-                    bristo_contacts_authlog_postal,
                     bristo_contacts_authlog_success)
-                    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s);""",
-                    (_usr_nm,_in, _grplogin, _usr_ip, _usr_city,
-                    _usr_reg, _usr_ctry, _usr_zip, _suc))
+                    VALUES (%s,%s,%s,inet_client_addr(),%s);""",
+                    (_usr_nm,_in, _grplogin, _suc))
             except psycopg2.DatabaseError as dberror:
                 self._conn_main.rollback()
                 # self.contactsStatusBar.removeWidget(self.conn_msg)

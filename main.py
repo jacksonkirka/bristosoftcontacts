@@ -25,7 +25,7 @@ the python scripts herein.
 
 # Imports
 import sys
-import sip
+import sip # Note in Windows 10 use from PyQt5 import sip
 sip.setapi('QString', 2)
 
 from PyQt5.QtCore import *
